@@ -1,0 +1,31 @@
+ver 2.2
+Highcharts extension
+- Extension works for both ExtJs 4 and Touch 2
+ 
+Demos
+- Added demos for Sencha Touch 2
+
+ver 2.1.1
+Demos
+- Fixed dial color in gauge chart demo
+- Corrected thickness in splitter bar
+- Typo in page title
+
+ver 2.1
+Highcharts extension 
+- Fixed shift animation on category data
+- Fixed stop loading data from the server after few load calls
+
+Demos
+- Added Add Series example
+- Added Null data example
+- Fixed reset sample data on spline demos
+
+ver 2.0
+- Added support to Highcharts 2.3 gauge chart
+- Added support to Highcharts 2.3 range type charts: minDataIndex, maxDataIndex and dataIndex array mode
+- [ Optimisation ] reduce redundant call on refresh, draw method only call refresh if the store is not loading, i.e isLoading
+- [ Optimisation ] added refreshOnChange config - avoid redundant call on refresh.
+- [ Optimisation ] added pointObject as default false to create data as array instead of point object
+- Added initAnimAfterLoad to support initial animation
+- Added afterChartRendered callback
