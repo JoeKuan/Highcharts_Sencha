@@ -31,7 +31,7 @@ Ext.define("Chart.ux.Highcharts", {
   extend : 'Ext.Component',
   alias : ['widget.highchart'],
 
-  debug: true,
+  debug: false,
 
   debugOn : function() {
       this.debug = true;
