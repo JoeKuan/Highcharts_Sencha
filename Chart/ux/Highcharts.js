@@ -1,8 +1,8 @@
 /**
  * @author Joe Kuan (much improved & ported from ExtJs 3 highchart adapter)
  * @email kuan.joe@gmail.com
- * @version 2.2
- * @date 25 Nov 2012
+ * @version 2.2.1
+ * @date 1 Dec 2012
  *
  * Highcharts extension for Sencha Ext JS 4 and Touch 2
  *
@@ -365,13 +365,8 @@ Ext.define("Chart.ux.Highcharts", {
             _this.chartConfig.series[i].data = [];
 
          // Sort out the type for this series
-         var seriesType = _this.series[i].type || _this.chartConfig.chart.defaultSeriesType;
+         var seriesType = _this.series[i].type || _this.chartConfig.chart.type || _this.chartConfig.chart.defaultSeriesType || 'line';
          var data = _this.chartConfig.series[i].data = _this.chartConfig.series[i].data || {};
-
-         // Check any series type we don't support here
-         if (!seriesType) {
-             continue;
-         }
 
          switch(seriesType) {
              case 'line':
@@ -675,7 +670,10 @@ Ext.define("Chart.ux.Highcharts", {
 
         for( i = 0; i < seriesCount; i++) {
           var serie = _this.series[i], point;
-          if (serie.dataIndex || serie.yField || serie.minDataIndex) {
+          // if serie.config.getData is defined, it doesn't need
+          // reference to dataIndex or yField, it just direct access
+          // to fields inside the implementation
+          if (serie.dataIndex || serie.yField || serie.minDataIndex || serie.config.getData) {
               point = serie.getData(record, x);
               data[i].push(point);
           } else if (serie.type == 'pie') {
@@ -735,7 +733,14 @@ Ext.define("Chart.ux.Highcharts", {
                    for (var x = 0; x < Math.min(chartSeriesLength, storeSeriesLength); x++) {
                         this.chart.series[i].points[x].update(data[i][x], false, true);
                    }
+
+                   // Gotcha, we need to be careful with pie series, as the totalDataField
+                   // can conflict with the following series data points trimming operations
+                   if (_this.series[i].type == 'pie')
+                       continue;
+
                    // Append the rest of the points from store to chart
+                   this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);
                    if (storeSeriesLength > chartSeriesLength) {
                       for (var y = 0; y < (storeSeriesLength - chartSeriesLength); y++, x++) {
                           this.chart.series[i].addPoint(data[i][x], false, false, true);
@@ -743,7 +748,6 @@ Ext.define("Chart.ux.Highcharts", {
                    }
                    // Remove the excessive points from the chart
                    else if (chartSeriesLength > storeSeriesLength) {
-                      this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);
                       for (var y = 0; y < (chartSeriesLength - storeSeriesLength); y++) {
                           var last = this.chart.series[i].points.length - 1;
                           this.chart.series[i].points[last].remove(false, true);

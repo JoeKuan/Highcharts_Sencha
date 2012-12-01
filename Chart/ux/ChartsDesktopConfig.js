@@ -100,7 +100,9 @@ Ext.define ("Chart.ux.ChartsDesktopConfig", {
         name : 'Yesterday'
       }, {
         type : 'spline',
-        dataIndex : 'today',
+        getData: function(record, index) {
+            return record.data.today;
+        },
         name : 'Today'
       }],
       animation: false,
@@ -891,6 +893,11 @@ Ext.define ("Chart.ux.ChartsDesktopConfig", {
         subtitle : {
           text : 'Random Value',
           x : -20
+        },
+        plotOptions: { 
+          pie: { 
+            allowPointSelect: true 
+          } 
         },
         tooltip : {
           formatter : function () {
