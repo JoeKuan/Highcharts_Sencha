@@ -1,6 +1,6 @@
 <?php
 $result[] = array('text' => 'Spline - Animation (Points update)', 'id' => 'charts/spline', 'leaf' => true, 'icon' => '../images/linechart.png');
-$result[] = array('text' => 'Spline - No animation', 'id' => 'charts/splineNoAnim', 'leaf' => true, 'icon' => '../images/linechart.png');
+$result[] = array('text' => 'Spline - No animation (Override getData template method)', 'id' => 'charts/splineNoAnim', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - Line Shift (Category x-axis)', 'id' => 'charts/splineCatShift', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - Line Shift (Numeric x-axis)', 'id' => 'charts/splineNumShift', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - ExtJs Popup Menu', 'id' => 'charts/splinePopup', 'leaf' => true, 'icon' => '../images/linechart.png');

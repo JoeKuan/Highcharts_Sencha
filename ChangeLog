@@ -1,4 +1,13 @@
-ver 2.2
+ver 2.2.1
+- Fixed store reload on pie chart
+- Fixed default series type value
+- Allow series definition without dataIndex or yField as long as getData method is defined
+
+Desktop Demos
+- Changed one of series definitions with overriding getData method only in 'No Animation' demo
+- Added 'allowPointSelect' in plotOptions for pie demo
+
+ver 2.2.0
 Highcharts extension
 - Extension works for both ExtJs 4 and Touch 2
  
