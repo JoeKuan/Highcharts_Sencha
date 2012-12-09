@@ -253,6 +253,11 @@ Ext.define("Chart.ux.Highcharts", {
     for(var i = 0; i < sc; i++) {
       this.removeSerie(0);
     }
+      // Need to also clean up the previous categories data if
+      // there are any
+      Ext.each(_this.chartConfig.xAxis, function(xAxis) {
+          delete xAxis.categories;
+      });
   },
 
   /**
@@ -376,22 +381,38 @@ Ext.define("Chart.ux.Highcharts", {
              case 'scatter':
              case 'bar':
              case 'column':
-                 var yField = _this.series[i].yField || _this.series[i].dataIndex;
-                 
+             var yField = _this.series[i].yField || _this.series[i].dataIndex;
+             var colorField = _this.series[i].colorField;
+
                  // Check whether series itself has its own xField defined,
                  // If so, then expect this is a numeric field.
                  if (_this.series[i].xField) {
                     var xField = _this.series[i].xField;
                     for (var x = 0; x < items.length; x++) {
                         var record = items[x];
-                        data.push([ record.data[xField], record.data[yField] ]);
+                        
+                        // Determine whether the colorField is 'auto', numerical value,
+                        // or field name
+                        var color = null;
+                        colorField && (color = _this.series[i].resolveColor(colorField, record, x));
+                        if (color)
+                            data.push({ x: record.data[xField], y: record.data[yField], color: color });
+                        else
+                            data.push([ record.data[xField], record.data[yField] ]);
                     } 
-        
+                     
                  // This make sure the series has no manual data, rely on store record
                  } else if (_this.series[i].yField || _this.series[i].dataIndex) {
                     for (var x = 0; x < items.length; x++) {
                         var record = items[x];
-                        data.push(record.data[yField]);
+                        // Determine whether the colorField is 'auto', numerical value,
+                        // or field name
+                        var color = null;
+                        colorField && (color = _this.series[i].resolveColor(colorField, record, x));
+                        if (color)
+                            data.push({ y: record.data[yField], color: color });
+                        else
+                            data.push(record.data[yField]);
                     }
         
                     var xAxis = (Ext.isArray(_this.chartConfig.xAxis)) ? _this.chartConfig.xAxis[0] : _this.chartConfig.xAxis;
@@ -741,15 +762,24 @@ Ext.define("Chart.ux.Highcharts", {
 
                    // Append the rest of the points from store to chart
                    this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);
-                   if (storeSeriesLength > chartSeriesLength) {
+                   if (chartSeriesLength < storeSeriesLength) {
                       for (var y = 0; y < (storeSeriesLength - chartSeriesLength); y++, x++) {
-                          this.chart.series[i].addPoint(data[i][x], false, false, true);
+                          // If data[i][x] is a numeric point, that means x-axis is categorie axis
+                          // with string labels. We need to make sure the data points are appended
+                          // in the right order
+                          if (Ext.isNumeric(data[i][x])) {
+                              this.chart.series[i].addPoint([x, data[i][x]], false, false, true);
+                          } else {
+                              this.chart.series[i].addPoint(data[i][x], false, false, true);
+                          }
                       }
                    }
                    // Remove the excessive points from the chart
                    else if (chartSeriesLength > storeSeriesLength) {
                       for (var y = 0; y < (chartSeriesLength - storeSeriesLength); y++) {
-                          var last = this.chart.series[i].points.length - 1;
+                          // Points.length is not immediately updated after remove call, so don't use points.length
+                          var last = chartSeriesLength - y - 1;
+                          this.log("Remove point at pos " + last);
                           this.chart.series[i].points[last].remove(false, true);
                       }
                    }
@@ -823,7 +853,7 @@ Ext.define("Chart.ux.Highcharts", {
           // For Line Shift it has to be setCategories before addPoint
           if(_this.xField && !_this.lineShift) {
             //this.updatexAxisData();
-            this.chart.xAxis[0].setCategories(xFieldData, true);
+            this.chart.xAxis[0].setCategories(xFieldData, false);
           }
 
           this.chart.redraw();
@@ -1039,6 +1069,16 @@ Ext.define('Chart.ux.Highcharts.Serie', {
    */
   yField : null,
 
+    /**
+     * This field is use for setting data point color
+     * 'auto' - Automatically assign color based on Highcharts 
+     *          color order. Do not use legend with this
+     * number or '#([0-9])' - set the color as this value
+     * string - treat this as a field name and expect the
+     *          store returns rows with color field
+     */
+    colorField: null,
+
   /**
    * The field used to hide the serie initial. Defaults to true.
    *
@@ -1049,13 +1089,35 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
   clear : Ext.emptyFn,
 
+  // Resolve color based on the value of colorField
+    resolveColor: function(colorField, record, dataPtIdx) {
+
+        var color = null;
+        if (colorField) {
+            if (colorField === 'auto') {
+                // Incremental as Highcharts colors
+                color = Highcharts.getOptions().colors[dataPtIdx] || Highcharts.getOptions().colors[0];
+            } else if (Ext.isNumeric(colorField)) {
+                color = colorField;
+            } else if (Ext.isString(colorField)) {
+                if (/^(#)?([0-9a-fA-F]{3})([0-9a-fA-F]{3})?$/.test(colorField)) {
+                    color = colorField;
+                } else {
+                    color = record.data[colorField];
+                }
+            }
+        }
+        console.log("resolveColor " + colorField + ", " + color);
+        return color;
+    },
+
   obj_getData : function(record, index) {
     var yField = this.yField || this.dataIndex, point = {
       data : record.data,
       y : record.data[yField]
     };
     this.xField && (point.x = record.data[this.xField]);
-    this.colorField && (point.color = record.data[this.colorField]);
+      this.colorField && (point.color = this.resolveColor(this.colorField, record, index));
     return point;
   },
 
@@ -1078,6 +1140,10 @@ Ext.define('Chart.ux.Highcharts.Serie', {
     this.config = config;
 
     this.yField = this.yField || this.dataIndex;
+
+    // If colorField is defined, then we have to use data point
+    // as object
+      this.colorField && (this.pointObject = true);
 
     // If getData method is already defined, then overwrite it
     if (!this.getData) {
@@ -1130,7 +1196,7 @@ Ext.define('Chart.ux.Highcharts.RangeSerie', {
   }
 });
 
-Chart.ux.Highcharts.version = '2.2';
+Chart.ux.Highcharts.version = '2.2.2';
 
 /**
  * @class Chart.ux.Highcharts.SplineSerie

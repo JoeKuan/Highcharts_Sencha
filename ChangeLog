@@ -1,4 +1,17 @@
+ver 2.2.2
+Highcharts extension
+- Fixed removeAllSeries method need to also cleanup categories data in chartConfig from previous load
+- Fixed when store reload with more data, it appends the data in the correct category (string labels) order
+- Fixed when store reload with less data, it correctly remove the data point with the correct index
+- Extended the colorField properties to other series
+- Added 'auto' keyword support for colorField to automatically assign point color to Highcharts colors
+
+Desktop Demos
+- Added spline chart with no initial data demo (initAnimAfterLoad: false)
+- Added column drill down demo
+
 ver 2.2.1
+Highcharts extension
 - Fixed store reload on pie chart
 - Fixed default series type value
 - Allow series definition without dataIndex or yField as long as getData method is defined
