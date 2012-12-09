@@ -790,6 +790,9 @@ Ext.define ("Chart.ux.ChartsDesktopConfig", {
       }
     },
 
+      /*************************************************
+       * Column config
+       *************************************************/
     column : {
       series : [{
         type : 'column',
@@ -859,6 +862,128 @@ Ext.define ("Chart.ux.ChartsDesktopConfig", {
           x : -10,
           y : 100,
           borderWidth : 0
+        },
+        credits : {
+          text : 'joekuan.wordpress.com',
+          href : 'http://joekuan.wordpress.com',
+          style : {
+            cursor : 'pointer',
+            color : '#707070',
+            fontSize : '12px'
+          }
+        }
+      }
+    },
+
+      /*************************************************************
+       * Column drill down config with button click
+       *************************************************************/
+    columnDrillDown : {
+      series : [{
+        type : 'column',
+          dataIndex : 'usage',
+          colorField: 'auto',
+          // Set this to white, so won't interfere with the series
+          // index color
+          color: 'white',
+          name: 'Browser brands'
+      }],
+        xField: 'vendor',
+      height : 500,
+      width : 700,
+      chartConfig : {
+        chart : {
+          marginRight : 130,
+          marginBottom : 120,
+            zoomType : 'x'
+        },
+        title : {
+          text : 'Column drill down demo. Click a column to drill down further (issues a load event)',
+          x : -20 //center
+        },
+        yAxis : {
+          title : {
+            text : 'Total percent market share'
+          }
+        },
+          plotOptions: {
+              column: {
+                  cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        color: Highcharts.getOptions().colors[0],
+                        style: {
+                            fontWeight: 'bold'
+                        },
+                        formatter: function() {
+                            return this.y +'%';
+                        }
+                    },
+                  point: {
+                      events: {
+                          click: function(evt) {
+
+                              var selectPoint = this;
+                              var store = Ext.getCmp('main_chart').store;
+                              var extraParams = store.getProxy().extraParams;
+
+                              var dataIndex = '', xField = '';
+                              var series = null;
+                              // Flick store params
+                              if (extraParams.total) {
+                                  delete extraParams.total;
+                                  extraParams.browser = this.category;
+                                  series = {
+                                      dataIndex: 'usage',
+                                      // Set all the point colors to the series color
+                                      color: this.color,
+                                      name: 'Versions',
+                                      type: 'column'
+                                  };
+                                  xField = 'version';
+                              } else {
+                                  extraParams.total = true;
+                                  delete extraParams.browser;
+                                  series = {
+                                      dataIndex: 'usage',
+                                      // Automatic set the data point based on Highcharts
+                                      // colors order and the data point order
+                                      colorField: 'auto',
+                                      type: 'column',
+                                      name: 'Browser brands',
+                                      color: 'white'
+                                  };
+                                  xField = 'vendor';
+                              }
+
+                              // Reset the data mapping, as we have already created
+                              // the chart. All we need to do is to reset the value
+                              // inside the chartConfig and call redraw
+                              var chartExt = Ext.getCmp('main_chart');
+                              // addSeries without append means replacing the series
+                              chartExt.addSeries([series]);
+                              chartExt.xField = xField;
+
+                              // Because this extension has already binded store,
+                              // that means the chart will automatically after
+                              // load method is finished
+                              store.load();
+                          }
+                      }
+                  }
+              }
+          },
+        tooltip : {
+          formatter : function () {
+              var point = this.point,
+              s = this.x +':<b>'+ this.y +'% market share</b><br/>';
+              if (point.drilldown) {
+                  s += 'Click to view '+ point.category +' versions';
+              } else {
+                  s += 'Click to return to browser brands';
+              }
+              return s;
+          }
         },
         credits : {
           text : 'joekuan.wordpress.com',

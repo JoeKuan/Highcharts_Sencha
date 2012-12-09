@@ -63,6 +63,8 @@ Ext.define('Highcharts.controller.Charts', {
           // Clear up special purpose widget
           Ext.getCmp('addSeries').setDisabled(true);
 
+            var initLoad = true;
+
           switch (selectedType) {
             case 'spline':
               hcConfig = configs.getSpline();
@@ -99,6 +101,14 @@ Ext.define('Highcharts.controller.Charts', {
               store = Ext.create('Highcharts.store.NumericTemperature');
               store.getProxy().setModel('Highcharts.model.NumericTemperature');
               break;
+            case 'splineNoInitAnim':
+              hcConfig = configs.getSpline();
+              hcConfig.initAnimAfterLoad = false;
+              hcConfig.chartConfig.title.text = "No initial data, click reload to draw data";
+              store = Ext.create('Highcharts.store.Temperature');
+              store.getProxy().setModel('Highcharts.model.Temperature');
+              initLoad = false;
+              break;
             case 'splineAfterRenderedCallback':
               hcConfig = configs.getSplineAfterRenderedCallback();
               store = Ext.create('Highcharts.store.NumericTemperature');
@@ -121,6 +131,12 @@ Ext.define('Highcharts.controller.Charts', {
               hcConfig = configs.getDonut();
               reloadDisabled = true;
               store = Ext.create('Highcharts.store.Browsers');
+              break;
+            case 'columnDrillDown':
+              hcConfig = configs.getColumnDrillDown();
+              reloadDisabled = true;
+              store = Ext.create('Highcharts.store.Browsers');
+              store.getProxy().extraParams.total = true;
               break;
             case 'gauge':
               hcConfig = configs.getGauge();
@@ -165,9 +181,8 @@ Ext.define('Highcharts.controller.Charts', {
           mainChart.bindStore(store, true);
           Ext.getCmp('centerpane').add(mainChart);
 
-          if (selectedType != 'gauge/dial') {
+          if (initLoad)
               store.load();
-          }
 
           // Enable all the chart relate buttons
           Ext.getCmp('reload').setDisabled(reloadDisabled);

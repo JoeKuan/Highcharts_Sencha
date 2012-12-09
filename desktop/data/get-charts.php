@@ -7,7 +7,9 @@ $result[] = array('text' => 'Spline - ExtJs Popup Menu', 'id' => 'charts/splineP
 $result[] = array('text' => 'Spline - Add Series (non store data)', 'id' => 'charts/splineAddSeries', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - Null data', 'id' => 'charts/splineNullData', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - afterChartRendered callback', 'id' => 'charts/splineAfterRenderedCallback', 'leaf' => true, 'icon' => '../images/linechart.png');
+$result[] = array('text' => 'Spline - No initial animation', 'id' => 'charts/splineNoInitAnim', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Column', 'id' => 'charts/column', 'leaf' => true, 'icon' => '../images/columnchart.png');
+$result[] = array('text' => 'Column - drill down', 'id' => 'charts/columnDrillDown', 'leaf' => true, 'icon' => '../images/columnchart.png');
 $result[] = array('text' => 'Pie', 'id' => 'charts/pie', 'leaf' => true, 'icon' => '../images/piechart.png');
 $result[] = array('text' => 'Scatter', 'id' => 'charts/scatter', 'leaf' => true, 'icon' => '../images/scatter.png');
 $result[] = array('text' => 'Donut (Pie)', 'id' => 'charts/donut', 'leaf' => true, 'icon' => '../images/ring.png' );
