@@ -1027,7 +1027,7 @@ Ext.define("Chart.ux.Highcharts.Series", {
   },
 
   get : function(id) {
-      return this.items[values.indexOf(id)];
+      return this.items[this.values.indexOf(id)];
   }
 
 });
