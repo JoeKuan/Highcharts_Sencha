@@ -1,7 +1,7 @@
 /**
  * @author Joe Kuan (much improved & ported from ExtJs 3 highchart adapter)
  * @email kuan.joe@gmail.com
- * @version 2.2.1
+ * @version 2.2.3
  * @date 1 Dec 2012
  *
  * Highcharts extension for Sencha Ext JS 4 and Touch 2
@@ -1016,21 +1016,21 @@ Ext.define("Chart.ux.Highcharts", {
  * This class registers all available series, and provide backward compatibility
  * @constructor
  */
-Chart.ux.Highcharts.Series = function() {
-  var items = new Array(), values = new Array();
+Ext.define("Chart.ux.Highcharts.Series", {
+  singleton: true,
+  items: new Array(), 
+  values: new Array(),
 
-  return {
-    reg : function(id, cls) {
-      items.push(cls);
-      values.push(id);
-    },
+  reg : function(id, cls) {
+      this.items.push(cls);
+      this.values.push(id);
+  },
 
-    get : function(id) {
-      return items[values.indexOf(id)];
-    }
+  get : function(id) {
+      return this.items[values.indexOf(id)];
+  }
 
-  };
-}();
+});
 
 /**
  * @class Ext.ux.Highcharts.Serie
@@ -1196,7 +1196,7 @@ Ext.define('Chart.ux.Highcharts.RangeSerie', {
   }
 });
 
-Chart.ux.Highcharts.version = '2.2.2';
+Chart.ux.Highcharts.version = '2.2.3';
 
 /**
  * @class Chart.ux.Highcharts.SplineSerie
