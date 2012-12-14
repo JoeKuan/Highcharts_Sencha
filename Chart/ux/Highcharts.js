@@ -31,6 +31,10 @@ Ext.define("Chart.ux.Highcharts", {
   extend : 'Ext.Component',
   alias : ['widget.highchart'],
 
+  statics: {
+    version: '2.2.3'
+  },
+
   debug: false,
 
   debugOn : function() {
@@ -188,9 +192,10 @@ Ext.define("Chart.ux.Highcharts", {
       var serie = series[i];
       if(!serie.serieCls) {
         if(serie.type != null || this.defaultSerieType != null) {
-          cls = Chart.ux.Highcharts.Series.get(serie.type != null ? serie.type : this.defaultSerieType);
+          cls = serie.type || this.defaultSerieType;
+          cls = "highcharts." + cls;  // See alternateClassName
         } else {
-          cls = Chart.ux.Highcharts.Serie;
+          cls = "Chart.ux.Highcharts.Serie";
         }
         serieObject = Ext.create(cls, serie);
       } else {
@@ -1011,28 +1016,7 @@ Ext.define("Chart.ux.Highcharts", {
 
 });
 
-/**
- * @class Ext.ux.Highcharts.Series
- * This class registers all available series, and provide backward compatibility
- * @constructor
- */
-Ext.define("Chart.ux.Highcharts.Series", {
-  singleton: true,
-  items: new Array(), 
-  values: new Array(),
-
-  reg : function(id, cls) {
-      this.items.push(cls);
-      this.values.push(id);
-  },
-
-  get : function(id) {
-      return this.items[this.values.indexOf(id)];
-  }
-
-});
-
-/**
+/**          
  * @class Ext.ux.Highcharts.Serie
  * Series class for the highcharts widget.
  * @constructor
@@ -1196,8 +1180,6 @@ Ext.define('Chart.ux.Highcharts.RangeSerie', {
   }
 });
 
-Chart.ux.Highcharts.version = '2.2.3';
-
 /**
  * @class Chart.ux.Highcharts.SplineSerie
  * @extends Chart.ux.Highcharts.Serie
@@ -1206,9 +1188,9 @@ Chart.ux.Highcharts.version = '2.2.3';
  */
 Ext.define('Chart.ux.Highcharts.SplineSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.spline' ],
   type : 'spline'
 });
-Chart.ux.Highcharts.Series.reg('spline', 'Chart.ux.Highcharts.SplineSerie');
 
 /**
  * @class Chart.ux.Highcharts.ColumnSerie
@@ -1218,9 +1200,9 @@ Chart.ux.Highcharts.Series.reg('spline', 'Chart.ux.Highcharts.SplineSerie');
  */
 Ext.define('Chart.ux.Highcharts.ColumnSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.column' ],
   type : 'column'
 });
-Chart.ux.Highcharts.Series.reg('column', 'Chart.ux.Highcharts.ColumnSerie');
 
 /**
  * @class Chart.ux.Highcharts.BarSerie
@@ -1230,9 +1212,9 @@ Chart.ux.Highcharts.Series.reg('column', 'Chart.ux.Highcharts.ColumnSerie');
  */
 Ext.define('Chart.ux.Highcharts.BarSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.bar' ],
   type : 'bar'
 });
-Chart.ux.Highcharts.Series.reg('bar', 'Chart.ux.Highcharts.BarSerie');
 
 /**
  * @class Chart.ux.Highcharts.SplineSerie
@@ -1242,9 +1224,9 @@ Chart.ux.Highcharts.Series.reg('bar', 'Chart.ux.Highcharts.BarSerie');
  */
 Ext.define('Chart.ux.Highcharts.LineSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.line' ],
   type : 'line'
 });
-Chart.ux.Highcharts.Series.reg('line', 'Chart.ux.Highcharts.LineSerie');
 
 /**
  * @class Chart.ux.Highcharts.SplineSerie
@@ -1254,9 +1236,9 @@ Chart.ux.Highcharts.Series.reg('line', 'Chart.ux.Highcharts.LineSerie');
  */
 Ext.define('Chart.ux.Highcharts.AreaSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.area' ],
   type : 'area'
 });
-Chart.ux.Highcharts.Series.reg('area', 'Chart.ux.Highcharts.AreaSerie');
 
 /**
  * @class Chart.ux.Highcharts.SplineSerie
@@ -1266,9 +1248,9 @@ Chart.ux.Highcharts.Series.reg('area', 'Chart.ux.Highcharts.AreaSerie');
  */
 Ext.define('Chart.ux.Highcharts.AreaSplineSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.areaspline' ],
   type : 'areaspline'
 });
-Chart.ux.Highcharts.Series.reg('areaspline', 'Chart.ux.Highcharts.AreaSplineSerie');
 
 /**
  * @class Chart.ux.Highcharts.GaugeSerie
@@ -1278,9 +1260,9 @@ Chart.ux.Highcharts.Series.reg('areaspline', 'Chart.ux.Highcharts.AreaSplineSeri
  */
 Ext.define('Chart.ux.Highcharts.GaugeSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.gauge' ],
   type : 'gauge'
 });
-Chart.ux.Highcharts.Series.reg('gauge', 'Chart.ux.Highcharts.GaugeSerie');
 
 /**
  * @class Chart.ux.Highcharts.AreaRangeSerie
@@ -1290,9 +1272,9 @@ Chart.ux.Highcharts.Series.reg('gauge', 'Chart.ux.Highcharts.GaugeSerie');
  */
 Ext.define('Chart.ux.Highcharts.AreaRangeSerie', {
   extend : 'Chart.ux.Highcharts.RangeSerie',
+  alternateClassName: [ 'highcharts.arearange' ],
   type : 'arearange'
 });
-Chart.ux.Highcharts.Series.reg('arearange', 'Chart.ux.Highcharts.AreaRangeSerie');
 
 /**
  * @class Chart.ux.Highcharts.AreaSplineRangeSerie
@@ -1302,9 +1284,9 @@ Chart.ux.Highcharts.Series.reg('arearange', 'Chart.ux.Highcharts.AreaRangeSerie'
  */
 Ext.define('Chart.ux.Highcharts.AreaSplineRangeSerie', {
   extend : 'Chart.ux.Highcharts.RangeSerie',
+  alternateClassName: [ 'highcharts.areasplinerange' ],
   type : 'areasplinerange'
 });
-Chart.ux.Highcharts.Series.reg('areasplinerange', 'Chart.ux.Highcharts.AreaSplineRangeSerie');
 
 /**
  * @class Chart.ux.Highcharts.ColumnRangeSerie
@@ -1314,9 +1296,9 @@ Chart.ux.Highcharts.Series.reg('areasplinerange', 'Chart.ux.Highcharts.AreaSplin
  */
 Ext.define('Chart.ux.Highcharts.ColumnRangeSerie', {
   extend : 'Chart.ux.Highcharts.RangeSerie',
+  alternateClassName: [ 'highcharts.columnrange' ],
   type : 'columnrange'
 });
-Chart.ux.Highcharts.Series.reg('columnrange', 'Chart.ux.Highcharts.ColumnRangeSerie');
 
 /**
  * @class Chart.ux.Highcharts.ScatterSerie
@@ -1326,9 +1308,9 @@ Chart.ux.Highcharts.Series.reg('columnrange', 'Chart.ux.Highcharts.ColumnRangeSe
  */
 Ext.define('Chart.ux.Highcharts.ScatterSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
+  alternateClassName: [ 'highcharts.scatter' ],
   type : 'scatter'
 });
-Chart.ux.Highcharts.Series.reg('scatter', 'Chart.ux.Highcharts.ScatterSerie');
 
 /**
  * @class Chart.ux.Highcharts.PieSerie
@@ -1338,7 +1320,7 @@ Chart.ux.Highcharts.Series.reg('scatter', 'Chart.ux.Highcharts.ScatterSerie');
  */
 Ext.define('Chart.ux.Highcharts.PieSerie', {
   extend : 'Chart.ux.Highcharts.Serie',
-
+  alternateClassName: [ 'highcharts.pie' ],
   type : 'pie',
 
   /**
@@ -1470,4 +1452,3 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
   }
 
 });
-Chart.ux.Highcharts.Series.reg('pie', Chart.ux.Highcharts.PieSerie);
