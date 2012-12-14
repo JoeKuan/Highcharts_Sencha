@@ -1,3 +1,7 @@
+ver 2.2.3
+Highcharts extension
+- Re-implemented the old style of converting series type into class paths using ExtJs 4 feature. This has removed incompatiblity with the latest ExtJS release and also slightly optimised.
+
 ver 2.2.2
 Highcharts extension
 - Fixed removeAllSeries method need to also cleanup categories data in chartConfig from previous load
