@@ -1,11 +1,5 @@
 This is the HighCharts extension for Sencha ExtJS 4 and Touch 2.
 
-Click [here][tutorial] for the tutorial.
+The tutorial and API documentations can be found in the docs/ directory or you can view it [online][1]
 
-Click [here][desktop] for the ExtJs 4 demo.
-
-Click [here][mobile] for the Touch 2 demo.
-
-[tutorial]: http://joekuan.wordpress.com/highcharts-sencha/tutorial/
-[desktop]: http://www.joekuan.org/demos/Highcharts_Sencha/desktop/
-[mobile]: http://www.joekuan.org/demos/Highcharts_Sencha/mobile/
+[1]: http://joekuan.org/demos/Highcharts_Sencha/docs/#!/api/Chart.ux.Highcharts
