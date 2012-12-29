@@ -1,3 +1,11 @@
+ver 2.3.0
+Highcharts extension
+- Incorportated changes submitted by jacrasmussen to break down single Highchart.js into smaller series class files. This enable users to deploy their solution by selecting which series their applications support
+- Massive rewrite and redo on all the documentations, including features that have never been documented before. Now the tutorial and API documents are done in Sencha documentation style - JsDuck.
+
+Demos
+- Updated both desktop and mobile demos with the classes file hierarchy
+ 
 ver 2.2.3
 Highcharts extension
 - Re-implemented the old style of converting series type into class paths using ExtJs 4 feature. This has removed incompatiblity with the latest ExtJS release and also slightly optimised.

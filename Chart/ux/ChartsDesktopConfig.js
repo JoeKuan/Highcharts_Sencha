@@ -882,7 +882,7 @@ Ext.define ("Chart.ux.ChartsDesktopConfig", {
       series : [{
         type : 'column',
           dataIndex : 'usage',
-          colorField: 'auto',
+          colorByPoint: true,
           // Set this to white, so won't interfere with the series
           // index color
           color: 'white',
@@ -948,7 +948,7 @@ Ext.define ("Chart.ux.ChartsDesktopConfig", {
                                       dataIndex: 'usage',
                                       // Automatic set the data point based on Highcharts
                                       // colors order and the data point order
-                                      colorField: 'auto',
+                                      colorByPoint: true,
                                       type: 'column',
                                       name: 'Browser brands',
                                       color: 'white'

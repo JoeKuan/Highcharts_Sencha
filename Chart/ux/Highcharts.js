@@ -1,46 +1,187 @@
 /**
- * @author Joe Kuan (much improved & ported from ExtJs 3 highchart adapter)
- * @email kuan.joe@gmail.com
- * @version 2.2.3
- * @date 1 Dec 2012
+ * @author 
+ * Joe Kuan <kuan.joe@gmail.com>
  *
- * Highcharts extension for Sencha Ext JS 4 and Touch 2
+ * version 2.3.0
  *
- * You are not permitted to remove the author section from this file.
+ * <!-- You are not permitted to remove the author section (above) from this file. -->
+ *
+ * Documentation last updated: 28 Dec 2012
+ *
+ * A much improved & ported from ExtJs 3 Highchart adapter. 
+ *
+ * - Supports the latest Highcharts (2.3.x)
+ * - Supports both Sencha ExtJs 4 and Touch 2
+ * - Supports Highcharts animations
+ *
+ * In order to use this extension, you are expected to know how to use Highcharts and Sencha products (ExtJs 4 &amp; Touch 2). 
+ *
+ * # Configuring Highcharts Extension
+ * The Highcharts extension requires a few changes from an existing Highcharts configuration. Suppose we already have a
+ * configuration as follows:
+ *     @example
+ *     var chart = new Highcharts.Chart({
+ *       chart: {
+ *          renderTo: 'container',
+ *          type: 'spline'
+ *       },
+ *       title: {
+ *          text: 'A simple graph'
+ *       },
+ *       xAxis: {
+ *          categories: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+ *                        'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+ *       },
+ *       series: [{
+ *          dashStyle: 'DashDot',
+ *          data: [54.7, 54.7, 53.9, 54.8, 54.4, 54.2, 52.4, 51.0, 49.0, 47.4, 47.0, 46 ]
+ *       }]
+ *     });
+ * ## Step 1: Remove data related fields
+ *
+ * The first step is to take out the configuration 
+ * object and remove any data related properties such as: *xAxis.categories* and *series[0].data*. Then removes 
+ * *chart.renderTo* option as the extension will fill in that property internally. This leaves us with the following config:
+ *     @example
+ *     chart: {
+ *        type: 'spline'
+ *     },
+ *     title: {
+ *        text: 'A simple graph'
+ *     },
+ *     series: [{
+ *        dashStyle: 'DashDot'
+ *     }]
+ * ## Step 2: Create chartConfig
+ *
+ * The next step is to create an object called, *chartConfig*, and put the above configuration in it. Then we extract the 
+ * series array to an upper level which gives the followings:
+ *     @example
+ *     series: [{
+ *       dashStyle: 'DashDot'
+ *     }],
+ *     chartConfig: {
+ *       chart: {
+ *           type: 'spline'
+ *       },
+ *       title: {
+ *           text: 'A simple graph'
+ *       }
+ *     }
+ * ## Step 3: Create ExtJs Store and data mappings
+ *
+ * Then we create a ExtJs Store object to map the data fields.
+ *     @example
+ *     Ext.define('SampleData', {
+ *        extend: 'Ext.data.Model',
+ *          fields: [
+ *              {name: 'month', type: 'string'},
+ *              {name: 'value',  type: 'float'}
+ *          ]
+ *     });
+ *     
+ *     var store = Ext.create('Ext.data.Store', {
+ *        model: 'SampleData',
+ *        proxy: {
+ *            type: 'ajax',
+ *            url: '/getData.php',
+ *            reader: {
+ *                type: 'json',
+ *                root: 'rows'
+ *            }
+ *        },
+ *        autoLoad: false
+ *      });
+ * Then we modify the series array with data mappings to Store; we add *xField* outside the series array 
+ * as categories data and *dataIndex* for the y-axis values. For historical reason, we can also use *yField*, 
+ * just an alias name for *dataIndex*.
+ *     @example
+ *     series:[{
+ *        dashStyle: 'DashDot',
+ *        dataIndex: 'value'
+ *     }],
+ *     xField: 'month',
+ *     store: store,
+ *     chartConfig: {
+ *        chart: {
+ *        ....
+ *
+ * ## Step 4: Create ExtJs Highcharts Component
+ *
+ * The final step is to create a Highcharts component with the whole config as an object specifier.
+ *     @example
+ *     var win = new Ext.create('Ext.window.Window', {
+ *         layout: 'fit',
+ *         items: [{
+ *            xtype: 'highchart',
+ *            series:[{
+ *               dashStyle: 'DashDot',
+ *               dataIndex: 'value'
+ *            }],
+ *            xField: 'month',
+ *            store: store,
+ *            chartConfig: {
+ *               chart: {
+ *                  type: 'spline'
+ *               },
+ *               title: {
+ *                  text: 'A simple graph'
+ *               }
+ *            }
+ *         }]
+ *     }).show();
+ *
+ * # Updating Highcharts chart properties dynamically
+ * Some of the Highcharts properties cannot be updated interactively such as relocating legend box, 
+ * switching column charts stacking mode. The only way is to manually destroy and create the whole chart again. 
+ * In Highcharts extension, this can be done in an easier fashion. The Highcharts component itself
+ * contains a *chartConfig* object which holds the existing native Highcharts configurations. At runtime,
+ * options inside *chartConfig* can be modified and call method *draw* which interally destroys and
+ * creates a new chart. As a result, the chart appears as a dynamic smooth update
+ *     @example
+ *     var chart = new Ext.create('Chart.ux.Highcharts', {
+ *                     ....
+ *                 });
+ *     chart.chartConfig.plotOptions.column.stacking = 'normal';
+ *     chart.draw();
+ * 
+ * # Mapping between JsonStore and series data
+ * The data mapping between JsonStore and chart series option is quite straightforward. Please refers
+ * to the desired {@link Chart.ux.Highcharts.Serie} class and {@link Chart.ux.Highcharts.Serie#method-getData} 
+ * method for more details on data mapping.
  */
-
-if(!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function(elt /*, from*/) {
-    var len = this.length;
-
-    var from = Number(arguments[1]) || 0;
-    from = (from < 0) ? Math.ceil(from) : Math.floor(from);
-    if(from < 0)
-      from += len;
-
-    for(; from < len; from++) {
-      if( from in this && this[from] === elt)
-        return from;
-    }
-    return -1;
-  };
-
-}
-
 Ext.define("Chart.ux.Highcharts", {
   extend : 'Ext.Component',
   alias : ['widget.highchart'],
 
   statics: {
-    version: '2.2.3'
+    /***
+     * @static
+     * Version string of the current Highcharts extension
+     */
+    version: '2.3.0'
   },
 
+  /***
+   * @property {Boolean} debug
+   * Switch on the debug logging to the console
+   */
   debug: false,
 
-  debugOn : function() {
+  switchDebug : function() {
       this.debug = true;
   },
 
+  /***
+   * @property {Object} sencha
+   * @readonly
+   * Contain shorthand representations of which Sencha product is the 
+   * Highcharts extension currently running in. 
+   *     // Under Sencha ExtJs
+   *     { product: 'e', major: 4, name: 'e4' }
+   *     // Under Sencha Touch 2
+   *     { product: 't', major: 2, name: 't2' }
+   */
   sencha: function() {
       if (Ext.versions.extjs) {
          return {
@@ -64,19 +205,21 @@ Ext.define("Chart.ux.Highcharts", {
 
   }(),
 
+  /***
+   * This method is called by other routines within this extension to output debugging log.
+   * This method can be overrided with Ext.emptyFn for product deployment
+   * @param {String} msg debug message to the console
+   */
   log: function(msg) {
       (typeof console !== 'undefined' && this.debug) && console.log(msg);
   },
  
   /**
    * @cfg {Object} defaultSerieType
-   * Sets styles for this chart. This contains default styling, so modifying this
-   * property will <b>override</b>
-   * the built in styles of the chart. Use {@link #extraStyle} to add
-   * customizations to the default styling.
+   * If the series.type is not defined, then it will refer to this option
    */
-  defaultSerieType : null,
-
+  defaultSerieType : 'line',
+  
   /**
    * @cfg {Boolean} resizable
    * True to allow resizing, false to disable resizing (defaults to true).
@@ -84,8 +227,8 @@ Ext.define("Chart.ux.Highcharts", {
   resizable : true,
 
   /**
-   * @cfg {Integer} updateDelay
-   * (defaults to 0)
+   * @cfg {Number} updateDelay
+   * A delay to call {@link Chart.ux.Highcharts#method-draw} method
    */
   updateDelay : 0,
 
@@ -101,8 +244,7 @@ Ext.define("Chart.ux.Highcharts", {
    * chart refresh data when store datachanged event is triggered,
    * i.e. records are added, removed, or updated.
    * If your application is just purely showing data from store load, 
-   * then you don't need this, make sure refreshOnLoad is true.
-   * (default: false)
+   * then you don't need this.
    */
   refreshOnChange: false,
 
@@ -110,39 +252,64 @@ Ext.define("Chart.ux.Highcharts", {
 
   /**
    * @cfg {Boolean}
-   * this config enable or disable chart init animation even Highcharts 
-   * chart.animation is true. If set to true, then the extension will
-   * try to build chart configuration with store series data.
-   * The initial animation is only on display:
-   *    1. store data is already loaded
-   *    2. chart.animation is not manually set to false
-   * (default: false) 
+   * this config enable or disable chart animation 
    */
   animation: true,
-  initAnim: true,
   updateAnim: true,
 
-  /** 
+  /*** 
+   * @cfg {Boolean} lineShift
    * The line shift is achieved by comparing the existing x values in the chart
    * and x values from the store record and work out the extra record.
-   * Then append the new records with shift. Hence, any old records with updated
+   * Then append the new records with shift property. Hence, any old records with updated
    * y values are ignored
-   * updateAnim: true
    */
   lineShift: false,
 
+  initAnim: true,
   /**
    * @cfg {Boolean}
-   * This option will defer initially chart create until the store is loaded
-   * This option must be used with initAnim: true
-   * (default: true)
+   * In a nutshell, keeps this option to true.
+   *
+   * Since Highcharts initial and update animations are not the same, 
+   * if you want to make sure there is initial animation, then you should create store 
+   * and extension in specific sequence. First, set the {@link Ext.data.Store#cfg-autoLoad} 
+   * option to false, create the Highcharts component with the store, then call the 
+   * {@link Ext.data.Store#method-load} method. The *initAnimAfterLoad* defers creating 
+   * the chart internally until the store is loaded. Disabling it, the extension will create 
+   * the chart instantly and you will only see the update animation after the load.
    */
   initAnimAfterLoad: true,
 
   /**
-   * @cfg {Function} afterChartRendered - callback for after the Highcharts
-   * is rendered. 
-   * afterChartRendered: function (Highcharts chart) 
+   * @cfg {Function} afterChartRendered 
+   * callback for after the Highcharts
+   * is rendered. **Note**: Do not call initial {@link Ext.data.Store#method-load} inside this handler, 
+   * especially with *initAnimAfterLoad* set to true because {@link Ext.data.Store#method-load} will
+   * never be called as the chart is deferring to render waiting for the store data. Here is an example
+   * of how this should be called. This 'this' keyword refers to the Highcharts ExtJs component whereas
+   * chart refers to the created Highcharts chart object
+   *       items: [{
+   *          xtype: 'highchart',
+   *          listeners: {
+   *              afterChartRendered: function(chart) {
+   *                  // 'this' refers to the 'highchart' ExtJs component
+   *                  var size = this.getSize();
+   *                  // Get the average value of the first series
+   *                  var temp = 0;
+   *                  Ext.each(chart.series[0].data, function(data) {
+   *                      temp += data;
+   *                  });
+   *                  temp = temp / chart.series[0].data.length;
+   *                  Ext.Msg.alert('Info', 'The average value is ' + temp);
+   *              }
+   *          },
+   *          series:[ ... ],
+   *          xField: 'month',
+   *          store: store,
+   *          chartConfig: {
+   *             ....
+   *          }
    */
   afterChartRendered: null,
 
@@ -175,10 +342,10 @@ Ext.define("Chart.ux.Highcharts", {
     this.callParent(arguments);
   },
 
-  /**
+  /***
    * Add one or more series to the chart
-   * @param {Array} series An array of series
-   * @param {Boolean} append the serie. Defaults to true
+   * @param {Array} series An array of series configuration objects
+   * @param {Boolean} append Append the series if true, otherwise replace all the existing chart series. Optional parameter, Defaults to true if not specified
    */
   addSeries : function(series, append) {
     append = (append === null || append === true) ? true : false;
@@ -233,8 +400,10 @@ Ext.define("Chart.ux.Highcharts", {
     }
   },
 
-  /**
-   *
+  /***
+   * Remove particular series from the chart. 
+   * @param {Number} id the index value in the chart series array
+   * @param {Boolean} redraw Set it to true to immediate redraw the chart to reflect the change
    */
   removeSerie : function(id, redraw) {
     // Sencha Touch uses config to access properties
@@ -248,8 +417,9 @@ Ext.define("Chart.ux.Highcharts", {
     _this.series.splice(id, 1);
   },
 
-  /**
-   * Remove all series
+  /***
+   * Remove all series in the chart. This also remove any categories
+   * data along the axes
    */
   removeAllSeries : function() {
     // Sencha Touch uses config to access properties
@@ -266,7 +436,7 @@ Ext.define("Chart.ux.Highcharts", {
   },
 
   /**
-   * Set the title of the chart
+   * Set the title of the chart and redraw the chart
    * @param {String} title Text to set the subtitle
    */
   setTitle : function(title) {
@@ -285,7 +455,7 @@ Ext.define("Chart.ux.Highcharts", {
   },
 
   /**
-   * Set the subtitle of the chart
+   * Set the subtitle of the chart and redraw the chart
    * @param {String} title Text to set the subtitle
    */
   setSubTitle : function(title) {
@@ -350,6 +520,7 @@ Ext.define("Chart.ux.Highcharts", {
   },
 
   /***
+   *  @private
    *  Build the initial data set if there are data already
    *  inside the store.
    */
@@ -519,13 +690,14 @@ Ext.define("Chart.ux.Highcharts", {
      }
   },
 
+  /**
+   * Redraw the chart. It internally destroys existing chart (if already display) and 
+   * re-creates the chart object. Call this method to reflect any structural changes in chart configuration 
+   */
   draw : function() {
     // Sencha Touch uses config to access properties
     var _this = (this.sencha.product == 't') ? this.config : this;
 
-    /**
-     * Redraw the chart
-     */
     this.log("call draw");
     if(this.chart && this.rendered) {
       if(this.resizable) {
@@ -545,9 +717,6 @@ Ext.define("Chart.ux.Highcharts", {
         this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
       }
 
-      /**
-       * Create the chart
-       */
     } else if(this.rendered) {
       // Create the chart from fresh
 
@@ -601,11 +770,9 @@ Ext.define("Chart.ux.Highcharts", {
   },
 
   bindComponent : function(bind) {
-    /**
-     * Make the chart update the positions
-     * positions are based on the window object and not on the
-     * owner object.
-     */
+    // Make the chart update the positions
+    // positions are based on the window object and not on the
+    // owner object.
     var getWindow = function(parent) {
       if(parent.ownerCt)
         return getWindow(parent.ownerCt);
@@ -667,7 +834,9 @@ Ext.define("Chart.ux.Highcharts", {
   },
 
   /**
-   * Complete refresh of the chart
+   * Complete refresh series in the chart. This method rebuilds the chart series
+   * array from the current store records. Any store record changes should call 
+   * this method to reflect to the chart.
    */
   refresh : function() {
     // Sencha Touch uses config to access properties
@@ -866,7 +1035,7 @@ Ext.define("Chart.ux.Highcharts", {
     }
   },
 
-  /**
+  /***
    * Update a selected row.
    */
   refreshRow : function(record) {
@@ -892,8 +1061,8 @@ Ext.define("Chart.ux.Highcharts", {
   },
 
   /**
-   * A function to delay the updates
-   * @param {Integer} delay Set a custom delay
+   * A function to delay the call to {@link Chart.ux.Highcharts#method-draw} method
+   * @param {Number} delay Set a custom delay
    */
   update : function(delay) {
     var cdelay = delay || this.updateDelay;
@@ -998,6 +1167,9 @@ Ext.define("Chart.ux.Highcharts", {
     this.refreshOnLoad && this.refresh();
   },
 
+  /***
+   * Destroy the Highchart component as well as the interal chart component
+   */
   destroy : function() {
     // Sencha Touch uses config to access properties
     var _this = (this.sencha.product == 't') ? this.config : this;

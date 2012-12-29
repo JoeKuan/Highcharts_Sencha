@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-PieSerie'>/**
+</span> * # Plotting Pie Series
+ * There are two ways to plot pie chart from record data: a data point per record and
+ * total values of all the records
+ *
+ * ## Data point per record
+ * Pie series uses two options for mapping category name and data fields: 
+ * *categoryField* and *dataField*, (This is historical reason instead of 
+ * using *xField* and *dataIndex*). Suppose we have data model in the following format:
+ *
+ * &lt;table&gt;
+ *    &lt;tbody&gt;
+ *       &lt;tr&gt;&lt;td&gt;productName&lt;/td&gt;&lt;td&gt;sold&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product A&lt;/td&gt;&lt;td&gt;15,645,242&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product B&lt;/td&gt;&lt;td&gt;22,642,358&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product C&lt;/td&gt;&lt;td&gt;21,432,330&lt;/td&gt;&lt;/tr&gt;
+ *    &lt;/tbody&gt;
+ * &lt;/table&gt;
+ * Then we can define the series data as:
+ * 
+ *     series: [{
+ *        type: 'pie',
+ *        categoryField: 'productName',
+ *        dataField: 'sold'
+ *     }]
+ *
+ * # Data point as total value of all the records
+ * Instead of mapping *dataField* and *categorieField* fields to the store record for each
+ * pie data point, this approach uses the total value of a category as a data point. 
+ * E.g. we have a class of pupils with a set of subject scores
+ * &lt;table&gt;
+ *    &lt;tbody&gt;
+ *       &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;English&lt;/td&gt;&lt;td&gt;Math&lt;/td&gt;&lt;td&gt;Science&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Joe&lt;/td&gt;&lt;td&gt;77&lt;/td&gt;&lt;td&gt;81&lt;/td&gt;&lt;td&gt;78&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;David&lt;/td&gt;&lt;td&gt;67&lt;/td&gt;&lt;td&gt;56&lt;/td&gt;&lt;td&gt;69&lt;/td&gt;&lt;tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Nora&lt;/td&gt;&lt;td&gt;44&lt;/td&gt;&lt;td&gt;50&lt;/td&gt;&lt;td&gt;39&lt;/td&gt;&lt;tr&gt;
+ *    &lt;/tbody&gt;
+ * &lt;/table&gt;
+ * All we want is to plot distribution of total scores for each subject. Hence, we define
+ * the pie series as follows:
+ *     series: [{
+ *        type: 'pie',
+ *        useTotals: true,
+ *        column: [ 'english', 'math', 'science' ]
+ *     }]
+ * whereas the server-side should return JSON data as follows:
+ *     { &quot;root&quot;: [{ &quot;english&quot;: 77, &quot;math&quot;: 81, &quot;science&quot;: 78 },
+ *                { &quot;english&quot;: 67, &quot;math&quot;: 56, &quot;science&quot;: 69 },
+ *                { &quot;english&quot;: 44, &quot;math&quot;: 50, &quot;science&quot;: 39 },
+ *                .....                                         ]
+ *     } 
+ * and the data model for the store is defined as follows:
+ *     Ext.define('ExamResults', {
+ *        extend: 'Ext.data.Model',
+ *          fields: [
+ *              {name: 'english', type: 'int'},
+ *              {name: 'math',  type: 'int'},
+ *              {name: 'science',  type: 'int'}
+ *          ]
+ *     });
+ *  
+ * # Multiple Pie Series (Donut chart)
+ * A donut chart is really two pie series which a second pie series lay outside of the 
+ * first series. The second series is subcategory data of the first series.
+ * Suppose we want to plot a more detail chart with the breakdown of sold items into regions:
+ * &lt;table&gt;
+ *    &lt;tbody&gt;
+ *       &lt;tr&gt;&lt;td&gt;productName&lt;/td&gt;&lt;td&gt;sold&lt;/td&gt;&lt;td&gt;Europe&lt;/td&gt;&lt;td&gt;Asia&lt;/td&gt;&lt;td&gt;Americas&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product A&lt;/td&gt;&lt;td&gt;15,645,242&lt;/td&gt;&lt;td&gt;10,432,542&lt;/td&gt;&lt;td&gt;2,425,432&lt;/td&gt;&lt;td&gt;2,787,268&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product B&lt;/td&gt;&lt;td&gt;22,642,358&lt;/td&gt;&lt;td&gt;4,325,421&lt;/td&gt;&lt;td&gt;4,325,321&lt;/td&gt;&lt;td&gt;13,991,616&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product C&lt;/td&gt;&lt;td&gt;21,432,330&lt;/td&gt;&lt;td&gt;2,427,431&lt;/td&gt;&lt;td&gt;6,443,234&lt;/td&gt;&lt;td&gt;12,561,665&lt;/td&gt;&lt;/tr&gt;
+ *    &lt;/tbody&gt;
+ * &lt;/table&gt;
+ * The data model for the donut chart store should be refined with fields: productName, 
+ * sold and region. The rows returning from the store should look like:
+ * &lt;table&gt;
+ *    &lt;tbody&gt;
+ *       &lt;tr&gt; &lt;td&gt;productName&lt;/td&gt; &lt;td&gt;sold&lt;/td&gt; &lt;td&gt;region&lt;/td&gt; &lt;/tr&gt;
+ *       &lt;tr&gt; &lt;td&gt;Product A&lt;/td&gt; &lt;td&gt;10,432,542&lt;/td&gt; &lt;td&gt;Europe&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;
+ *       &lt;tr&gt; &lt;td&gt;Product A&lt;/td&gt; &lt;td&gt;2,425,432&lt;/td&gt; &lt;td&gt;Asia&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;
+ *       &lt;tr&gt; &lt;td&gt;Product A&lt;/td&gt; &lt;td&gt;2,787,268&lt;/td&gt; &lt;td&gt;Americas&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;
+ *       &lt;tr&gt; &lt;td&gt;Product B&lt;/td&gt; &lt;td&gt;4,325,421&lt;/td&gt; &lt;td&gt;Europe&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;
+ *       &lt;tr&gt; &lt;td&gt;Product B&lt;/td&gt; &lt;td&gt;4,325,321&lt;/td&gt; &lt;td&gt;Asia&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;
+ *    &lt;/tbody&gt;
+ * &lt;/table&gt;
+The series definition for the donut chart should look like this:
+ *     series: [{
+ *        // Inner pie series
+ *        type: 'pie',
+ *        categoryField: 'productName',
+ *        dataField: 'sold',
+ *        size: '60%',
+ *        totalDataField: true
+ *     }, {
+ *        // Outer pie series
+ *        type: 'pie',
+ *        categoryField: 'region',
+ *        dataField: 'sold',
+ *        innerSize: '60%',
+ *        size: '75%'
+ *     }]
+ * The *totalDataField* informs the first series to take the sum of *dataField* (sold) 
+ * on entries with the same *categoryField* value, whereas the second series displays 
+ * a section on each region (i.e. each record). The *innerSize* is just the Highcharts 
+ * option to make the outer pie series appear as ring form.
+ *
+ * If you want to have a fix set of colours in the outer ring along each slice, then 
+ * you can create an extra field in your store for the color code and use the 
+ * *colorField* option to map the field.
+ */
+Ext.define('Chart.ux.Highcharts.PieSerie', {
+	extend : 'Chart.ux.Highcharts.Serie',
+	alternateClassName: [ 'highcharts.pie' ],
+<span id='Chart-ux-Highcharts-PieSerie-cfg-type'>	type : 'pie',
+</span>
+<span id='Chart-ux-Highcharts-PieSerie-cfg-xField'>  /***
+</span>   * @cfg xField
+   * @hide
+   */
+
+<span id='Chart-ux-Highcharts-PieSerie-cfg-yField'>  /***
+</span>   * @cfg yField
+   * @hide
+   */
+
+<span id='Chart-ux-Highcharts-PieSerie-cfg-dataIndex'>  /***
+</span>   * @cfg dataIndex
+   * @hide
+   */
+
+<span id='Chart-ux-Highcharts-PieSerie-cfg-categorieField'>	/**
+</span>	 * @cfg {String} categorieField
+   * the field name mapping to store records for pie category data 
+	 */
+	categorieField : null,
+
+<span id='Chart-ux-Highcharts-PieSerie-cfg-totalDataField'>	/**
+</span>	 * @cfg {Boolean} totalDataField
+   * See above. This is used for producing donut chart. Bascially informs
+   * getData method to take the total sum of dataField as the data point value
+   * for those records with the same matching string in the categorieField.
+	 */
+	totalDataField : false,
+
+<span id='Chart-ux-Highcharts-PieSerie-cfg-dataField'>	/**
+</span>	 * @cfg {String} dataField
+   * the field name mapping to store records for value data 
+	 */
+	dataField : null,
+
+<span id='Chart-ux-Highcharts-PieSerie-cfg-useTotals'>	/***
+</span>	 * @cfg {Boolean} useTotals
+   * use the total value of a categorie of all the records as a data point
+	 */
+	useTotals : false,
+
+<span id='Chart-ux-Highcharts-PieSerie-cfg-columns'>  /***
+</span>   * @cfg {Array} columns
+   * a list of category names that match the record fields
+   */
+	columns : [],
+
+<span id='Chart-ux-Highcharts-PieSerie-method-constructor'>	constructor : function(config) {
+</span>		this.callParent(arguments);
+		if(this.useTotals) {
+			this.columnData = {};
+			var length = this.columns.length;
+			for(var i = 0; i &lt; length; i++) {
+				this.columnData[this.columns[i]] = 100 / length;
+			}
+		}
+	},
+
+<span id='Chart-ux-Highcharts-PieSerie-method-addData'>	//private
+</span>	addData : function(record) {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			this.columnData[c] = this.columnData[c] + record.data[c];
+		}
+	},
+
+<span id='Chart-ux-Highcharts-PieSerie-method-update'>	//private
+</span>	update : function(record) {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			if(record.modified[c])
+				this.columnData[c] = this.columnData[c] + record.data[c] - record.modified[c];
+		}
+	},
+
+<span id='Chart-ux-Highcharts-PieSerie-method-removeData'>	//private
+</span>	removeData : function(record, index) {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			this.columnData[c] = this.columnData[c] - record.data[c];
+		}
+	},
+
+<span id='Chart-ux-Highcharts-PieSerie-method-clear'>	//private
+</span>	clear : function() {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			this.columnData[c] = 0;
+		}
+	},
+
+<span id='Chart-ux-Highcharts-PieSerie-method-getData'>	/***
+</span>   * As the implementation of pie series is quite different to other series types,
+   * it is not recommended to override this method
+   */
+	getData : function(record, seriesData) {
+
+		// Summed up the category among the series data
+		if(this.totalDataField) {
+			var found = null;
+			for(var i = 0; i &lt; seriesData.length; i++) {
+				if(seriesData[i].name == record.data[this.categorieField]) {
+					found = i;
+					seriesData[i].y += record.data[this.dataField];
+					break;
+				}
+			}
+			if(found === null) {
+				if (this.colorField &amp;&amp; record.data[this.colorField]) {
+					seriesData.push({
+						name: record.data[this.categorieField],
+						y: record.data[this.dataField],
+						color: record.data[this.colorField]
+					});
+				} else {
+					seriesData.push({
+						name: record.data[this.categorieField],
+						y: record.data[this.dataField]
+					});
+				}
+				i = seriesData.length - 1;
+			}
+			return seriesData[i];
+		}
+
+		if(this.useTotals) {
+			this.addData(record);
+			return [];
+		}
+
+		if (this.colorField &amp;&amp; record.data[this.colorField]) {
+			return {
+				name: record.data[this.categorieField],
+				y: record.data[this.dataField],
+				color: record.data[this.colorField]
+			};
+		} else {
+			return {
+				name: record.data[this.categorieField],
+				y: record.data[this.dataField]
+			};
+		}
+	},
+
+<span id='Chart-ux-Highcharts-PieSerie-method-getTotals'>	getTotals : function() {
+</span>		var a = new Array();
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			a.push([c, this.columnData[c]]);
+		}
+		return a;
+	}
+
+});
+</pre>
+</body>
+</html>
