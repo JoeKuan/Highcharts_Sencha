@@ -2,11 +2,11 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 2.3.0
+ * version 2.3.1
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 28 Dec 2012
+ * Documentation last updated: 4 Jan 2013
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
@@ -159,7 +159,7 @@ Ext.define("Chart.ux.Highcharts", {
      * @static
      * Version string of the current Highcharts extension
      */
-    version: '2.3.0'
+    version: '2.3.1'
   },
 
   /***
@@ -323,10 +323,11 @@ Ext.define("Chart.ux.Highcharts", {
         this.initAnimAfterLoad = false;
     }
 
-    // Important: Sencha Touch needs this
-    (this.sencha.product == 't') && this.on('painted', this.afterRender);
-
     this.callParent(arguments);
+
+    // Important: Sencha Touch needs this
+    (this.sencha.product == 't') && this.on('show', this.afterRender);
+
   },
 
   initComponent : function() {

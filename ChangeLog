@@ -1,3 +1,7 @@
+ver 2.3.1
+Highcharts extension
+- Fixed compatability issue with Sencha Touch 2.1
+
 ver 2.3.0
 Highcharts extension
 - Incorportated changes submitted by jacrasmussen to break down single Highchart.js into smaller series class files. This enable users to deploy their solution by selecting which series their applications support
