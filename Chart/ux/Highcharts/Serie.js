@@ -35,8 +35,13 @@
  * This means both series have their own (x,y) data. In this case, the xField must refer to numerical values.
  */
 Ext.define('Chart.ux.Highcharts.Serie', {
-	requires: 'Chart.ux.Highcharts',
-
+	requires: [
+	    'Chart.ux.Highcharts',
+	    'Ext.util.Observable'
+	],
+	mixins: {
+	    observable: 'Ext.util.Observable'
+	},
   /***
    * @cfg {String} type 
    * Highcharts series type name. This field must be specified.
@@ -191,14 +196,31 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
 	serieCls : true,
 
-	constructor : function(config) {
+	constructor : function(config) {		
 		config.type = this.type;
 		if(!config.data) {
 			config.data = [];
 		}
-		Ext.apply(this, config);
+		Ext.apply(config,{
+		    events:{
+			click:this.onPointClick.bind(this)
+		    }
+		});
+		//Ext.apply(this, config);
+		this.mixins.observable.constructor.call(this, config);
+		this.addEvents(
+		    /**
+		    * @event pointclick
+		    * Fires when the point of the serie is clicked.
+		    * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
+		    * @param {Object} point the point clicked
+		    * @param {Ext.data.Record} record the record associated to the point
+		    * @param {Object} evt the event param
+		    */
+		    'pointclick'
+		);
 		this.config = config;
-
+		
 		this.yField = this.yField || this.dataIndex;
 
 		// If colorField is defined, then we have to use data point
@@ -215,6 +237,9 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 				this.getData = this.arr_getDataSingle;
 			}
 		}
+	},
+	onPointClick:function(evt){
+	    this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
 	}
 
 });
