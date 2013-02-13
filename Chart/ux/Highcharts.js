@@ -365,6 +365,11 @@ Ext.define("Chart.ux.Highcharts", {
 		} else {
 		    cls = "Chart.ux.Highcharts.Serie";
 		}
+		if(serie.listeners){
+		    if(!serie.listeners.scope){
+			serie.listeners.scope=this;
+		    }
+		}
 		serieObject = Ext.create(cls, serie);
 	    } else {
 		serieObject = serie;
