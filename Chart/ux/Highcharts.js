@@ -781,7 +781,7 @@ Ext.define("Chart.ux.Highcharts", {
 
 	for( i = 0; i < _this.series.length; i++) {
 	    if(!_this.series[i].visible)
-		this.chart.series[i].hide();
+		_this.series[i].hide();
 	}
 
 	// Refresh the data only if it is not loading
