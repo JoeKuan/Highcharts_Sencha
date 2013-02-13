@@ -153,7 +153,6 @@
 Ext.define("Chart.ux.Highcharts", {
     extend : 'Ext.Component',
     alias : ['widget.highchart'],
-
     statics: {
 	/***
      * @static
@@ -357,7 +356,13 @@ Ext.define("Chart.ux.Highcharts", {
 	var n = new Array(), c = new Array(), cls, serieObject;
 	// Add empty data to the serie or just leave it normal. Bug in HighCharts?
 	for(var i = 0; i < series.length; i++) {
-	    var serie = series[i];
+	    var serie = Ext.clone(series[i]);
+	    if(serie.listeners){
+		if(!serie.listeners.scope ){
+		    serie.listeners.scope=this;
+		}
+	    }
+	    
 	    if(!serie.serieCls) {
 		if(serie.type != null || this.defaultSerieType != null) {
 		    cls = serie.type || this.defaultSerieType;
@@ -365,12 +370,8 @@ Ext.define("Chart.ux.Highcharts", {
 		} else {
 		    cls = "Chart.ux.Highcharts.Serie";
 		}
-		if(serie.listeners){
-		    if(!serie.listeners.scope){
-			serie.listeners.scope=this;
-		    }
-		}
-		serieObject = Ext.create(cls, serie);
+		
+		serieObject = Ext.create(cls,serie);
 	    } else {
 		serieObject = serie;
 	    }
@@ -919,16 +920,21 @@ Ext.define("Chart.ux.Highcharts", {
 		    // to fields inside the implementation
 		    if (serie.dataIndex || serie.yField || serie.minDataIndex || serie.config.getData) {
 			point = serie.getData(record, x);
+			if(Ext.isObject(point)){
+			    point.record=record;
+			}
 			data[i].push(point);
 		    } else if (serie.type == 'pie') {
 			if (serie.useTotals) {
 			    if(x == 0)
 				serie.clear();
 			    point = serie.getData(record, x);
+			    point.record=record;
 			} else if (serie.totalDataField) {
 			    serie.getData(record, data[i]);
 			} else {
 			    point = serie.getData(record, x);
+			    point.record=record;
 			    data[i].push(point);
 			}
 		    } else if (serie.type == 'gauge') {

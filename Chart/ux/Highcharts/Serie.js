@@ -240,6 +240,11 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 	},
 	onPointClick:function(evt){
 	    this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
+	},
+	destroy:function(){
+	    console.log("serie destroy");
+	    this.clearListeners();
+	    this.mixins.observable.destroy();
 	}
 
 });
