@@ -148,6 +148,12 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
 	 */
 	dataField : null,
 
+	/**
+	 * @cfg {String} radiusField
+  	 * the field name mapping to store records for radius data 
+	 */
+	radiusField: null,
+
 	/***
 	 * @cfg {Boolean} useTotals
    * use the total value of a categorie of all the records as a data point

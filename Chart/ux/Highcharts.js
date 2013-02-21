@@ -627,6 +627,7 @@ Ext.define("Chart.ux.Highcharts", {
 		    var categorieField = _this.series[i].categorieField;
 		    var dataField = _this.series[i].dataField;
 		    var colorField = _this.series[i].colorField;
+        var radiusField= _this.series[i].radiusField;
 
 		    if(_this.series[i].totalDataField) {
 			var found = null;
@@ -654,9 +655,11 @@ Ext.define("Chart.ux.Highcharts", {
 			for (var x = 0; x < items.length; x++) {
 			    var record = items[x];
 			    var ptObject = { 
-				record:record,
+        record:record,
 				name: record.data[categorieField],
-				y: record.data[dataField]
+				y: record.data[dataField],
+        r: record.data[radiusField]
+
 			    };
 			    colorField && (ptObject.color = record.data[colorField]);
 			    data.push(ptObject);
