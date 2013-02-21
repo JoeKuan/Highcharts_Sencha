@@ -174,7 +174,13 @@ Ext.define('Highcharts.controller.Charts', {
           // Stop switching back to the chart and change the series
           // data inside the config
           hcConfig = Ext.clone(hcConfig);
-
+	  
+	  hcConfig.series[0].listeners={
+	      pointclick:function(){
+		  console.log(arguments);
+	      }
+	  }
+	  
           // New chart with config and id
           hcConfig.id = 'main_chart';
           mainChart = Ext.widget('highchart', hcConfig);
