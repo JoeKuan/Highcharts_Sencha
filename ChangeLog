@@ -1,3 +1,18 @@
+ver 2.3.2
+Highcharts extension
+- Added support for multiple series with irregular data, dataIndex field can support data array from JsonStore. 
+- Fixed non store support. The extension can be initialised without any store and display series with addSeries method.
+- Fixed the resizable default option
+- Fixed unbind event on destroy
+- Added pointclick event support (contributed by straccio)
+- Massively refactor and clean up a lot of shitake code
+
+Desktop Demos
+- Fixed and improved the demo code
+- Added irregular multiple series demo
+- Added non store demo
+- Added demo to test resizing issue, add/remove data points for series update, pointclick event
+
 ver 2.3.1
 Highcharts extension
 - Fixed compatability issue with Sencha Touch 2.1
