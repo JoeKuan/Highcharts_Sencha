@@ -664,7 +664,7 @@ Ext.define("Chart.ux.Highcharts", {
         } else if(this.rendered) {
             // Create the chart from fresh
 
-            if (!this.initAnimAfterLoad) {
+            if (!this.initAnimAfterLoad || this.store.getCount() >0) {
                 this.buildInitData();
                 this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
                 this.log("initAnimAfterLoad is off, creating chart from fresh");
