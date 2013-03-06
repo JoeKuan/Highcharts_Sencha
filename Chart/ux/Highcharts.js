@@ -370,7 +370,7 @@ Ext.define("Chart.ux.Highcharts", {
 		} else {
 		    cls = "Chart.ux.Highcharts.Serie";
 		}
-		
+
 		serieObject = Ext.create(cls,serie);
 	    } else {
 		serieObject = serie;
@@ -979,6 +979,18 @@ Ext.define("Chart.ux.Highcharts", {
 			this.chart.series[i].setData(_this.series[i].getTotals());
 		    } else if (data[i].length > 0) {
 			if (!_this.lineShift) {
+			    // Gotcha, we need to be careful with pie series, as the totalDataField
+			    // can conflict with the following series data points trimming operations
+			    if (_this.series[i].type === 'pie'){
+				this.chart.series[i].setData([]);
+				for(var x=0;x<data[i].length;x++){
+				    this.chart.series[i].addPoint(data[i][x], false, false, false);
+				}
+				this.chart.series[i].animate=Highcharts.seriesTypes.pie.prototype.animate.bind(this.chart.series[i]);
+				this.chart.redraw();
+				continue;
+			    }
+			    
 			    // Need to work out the length between the store dataset and
 			    // the current series data set
 			    var chartSeriesLength = this.chart.series[i].points.length;
@@ -986,12 +998,7 @@ Ext.define("Chart.ux.Highcharts", {
 			    for (var x = 0; x < Math.min(chartSeriesLength, storeSeriesLength); x++) {
 				this.chart.series[i].points[x].update(data[i][x], false, true);
 			    }
-
-			    // Gotcha, we need to be careful with pie series, as the totalDataField
-			    // can conflict with the following series data points trimming operations
-			    if (_this.series[i].type == 'pie')
-				continue;
-
+			    
 			    // Append the rest of the points from store to chart
 			    this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);
 			    if (chartSeriesLength < storeSeriesLength) {
@@ -1087,7 +1094,6 @@ Ext.define("Chart.ux.Highcharts", {
 		    //this.updatexAxisData();
 		    this.chart.xAxis[0].setCategories(xFieldData, false);
 		}
-
 		this.chart.redraw();
 	    }
 	}
