@@ -215,7 +215,7 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
    * it is not recommended to override this method
    */
 	getData : function(record, seriesData) {
-
+		var p=null;
 		// Summed up the category among the series data
 		if(this.totalDataField) {
 			var found = null;
@@ -227,18 +227,23 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
 				}
 			}
 			if(found === null) {
+				
 				if (this.colorField && record.data[this.colorField]) {
-					seriesData.push({
+					p={
 						name: record.data[this.categorieField],
 						y: record.data[this.dataField],
 						color: record.data[this.colorField]
-					});
+					};
 				} else {
-					seriesData.push({
+					p={
 						name: record.data[this.categorieField],
 						y: record.data[this.dataField]
-					});
+					};
 				}
+				if(this.radiusValued===true && this.radiusField){
+				    p.r=record.data[this.radiusField];
+				}
+				seriesData.push(p);
 				i = seriesData.length - 1;
 			}
 			return seriesData[i];
@@ -250,17 +255,21 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
 		}
 
 		if (this.colorField && record.data[this.colorField]) {
-			return {
+			p= {
 				name: record.data[this.categorieField],
 				y: record.data[this.dataField],
 				color: record.data[this.colorField]
 			};
 		} else {
-			return {
+			p = {
 				name: record.data[this.categorieField],
 				y: record.data[this.dataField]
 			};
 		}
+		if(this.radiusValued===true && this.radiusField){
+		    p.r=record.data[this.radiusField];
+		}
+		return p;
 	},
 
 	getTotals : function() {
