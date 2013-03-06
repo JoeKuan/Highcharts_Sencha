@@ -482,9 +482,9 @@ Ext.define("Chart.ux.Highcharts", {
 
     initEvents : function() {
 	if(this.loadMask) {
-	    this.loadMask = new Ext.LoadMask(this.el, Ext.apply({
-		store : this.store
-	    }, this.loadMask));
+	    this.loadMask = new Ext.LoadMask(this,{
+		store: this.store
+	    });
 	}
     },
 
