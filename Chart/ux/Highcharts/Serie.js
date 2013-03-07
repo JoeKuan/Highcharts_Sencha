@@ -92,8 +92,8 @@ Ext.define('Chart.ux.Highcharts.Serie', {
     pointObject: false,
     
     /**
-     * @private
-     * The Chart.ux.Highcharts object that as this serie
+     * @readonly
+     * The {@link Chart.ux.Highcharts} object that has this serie
      *
      * @type Object/Chart.ux.Highcharts
      */
