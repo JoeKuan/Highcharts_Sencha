@@ -8,6 +8,8 @@ $result[] = array('text' => 'Spline - Add Series (non store data)', 'id' => 'cha
 $result[] = array('text' => 'Spline - Null data', 'id' => 'charts/splineNullData', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - afterChartRendered callback', 'id' => 'charts/splineAfterRenderedCallback', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - No initial animation', 'id' => 'charts/splineNoInitAnim', 'leaf' => true, 'icon' => '../images/linechart.png');
+$result[] = array('text' => 'Spline - Irregular data', 'id' => 'charts/splineIrregular', 'leaf' => true, 'icon' => '../images/linechart.png');
+$result[] = array('text' => 'Spline - No store binding', 'id' => 'charts/splineNoStore', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Column', 'id' => 'charts/column', 'leaf' => true, 'icon' => '../images/columnchart.png');
 $result[] = array('text' => 'Column - drill down', 'id' => 'charts/columnDrillDown', 'leaf' => true, 'icon' => '../images/columnchart.png');
 $result[] = array('text' => 'Pie', 'id' => 'charts/pie', 'leaf' => true, 'icon' => '../images/piechart.png');
@@ -20,26 +22,15 @@ $result[] = array('text' => 'Columns Range', 'id' => 'charts/columnrange', 'leaf
 $result[] = array('text' => 'Polar/Radar', 'id' => 'charts/polar', 'leaf' => true, 'icon' => '../images/radar.png' );
 $result[] = array('text' => 'Star', 'id' => 'charts/star', 'leaf' => true, 'icon' => '../images/asterisk.png' );
 
-/*
-$result[] = array('text' => 'Testing', 'id' => 'testing', 'leaf' => false, 
+$result[] = array('text' => 'Other Tests', 'id' => 'testing', 'leaf' => false, 'expanded' => true, 
      'children' => array(
-           array('text' => 'refreshOnChange (enabled)', 'id' => 'tests/refreshOnChange_On', 'leaf' => true,
-                 'description' => 'Changing the data editor should trigger refresh'),
-           array('text' => 'refreshOnChange (disabled)', 'id' => 'tests/refreshOnChange_Off','leaf' => true,
-                 'description' => 'Changing the data editor should NOT trigger refresh'),
-           array('text' => 'refreshOnLoad (enabled)', 'id' => 'tests/refreshOnLoad_On', 'leaf' => true,
-                 'description' => 'Reloading the store should trigger refresh'),
-           array('text' => 'refreshOnLoad (disabled)', 'id' => 'tests/refreshOnLoad_Off','leaf' => true,
-                 'description' => 'Reloading the store should NOT trigger refresh'),
-           array('text' => 'ignoreInitAnim (enabled)', 'id' => 'tests/ignoreInitAnim_Off','leaf' => true,
-                 'description' => "Highcharts init animation on and shouldn't show initial animation"),
-           array('text' => '4000 data pts', 'id' => 'tests/4000pts','leaf' => true,
-                 'description' => "Should be able to plot 4000 data points"),
-           array('text' => 'afterChartRender', 'id' => 'tests/afterChartRender','leaf' => true,
-                 'description' => "Dialog box access chart rendered object"),
-
+           array('text' => 'Store reload with diff no. of data points', 'id' => 'charts/test1','leaf' => true, 
+                 'icon' => '../images/linechart.png'),
+           array('text' => 'Fix size chart within the component', 'id' => 'charts/test2','leaf' => true, 
+                 'icon' => '../images/piechart.png'),
+           array('text' => 'pointclick event listener', 'id' => 'charts/test3','leaf' => true, 
+                 'icon' => '../images/piechart.png')
       )    
 );
-*/
 echo json_encode($result);
 ?>
