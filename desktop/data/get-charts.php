@@ -13,6 +13,7 @@ $result[] = array('text' => 'Spline - No store binding', 'id' => 'charts/splineN
 $result[] = array('text' => 'Column', 'id' => 'charts/column', 'leaf' => true, 'icon' => '../images/columnchart.png');
 $result[] = array('text' => 'Column - drill down', 'id' => 'charts/columnDrillDown', 'leaf' => true, 'icon' => '../images/columnchart.png');
 $result[] = array('text' => 'Pie', 'id' => 'charts/pie', 'leaf' => true, 'icon' => '../images/piechart.png');
+$result[] = array('text' => 'Pie with radius valued', 'id' => 'charts/rpie', 'leaf' => true, 'icon' => '../images/piechart.png');
 $result[] = array('text' => 'Scatter', 'id' => 'charts/scatter', 'leaf' => true, 'icon' => '../images/scatter.png');
 $result[] = array('text' => 'Donut (Pie)', 'id' => 'charts/donut', 'leaf' => true, 'icon' => '../images/ring.png' );
 $result[] = array('text' => 'Gauge/Dial', 'id' => 'charts/gauge', 'leaf' => true, 'icon' => '../images/gauge.png' );

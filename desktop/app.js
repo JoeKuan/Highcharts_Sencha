@@ -19,6 +19,7 @@ Ext.require('Chart.ux.Highcharts.ColumnSerie');
 Ext.require('Chart.ux.Highcharts.GaugeSerie');
 Ext.require('Chart.ux.Highcharts.LineSerie');
 Ext.require('Chart.ux.Highcharts.PieSerie');
+Ext.require('Chart.ux.Highcharts.RPieSerie');
 Ext.require('Chart.ux.Highcharts.RangeSerie');
 Ext.require('Chart.ux.Highcharts.ScatterSerie');
 Ext.require('Chart.ux.Highcharts.SplineSerie');
