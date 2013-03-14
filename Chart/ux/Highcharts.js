@@ -507,11 +507,6 @@ Ext.define("Chart.ux.Highcharts", {
     },
 
     initEvents : function() {
-        if(this.loadMask) {
-            this.loadMask = new Ext.LoadMask(this,{
-		store: this.store
-	    });
-        }
     },
 
     afterRender : function() {
@@ -719,10 +714,10 @@ Ext.define("Chart.ux.Highcharts", {
     bindComponent : function(bind) {
         if(bind) {
             this.on('move', this.onMove);
-            this.on('resize', this.onResize);
+            this.on('resize', this._onResize);
         } else {
             this.un('move', this.onMove);
-            this.un('resize', this.onResize);
+            this.un('resize', this._onResize);
         }
     },
 
@@ -759,6 +754,15 @@ Ext.define("Chart.ux.Highcharts", {
         }
 
         this.store = store;
+	
+	if(this.loadMask !== false){
+	    if(this.loadMask === true){
+		this.loadMask = new Ext.LoadMask({target:this,store:this.store});
+	    }else{
+		this.loadMask.bindStore(this.store);
+	    }
+	}
+	
         if(store && !initial) {
             this.refresh();
         }
@@ -1063,8 +1067,8 @@ Ext.define("Chart.ux.Highcharts", {
     },
 
     //private
-    onResize : function() {
-        this.callParent(arguments);
+    _onResize : function() {
+//        this.callParent(arguments);
         this.resizable && this.update();
     },
 
