@@ -5,7 +5,7 @@ var hiRef = '#A41E09';
 var dialColor = '#FA3421';
 var currentRpm = 0;
 
-Ext.define ("Chart.ux.ChartsDesktopConfig", {
+Ext.define ("Highcharts.ChartsDesktopConfig", {
     singleton: true,
     config : {
         spline : {
@@ -1126,7 +1126,60 @@ Ext.define ("Chart.ux.ChartsDesktopConfig", {
                 }
             }
         },
-
+	rpie : {
+            series : [{
+                type : 'rpie',
+		radiusValued: true,
+                categorieField : 'fruit_name',
+                dataField : 'production',
+		radiusField : 'revenue',
+                name : 'Fruit production/revenue'
+            }],
+            height : 500,
+            width : 700,
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginBottom : 120
+                },
+                title : {
+                    text : 'Highcharts (' + Highcharts.version + ') Example For ExtJs ' + Ext.versions.core.version,
+                    x : -20 //center
+                },
+                subtitle : {
+                    text : 'Random Value',
+                    x : -20
+                },
+                plotOptions: { 
+                    pie: { 
+                        allowPointSelect: true 
+                    } 
+                },
+                tooltip : {
+                    formatter : function () {
+                        return '<b>' + this.point.name + '</b>' + ', production : ' + this.y + ' revenue : ' + this.point.r + "$";
+                    }
+                },
+                legend : {
+                    layout : 'vertical',
+                    align : 'right',
+                    verticalAlign : 'top',
+                    x : -10,
+                    y : 100,
+                    borderWidth : 0
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+		
         scatter : {
             series : [{
                 type : 'scatter',

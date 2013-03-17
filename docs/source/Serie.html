@@ -16,7 +16,7 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-Serie'>/***
-</span> * Serie class is the base class for all the series types. Users shouldn't use any of the 
+</span> * Serie class is the base class for all the series types. Users shouldn&#39;t use any of the 
  * series classes directly, they are created internally from Chart.ux.Highcharts depending on the
  * series configuration.
  *
@@ -26,28 +26,28 @@
  * There is a subtle difference for declaring xField outside or inside a series. For example:
  *
  *     series:[{
- *        name: 'Share A',
- *        type: 'line',
- *        yField: 'sharePriceA'
+ *        name: &#39;Share A&#39;,
+ *        type: &#39;line&#39;,
+ *        yField: &#39;sharePriceA&#39;
  *     }, {
- *        name: 'Share B',
- *        type: 'line',
- *        yField: 'sharePriceB'
+ *        name: &#39;Share B&#39;,
+ *        type: &#39;line&#39;,
+ *        yField: &#39;sharePriceB&#39;
  *     }],
- *     xField: 'datetime',
+ *     xField: &#39;datetime&#39;,
  *     ....
  * This means both series share the same categories and each series has it own set of y-values. 
  * In this case, the datetime field can be either string or numerical representation of date time.
  *     series:[{
- *        name: 'Share A',
- *        type: 'line',
- *        yField: 'sharePriceA',
- *        xField: 'datetimeA'
+ *        name: &#39;Share A&#39;,
+ *        type: &#39;line&#39;,
+ *        yField: &#39;sharePriceA&#39;,
+ *        xField: &#39;datetimeA&#39;
  *     }, {
- *        name: 'Share B',
- *        type: 'line',
- *        yField: 'sharePriceB',
- *        xField: 'datetimeB'
+ *        name: &#39;Share B&#39;,
+ *        type: &#39;line&#39;,
+ *        yField: &#39;sharePriceB&#39;,
+ *        xField: &#39;datetimeB&#39;
  *     }],
  * This means both series have their own (x,y) data. In this case, the xField must refer to numerical values.
  * 
@@ -63,22 +63,22 @@
  *
  * Then use {@link Chart.ux.Highcharts.Serie#cfg-dataIndex} to map the series data array
  *     series: [{
- *         name: 'Series A',
- *         dataIndex: 'series1'
+ *         name: &#39;Series A&#39;,
+ *         dataIndex: &#39;series1&#39;
  *     }, {
- *         name: 'Series B',
- *         dataIndex: 'series2'
+ *         name: &#39;Series B&#39;,
+ *         dataIndex: &#39;series2&#39;
  *     }, {
- *         name: 'Series C',
- *         dataIndex: 'series3'
+ *         name: &#39;Series C&#39;,
+ *         dataIndex: &#39;series3&#39;
  *     }]
  */
-Ext.define('Chart.ux.Highcharts.Serie', {
-    requires: [ 'Chart.ux.Highcharts',
-                'Ext.util.Observable'
+Ext.define(&#39;Chart.ux.Highcharts.Serie&#39;, {
+    requires: [ &#39;Chart.ux.Highcharts&#39;,
+                &#39;Ext.util.Observable&#39;
               ],
     mixins: {
-        observable: 'Ext.util.Observable'
+        observable: &#39;Ext.util.Observable&#39;
     },
 
 <span id='Chart-ux-Highcharts-Serie-cfg-type'>    /***
@@ -87,12 +87,12 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      *
      * Line, area, scatter and column series are the simplest form of charts 
      * (includes Polar) which has the simple data mappings: *dataIndex* or *yField* 
-     * for y-axis values and xField for either x-axis category field or data point's 
+     * for y-axis values and xField for either x-axis category field or data point&#39;s 
      * x-axis coordinate.
      *     series: [{
-     *        type: 'scatter',
-     *        xField: 'xValue',
-     *        yField: 'yValue'
+     *        type: &#39;scatter&#39;,
+     *        xField: &#39;xValue&#39;,
+     *        yField: &#39;yValue&#39;
      *     }]
      */
     type : null,
@@ -107,24 +107,32 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      * @type Boolean
      */
     pointObject: false,
+    
+<span id='Chart-ux-Highcharts-Serie-property-chart'>    /**
+</span>     * @readonly
+     * The {@link Chart.ux.Highcharts} object that has this serie
+     *
+     * @type Object/Chart.ux.Highcharts
+     */
+    chart: null,
 
 <span id='Chart-ux-Highcharts-Serie-cfg-xField'>    /**
 </span>     * @cfg {String} xField
      * The field used to access the x-axis value from the items from the data
-     * source. Store's record
+     * source. Store&#39;s record
      */
     xField : null,
 
 <span id='Chart-ux-Highcharts-Serie-cfg-yField'>    /**
 </span>     * @cfg {String} yField
      * The field used to access the y-axis value from the items from the data
-     * source. Store's record
+     * source. Store&#39;s record
      */
     yField : null,
 
 <span id='Chart-ux-Highcharts-Serie-cfg-dataIndex'>    /**
 </span>     * @cfg {String} dataIndex can be either an alias of *yField* 
-     * (which has higher precedence if both are defined) or mapping to store's field
+     * (which has higher precedence if both are defined) or mapping to store&#39;s field
      * with array of data points
      */
     dataIndex : null,
@@ -132,7 +140,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 <span id='Chart-ux-Highcharts-Serie-cfg-colorField'>    /**
 </span>     * @cfg {String} colorField
      * This field is used for setting data point color
-     * number or color hex in '#([0-9])'. Otherwise, the option
+     * number or color hex in &#39;#([0-9])&#39;. Otherwise, the option
      * is treated as a field name and the store should return 
      * rows with the same color field name. For column type series, if you
      * want Highcharts to automatically color each data point,
@@ -181,6 +189,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
         };
         this.xField &amp;&amp; (point.x = record.data[this.xField]);
         this.colorField &amp;&amp; (point.color = this.resolveColor(this.colorField, record, index));
+        this.bindRecord &amp;&amp; (point.record = record);
         return point;
     },
 
@@ -194,7 +203,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
 <span id='Chart-ux-Highcharts-Serie-method-arr_getDataPair'>    /***
 </span>     * @private
-     * each data point in the series is represented in it's own x and y values
+     * each data point in the series is represented in it&#39;s own x and y values
      */
     arr_getDataPair: function(record, index) {
         return [ record.data[ this.xField ], record.data[ this.yField ] ];
@@ -202,11 +211,11 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
 <span id='Chart-ux-Highcharts-Serie-method-getData'>    /***
 </span>     * @method getData
-     * getData is the core mechanism for transferring from Store's record data into the series data array.
+     * getData is the core mechanism for transferring from Store&#39;s record data into the series data array.
      * This routine acts as a Template Method for any series class, i.e. any new series type class must 
      * support this method.
      * 
-     * Generally, you don't need to override this method in the config because this method is internally
+     * Generally, you don&#39;t need to override this method in the config because this method is internally
      * created once the serie class is instantiated. Depending on whether *xField*, *yField* and 
      * *colorField* are defined, the class constructor creates a *getData* method which either returns a single value,
      * tuple array or a data point object. This is done for performance reason. See Highcharts API document
@@ -217,18 +226,18 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      * prototype. Note that if this method is manually defined, there is no need to define field name options
      * because this can be specified inside the implementation anyway
      *     series: [{
-     *         type: 'spline',
+     *         type: &#39;spline&#39;,
      *         // Return avg y values
      *         getData: function(record) {
      *             return (record.data.y1 + record.data.y2) / 2;
      *         }
      *     }],
-     *     xField: 'time',
+     *     xField: &#39;time&#39;,
      *     ....
      *
      * [link1]: http://api.highcharts.com/highcharts#Series.addPoint()
      *
-     * @param {Object} record Store's record which contains the series data at particular instance
+     * @param {Object} record Store&#39;s record which contains the series data at particular instance
      * @param {Number} index the index value of the record inside the Store
      * @return {Object|Array|Number}
      */
@@ -258,15 +267,17 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 		         * @param {Ext.data.Record} record the record associated to the point
 		         * @param {Object} evt the event param
 		         */
-		        'pointclick'
+		        &#39;pointclick&#39;
 		    );
 		    this.config = config;
 
         this.yField = this.yField || this.dataIndex;
+        
+        this.bindRecord = (this.config.listeners &amp;&amp; this.config.listeners.pointclick !== undefined);
 
         // If colorField is defined, then we have to use data point
         // as object
-        this.colorField &amp;&amp; (this.pointObject = true);
+        (this.colorField || this.bindRecord) &amp;&amp; (this.pointObject = true);
 
         // If getData method is already defined, then overwrite it
         if (!this.getData) {
@@ -281,7 +292,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
     },
 
 <span id='Chart-ux-Highcharts-Serie-method-onPointClick'>	  onPointClick:function(evt){
-</span>	      this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
+</span>	      this.fireEvent(&#39;pointclick&#39;,this,evt.point,evt.point.record,evt);
 	  }
 
 });

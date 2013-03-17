@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+//Ext.onReady(
+	(function() {
+	    var 
+		UNDEFINED,
+		math = Math,
+		mathRound = math.round,
+		mathFloor = math.floor,
+		mathCeil = math.ceil,
+		mathMax = math.max,
+		mathMin = math.min,
+		mathAbs = math.abs,
+		mathCos = math.cos,
+		mathSin = math.sin,
+		mathPI = math.PI,
+		deg2rad = mathPI * 2 / 360,
+		// some constants for frequently used strings
+		DIV = &#39;div&#39;,
+		ABSOLUTE = &#39;absolute&#39;,
+		RELATIVE = &#39;relative&#39;,
+		HIDDEN = &#39;hidden&#39;,
+		PREFIX = &#39;highcharts-&#39;,
+		VISIBLE = &#39;visible&#39;,
+		PX = &#39;px&#39;,
+		NONE = &#39;none&#39;,
+		M = &#39;M&#39;,
+		L = &#39;L&#39;,
+		/*
+		 * Empirical lowest possible opacities for TRACKER_FILL
+		 * IE6: 0.002
+		 * IE7: 0.002
+		 * IE8: 0.002
+		 * IE9: 0.00000000001 (unlimited)
+		 * IE10: 0.0001 (exporting only)
+		 * FF: 0.00000000001 (unlimited)
+		 * Chrome: 0.000001
+		 * Safari: 0.000001
+		 * Opera: 0.00000000001 (unlimited)
+		 */
+		TRACKER_FILL = &#39;rgba(192,192,192,&#39; + (Highcharts.hasSVG ? 0.0001 : 0.002) + &#39;)&#39;, // invisible but clickable
+		//TRACKER_FILL = &#39;rgba(192,192,192,0.5)&#39;,
+		NORMAL_STATE = &#39;&#39;,
+		HOVER_STATE = &#39;hover&#39;,
+		SELECT_STATE = &#39;select&#39;,
+		MILLISECOND = &#39;millisecond&#39;,
+		SECOND = &#39;second&#39;,
+		MINUTE = &#39;minute&#39;,
+		HOUR = &#39;hour&#39;,
+		DAY = &#39;day&#39;,
+		WEEK = &#39;week&#39;,
+		MONTH = &#39;month&#39;,
+		YEAR = &#39;year&#39;,
+
+		// constants for attributes
+		FILL = &#39;fill&#39;,
+		LINEAR_GRADIENT = &#39;linearGradient&#39;,
+		STOPS = &#39;stops&#39;,
+		STROKE = &#39;stroke&#39;,
+		STROKE_WIDTH = &#39;stroke-width&#39;;
+	    
+<span id='global-method-noop'>	    /**
+</span>	     * Return the first value that is defined. Like MooTools&#39; $.pick.
+	     */	    
+	    var noop = function () {};
+	    
+	    
+<span id='global-method-setAnimation'>	    /**
+</span>	    * Set the global animation to either a given value, or fall back to the
+	    * given chart&#39;s animation option
+	    * @param {Object} animation
+	    * @param {Object} chart
+	    */
+	   function setAnimation(animation, chart) {
+		   globalAnimation = Highcharts.pick(animation, chart.animation);
+	   }
+	   
+<span id='global-method-defined'>	   /**
+</span>	    * Returns true if the object is not null or undefined. Like MooTools&#39; $.defined.
+	    * @param {Object} obj
+	    */
+	   function defined(obj) {
+		   return obj !== UNDEFINED &amp;&amp; obj !== null;
+	   }
+
+<span id='global-property-rpie'>	    /**
+</span>	     * Set the default options for pie
+	     */
+	    Highcharts.getOptions().plotOptions.rpie = Highcharts.getOptions().plotOptions.pie;
+//		    {
+//		borderColor: &#39;#FFFFFF&#39;,
+//		borderWidth: 1,
+//		center: [&#39;50%&#39;, &#39;50%&#39;],
+//		colorByPoint: true, // always true for pies
+//		dataLabels: {
+//		    // align: null,
+//		    // connectorWidth: 1,
+//		    // connectorColor: point.color,
+//		    // connectorPadding: 5,
+//		    distance: 30,
+//		    enabled: true,
+//		    formatter: function() {
+//			return this.point.name;
+//		    }
+//		    // softConnector: true,
+//		    //y: 0
+//		},
+//		//innerSize: 0,
+//		legendType: &#39;point&#39;,
+//		marker: null, // point options are specified in the base options
+//		size: &#39;75%&#39;,
+//		showInLegend: false,
+//		slicedOffset: 10,
+//		states: {
+//		    hover: {
+//			brightness: 0.1,
+//			shadow: false
+//		    }
+//		}
+//	    };
+
+<span id='RPiePoint'>	    /**
+</span>	     * Extended point object for pies
+	     */
+var RPiePoint = Highcharts.extendClass(Highcharts.Point, {
+<span id='RPiePoint-method-init'>	/**
+</span>	 * Initiate the pie slice
+	 */
+	init: function () {
+
+		Highcharts.Point.prototype.init.apply(this, arguments);
+
+		var point = this,
+			toggleSlice;
+
+		//visible: options.visible !== false,
+		Highcharts.extend(point, {
+			visible: point.visible !== false,
+			name: Highcharts.pick(point.name, &#39;Slice&#39;)
+		});
+
+		// add event listener for select
+		toggleSlice = function () {
+			point.slice();
+		};
+		Highcharts.addEvent(point, &#39;select&#39;, toggleSlice);
+		Highcharts.addEvent(point, &#39;unselect&#39;, toggleSlice);
+
+		return point;
+	},
+
+<span id='RPiePoint-method-setVisible'>	/**
+</span>	 * Toggle the visibility of the pie slice
+	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
+	 *    visibility is toggled
+	 */
+	setVisible: function (vis) {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			tracker = point.tracker,
+			dataLabel = point.dataLabel,
+			connector = point.connector,
+			shadowGroup = point.shadowGroup,
+			method;
+
+		// if called without an argument, toggle visibility
+		point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+
+		method = vis ? &#39;show&#39; : &#39;hide&#39;;
+
+		point.group[method]();
+		if (tracker) {
+			tracker[method]();
+		}
+		if (dataLabel) {
+			dataLabel[method]();
+		}
+		if (connector) {
+			connector[method]();
+		}
+		if (shadowGroup) {
+			shadowGroup[method]();
+		}
+		if (point.legendItem) {
+			chart.legend.colorizeItem(point, vis);
+		}
+		
+		// Handle ignore hidden slices
+		if (!series.isDirty &amp;&amp; series.options.ignoreHiddenPoint) {
+			series.isDirty = true;
+			chart.redraw();
+		}
+	},
+
+<span id='RPiePoint-method-slice'>	/**
+</span>	 * Set or toggle whether the slice is cut out from the pie
+	 * @param {Boolean} sliced When undefined, the slice state is toggled
+	 * @param {Boolean} redraw Whether to redraw the chart. True by default.
+	 */
+	slice: function (sliced, redraw, animation) {
+		var point = this,
+			series = point.series,
+			chart = series.chart,
+			slicedTranslation = point.slicedTranslation,
+			translation;
+
+		    setAnimation(animation, chart);
+
+		// redraw is true by default
+		redraw = Highcharts.pick(redraw, true);
+
+		// if called without an argument, toggle
+		sliced = point.sliced = defined(sliced) ? sliced : !point.sliced;
+
+		translation = {
+			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
+			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
+		};
+		point.group.animate(translation);
+		if (point.shadowGroup) {
+			point.shadowGroup.animate(translation);
+		}
+
+	}
+});
+
+<span id='RPieSeries'>	    /**
+</span>	     * The Pie series class
+	     */
+	    var RPieSeries = {
+		type: &#39;rpie&#39;,
+		isCartesian: false,
+		pointClass: RPiePoint,
+		requireSorting: false,
+		radiusValued: false,
+		minRadius: 40,
+		pointAttrToOptions: {// mapping between SVG attributes and the corresponding options
+		    stroke: &#39;borderColor&#39;,
+		    &#39;stroke-width&#39;: &#39;borderWidth&#39;,
+		    fill: &#39;color&#39;
+		},
+		init: function(chart, options) {
+		    Highcharts.Series.prototype.init.apply(this, arguments);
+		    this.radiusValued = options.radiusValued || false;
+		    this.minRadius = options.minRadius || 40;
+		},
+<span id='RPieSeries-method-getColor'>		/**
+</span>		 * Pies have one color each point
+		 */
+		getColor: function() {
+		    // record first color for use in setData
+		    this.initialColor = this.chart.counters.color;
+		},
+<span id='RPieSeries-method-animate'>		/**
+</span>		 * Animate the pies in
+		 */
+		animate: function() {
+		    var series = this,
+			    points = series.points,
+			    startAngleRad = series.startAngleRad;
+
+		    Highcharts.each(points, function(point) {
+			var graphic = point.graphic,
+				args = point.shapeArgs;
+
+			if (graphic) {
+			    // start values
+			    graphic.attr({
+				r: series.center[3] / 2, // animate from inner radius (#779)
+				start: startAngleRad,
+				end: startAngleRad
+			    });
+
+			    // animate
+			    graphic.animate({
+				r: args.r,
+				start: args.start,
+				end: args.end
+			    }, series.options.animation);
+			}
+		    });
+
+		    // delete this function to allow it only once
+		    series.animate = null;
+
+		},
+<span id='RPieSeries-method-setData'>		/**
+</span>		 * Extend the basic setData method by running processData and generatePoints immediately,
+		 * in order to access the points from the legend.
+		 */
+		setData: function(data, redraw) {
+		    Highcharts.Series.prototype.setData.call(this, data, false);
+		    this.processData();
+		    this.generatePoints();
+		    if (Highcharts.pick(redraw, true)) {
+			this.chart.redraw();
+		    }
+		},
+<span id='RPieSeries-method-getCenter'>		/**
+</span>		 * Get the center of the pie based on the size and center options relative to the
+		 * plot area. Borrowed by the polar and gauge series types.
+		 */
+		getCenter: function() {
+
+		    var options = this.options,
+			    chart = this.chart,
+			    plotWidth = chart.plotWidth,
+			    plotHeight = chart.plotHeight,
+			    positions = options.center.concat([options.size, options.innerSize || 0]),
+			    smallestSize = mathMin(plotWidth, plotHeight),
+			    isPercent;
+
+		    return Highcharts.map(positions, function(length, i) {
+
+			isPercent = /%$/.test(length);
+			return isPercent ?
+				// i == 0: centerX, relative to width
+					// i == 1: centerY, relative to height
+						// i == 2: size, relative to smallestSize
+							// i == 4: innerSize, relative to smallestSize
+								[plotWidth, plotHeight, smallestSize, smallestSize][i] *
+								Highcharts.pInt(length) / 100 :
+								length;
+						    });
+						},
+<span id='RPieSeries-method-translate'>						/**
+</span>						 * Do translation for pie slices
+						 */
+						translate: function() {
+						    this.generatePoints();
+
+						    var total = 0,
+							    maxR = 0,
+							    rappR = 0,
+							    radius = 0,
+							    series = this,
+							    minRadius,
+							    radiusValued,
+							    cumulative = 0,
+							    precision = 1000, // issue #172
+							    options = series.options,
+							    slicedOffset = options.slicedOffset,
+							    connectorOffset = slicedOffset + options.borderWidth,
+							    positions,
+							    chart = series.chart,
+							    start,
+							    end,
+							    angle,
+							    startAngleRad = series.startAngleRad = mathPI / 180 * ((options.startAngle || 0) % 360 - 90),
+							    points = series.points,
+							    circ = 2 *mathPI,
+							    fraction,
+							    radiusX, // the x component of the radius vector for a given point
+							    radiusX2,
+							    radiusY,
+							    radiusY2,
+							    labelDistance = options.dataLabels.distance,
+							    ignoreHiddenPoint = options.ignoreHiddenPoint,
+							    i,
+							    len = points.length,
+							    point;
+
+						    radiusValued = this.radiusValued;
+						    minRadius = this.minRadius;
+
+						    // get positions - either an integer or a percentage string must be given
+						    series.center = positions = series.getCenter();
+
+						    // utility for getting the x value from a given y, used for anticollision logic in data labels
+						    series.getX = function(y, left) {
+
+							angle = math.asin((y - positions[1]) / (positions[2] / 2 + labelDistance));
+
+							return positions[0] +
+								(left ? -1 : 1) *
+								(mathCos(angle) * (positions[2] / 2 + labelDistance));
+						    };
+						    // get the total sum
+						    for (i = 0; i &lt; len; i++) {
+							point = points[i];
+							total += (ignoreHiddenPoint &amp;&amp; !point.visible) ? 0 : point.y;
+							if (radiusValued === true) {
+							    if ((ignoreHiddenPoint &amp;&amp; !point.visible) ? 0 : point.r &gt; maxR) {
+								maxR = point.r;
+							    }
+							}
+						    }
+						    if (radiusValued === true) {
+							rappR = 0;
+							if (maxR &gt; 0) {
+							    rappR = minRadius / maxR;
+							} else {
+							    minRadius = 0;
+							}
+
+						    }
+
+						    // Calculate the geometry for each point
+						    for (i = 0; i &lt; len; i++) {
+
+							point = points[i];
+
+							// set start and end angle
+							fraction = total ? point.y / total : 0;
+							start = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
+							if (!ignoreHiddenPoint || point.visible) {
+							    cumulative += fraction;
+							}
+							end = mathRound((startAngleRad + (cumulative * circ)) * precision) / precision;
+
+							angle = (end + start) / 2;
+							if (angle &gt; 0.75 * circ) {
+							    angle -= 2 *mathPI;
+							}
+
+							if (radiusValued === true) {
+							    radius = (((rappR * point.r) + (100 - minRadius)) * (positions[2] / 2)) / 100;
+							    radiusX2 = mathCos(angle) * positions[2] / 2;
+							    radiusY2 = mathSin(angle) * positions[2] / 2;
+							} else {
+							    radius = positions[2] / 2;
+							    radiusX2 = mathCos(angle) * radius;
+							    radiusY2 = mathSin(angle) * radius;
+							}
+							radiusX = mathCos(angle) * radius;
+							radiusY = mathSin(angle) * radius;
+
+							// set the shape
+							point.shapeType = &#39;arc&#39;;
+							point.shapeArgs = {
+							    x: positions[0],
+							    y: positions[1],
+							    //r: positions[2] / 2,
+							    r: radius,
+							    innerR: positions[3] / 2,
+							    start: start,
+							    end: end
+							};
+
+							// center for the sliced out slice
+							point.slicedTranslation = Highcharts.map([
+							    mathCos(angle) * slicedOffset + chart.plotLeft,
+							    mathSin(angle) * slicedOffset + chart.plotTop
+							], mathRound);
+
+							// set the anchor point for tooltips
+							point.tooltipPos = [
+							    positions[0] + radiusX2 * 0.7,
+							    positions[1] + radiusY2 * 0.7
+							];
+
+							point.half = angle &lt; circ / 4 ? 0 : 1;
+							point.angle = angle;
+
+							// set the anchor point for data labels
+							point.labelPos = [
+							    positions[0] + radiusX2 + mathCos(angle) * labelDistance, // first break of connector
+							    positions[1] + radiusY2 + mathSin(angle) * labelDistance, // a/a
+							    positions[0] + radiusX2 + mathCos(angle) * connectorOffset, // second break, right outside pie
+							    positions[1] + radiusY2 + mathSin(angle) * connectorOffset, // a/a
+							    positions[0] + radiusX2, // landing point for connector
+							    positions[1] + radiusY2, // a/a
+							    positions[0] + radiusX, // landing point for connector
+							    positions[1] + radiusY, // a/a
+							    labelDistance &lt; 0 ? // alignment
+								    &#39;center&#39; :
+								    point.half ? &#39;right&#39; : &#39;left&#39;, // alignment
+							    angle // center angle
+							];
+
+							// API properties
+							point.percentage = fraction * 100;
+							point.total = total;
+
+						    }
+
+
+						    this.setTooltipPoints();
+						},
+<span id='RPieSeries-method-render'>						/**
+</span>						 * Render the slices
+						 */
+						render: function() {
+						    var series = this;
+
+						    // cache attributes for shapes
+						    series.getAttribs();
+
+						    this.drawPoints();
+
+						    // draw the mouse tracking area
+						    if (series.options.enableMouseTracking !== false) {
+							series.drawTracker();
+						    }
+
+						    this.drawDataLabels();
+
+						    if (series.options.animation &amp;&amp; series.animate) {
+							series.animate();
+						    }
+
+						    // (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
+						    series.isDirty = false; // means data is in accordance with what you see
+						},
+<span id='RPieSeries-method-drawPoints'>						/**
+</span>						 * Draw the data points
+						 */
+						drawPoints: function() {
+						    var series = this,
+							    chart = series.chart,
+							    renderer = chart.renderer,
+							    groupTranslation,
+							    //center,
+							    graphic,
+							    group,
+							    shadow = series.options.shadow,
+							    shadowGroup,
+							    shapeArgs;
+
+						    // draw the slices
+						    Highcharts.each(series.points, function(point) {
+							graphic = point.graphic;
+							shapeArgs = point.shapeArgs;
+							group = point.group;
+							shadowGroup = point.shadowGroup;
+
+							// put the shadow behind all points
+							if (shadow &amp;&amp; !shadowGroup) {
+							    shadowGroup = point.shadowGroup = renderer.g(&#39;shadow&#39;)
+								    .attr({zIndex: 4})
+								    .add();
+							}
+
+							// create the group the first time
+							if (!group) {
+							    group = point.group = renderer.g(&#39;point&#39;)
+								    .attr({zIndex: 5})
+								    .add();
+							}
+
+							// if the point is sliced, use special translation, else use plot area traslation
+							groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
+							group.translate(groupTranslation[0], groupTranslation[1]);
+							if (shadowGroup) {
+							    shadowGroup.translate(groupTranslation[0], groupTranslation[1]);
+							}
+
+							// draw the slice
+							if (graphic) {
+							    graphic.animate(shapeArgs);
+							} else {
+							    point.graphic = graphic = renderer.arc(shapeArgs)
+								    .setRadialReference(series.center)
+								    .attr(Highcharts.extend(
+								    point.pointAttr[NORMAL_STATE],
+								    {&#39;stroke-linejoin&#39;: &#39;round&#39;}
+							    ))
+								    .add(point.group)
+								    .shadow(shadow, shadowGroup);
+
+							}
+
+							// detect point specific visibility
+							if (point.visible === false) {
+							    point.setVisible(false);
+							}
+
+						    });
+
+						},
+<span id='RPieSeries-method-drawDataLabels'>						/**
+</span>						 * Override the base drawDataLabels method by pie specific functionality
+						 */
+						drawDataLabels: function() {
+						    var series = this,
+							    data = series.data,
+							    point,
+							    chart = series.chart,
+							    options = series.options.dataLabels,
+							    connectorPadding = Highcharts.pick(options.connectorPadding, 10),
+							    connectorWidth = Highcharts.pick(options.connectorWidth, 1),
+							    connector,
+							    connectorPath,
+							    softConnector = Highcharts.pick(options.softConnector, true),
+							    distanceOption = options.distance,
+							    seriesCenter = series.center,
+							    radius = seriesCenter[2] / 2,
+							    centerY = seriesCenter[1],
+							    outside = distanceOption &gt; 0,
+							    dataLabel,
+							    labelPos,
+							    labelHeight,
+							    halves = [// divide the points into right and left halves for anti collision
+							[], // right
+							[]  // left
+						    ],
+							    x,
+							    y,
+							    visibility,
+							    rankArr,
+							    i = 2,
+							    j,
+							    sort = function(a, b) {
+							return b.y - a.y;
+						    },
+							    sortByAngle = function(points, sign) {
+							points.sort(function(a, b) {
+							    return (b.angle - a.angle) * sign;
+							});
+						    };
+
+						    // get out if not enabled
+						    if (!options.enabled &amp;&amp; !series._hasPointLabels) {
+							return;
+						    }
+
+						    // run parent method
+						    Highcharts.Series.prototype.drawDataLabels.apply(series);
+
+						    // arrange points for detection collision
+						    Highcharts.each(data, function(point) {
+							if (point.dataLabel) { // it may have been cancelled in the base method (#407)
+							    halves[point.half].push(point);
+							}
+						    });
+
+						    // assume equal label heights
+						    labelHeight = halves[0][0] &amp;&amp; halves[0][0].dataLabel &amp;&amp; (halves[0][0].dataLabel.getBBox().height || 21); // 21 is for #968
+
+						    /* Loop over the points in each half, starting from the top and bottom
+						     * of the pie to detect overlapping labels.
+						     */
+						    while (i--) {
+
+							var slots = [],
+								slotsLength,
+								usedSlots = [],
+								points = halves[i],
+								pos,
+								length = points.length,
+								slotIndex;
+
+							// Sort by angle
+							sortByAngle(points, i - 0.5);
+
+							// Only do anti-collision when we are outside the pie and have connectors (#856)
+							if (distanceOption &gt; 0) {
+
+							    // build the slots
+							    for (pos = centerY - radius - distanceOption; pos &lt;= centerY + radius + distanceOption; pos += labelHeight) {
+								slots.push(pos);
+								// visualize the slot
+								/*
+								 var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
+								 slotY = pos + chart.plotTop;
+								 if (!isNaN(slotX)) {
+								 chart.renderer.rect(slotX, slotY - 7, 100, labelHeight)
+								 .attr({
+								 &#39;stroke-width&#39;: 1,
+								 stroke: &#39;silver&#39;
+								 })
+								 .add();
+								 chart.renderer.text(&#39;Slot &#39;+ (slots.length - 1), slotX, slotY + 4)
+								 .attr({
+								 fill: &#39;silver&#39;
+								 }).add();
+								 }
+								 */
+							    }
+							    slotsLength = slots.length;
+
+							    // if there are more values than available slots, remove lowest values
+							    if (length &gt; slotsLength) {
+								// create an array for sorting and ranking the points within each quarter
+								rankArr = [].concat(points);
+								rankArr.sort(sort);
+								j = length;
+								while (j--) {
+								    rankArr[j].rank = j;
+								}
+								j = length;
+								while (j--) {
+								    if (points[j].rank &gt;= slotsLength) {
+									points.splice(j, 1);
+								    }
+								}
+								length = points.length;
+							    }
+
+							    // The label goes to the nearest open slot, but not closer to the edge than
+							    // the label&#39;s index.
+							    for (j = 0; j &lt; length; j++) {
+
+								point = points[j];
+								labelPos = point.labelPos;
+
+								var closest = 9999,
+									distance,
+									slotI;
+
+								// find the closest slot index
+								for (slotI = 0; slotI &lt; slotsLength; slotI++) {
+								    distance = mathAbs(slots[slotI] - labelPos[1]);
+								    if (distance &lt; closest) {
+									closest = distance;
+									slotIndex = slotI;
+								    }
+								}
+
+								// if that slot index is closer to the edges of the slots, move it
+								// to the closest appropriate slot
+								if (slotIndex &lt; j &amp;&amp; slots[j] !== null) { // cluster at the top
+								    slotIndex = j;
+								} else if (slotsLength &lt; length - j + slotIndex &amp;&amp; slots[j] !== null) { // cluster at the bottom
+								    slotIndex = slotsLength - length + j;
+								    while (slots[slotIndex] === null) { // make sure it is not taken
+									slotIndex++;
+								    }
+								} else {
+								    // Slot is taken, find next free slot below. In the next run, the next slice will find the
+								    // slot above these, because it is the closest one
+								    while (slots[slotIndex] === null) { // make sure it is not taken
+									slotIndex++;
+								    }
+								}
+
+								usedSlots.push({i: slotIndex, y: slots[slotIndex]});
+								slots[slotIndex] = null; // mark as taken
+							    }
+							    // sort them in order to fill in from the top
+							    usedSlots.sort(sort);
+							}
+
+							// now the used slots are sorted, fill them up sequentially
+							for (j = 0; j &lt; length; j++) {
+
+							    var slot, naturalY;
+
+							    point = points[j];
+							    labelPos = point.labelPos;
+							    dataLabel = point.dataLabel;
+							    visibility = point.visible === false ? HIDDEN : VISIBLE;
+							    naturalY = labelPos[1];
+
+							    if (distanceOption &gt; 0) {
+								slot = usedSlots.pop();
+								slotIndex = slot.i;
+
+								// if the slot next to currrent slot is free, the y value is allowed
+								// to fall back to the natural position
+								y = slot.y;
+								if ((naturalY &gt; y &amp;&amp; slots[slotIndex + 1] !== null) ||
+									(naturalY &lt; y &amp;&amp; slots[slotIndex - 1] !== null)) {
+								    y = naturalY;
+								}
+
+							    } else {
+								y = naturalY;
+							    }
+
+							    // get the x - use the natural x position for first and last slot, to prevent the top
+							    // and botton slice connectors from touching each other on either side
+							    x = options.justify ?
+								    seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
+								    series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
+
+							    // move or place the data label
+							    dataLabel
+								    .attr({
+								visibility: visibility,
+								// align: labelPos[6]
+								align: labelPos[8]
+							    })[dataLabel.moved ? &#39;animate&#39; : &#39;attr&#39;]({
+								x: x + options.x +
+									//({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
+										({left: connectorPadding, right: -connectorPadding}[labelPos[8]] || 0),
+									y: y + options.y - 10 // 10 is for the baseline (label vs text)
+								    });
+							    dataLabel.moved = true;
+
+							    // draw the connector
+							    if (outside &amp;&amp; connectorWidth) {
+								connector = point.connector;
+
+								connectorPath = softConnector ? [
+								    M,
+								    //x + (labelPos[6] === &#39;left&#39; ? 5 : -5), y, // end of the string at the label
+								    x + (labelPos[8] === &#39;left&#39; ? 5 : -5), y, // end of the string at the label
+								    &#39;C&#39;,
+								    x, y, // first break, next to the label
+								    2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
+								    labelPos[2], labelPos[3], // second break
+								    L,
+								    labelPos[4], labelPos[5],
+								    L,
+								    labelPos[6], labelPos[7]
+								] : [
+								    M,
+								    x + (labelPos[8] === &#39;left&#39; ? 5 : -5), y, // end of the string at the label
+								    L,
+								    labelPos[2], labelPos[3], // second break
+								    L,
+								    labelPos[4], labelPos[5], // base
+								    L,
+								    labelPos[6], labelPos[7] // base
+								];
+
+								if (connector) {
+								    connector.animate({d: connectorPath});
+								    connector.attr(&#39;visibility&#39;, visibility);
+
+								} else {
+								    point.connector = connector = series.chart.renderer.path(connectorPath).attr({
+									&#39;stroke-width&#39;: connectorWidth,
+									stroke: options.connectorColor || point.color || &#39;#606060&#39;,
+									visibility: visibility,
+									zIndex: 3
+								    })
+									    .translate(chart.plotLeft, chart.plotTop)
+									    .add();
+								}
+							    }
+							}
+						    }
+						},
+						alignDataLabel: noop,
+<span id='RPieSeries-property-drawTracker'>						/**
+</span>						 * Draw point specific tracker objects. Inherit directly from column series.
+						 */
+						drawTracker: Highcharts.seriesTypes.column.prototype.drawTracker,
+<span id='RPieSeries-property-drawLegendSymbol'>						/**
+</span>						 * Use a simple symbol from column prototype
+						 */
+						drawLegendSymbol: Highcharts.seriesTypes.area.prototype.drawLegendSymbol,
+<span id='RPieSeries-method-getSymbol'>						/**
+</span>						 * Pies don&#39;t have point marker symbols
+						 */
+						getSymbol: function() {
+						}
+
+					    };
+					    RPieSeries = Highcharts.extendClass(Highcharts.Series, RPieSeries);
+					    Highcharts.seriesTypes.rpie = RPieSeries;
+					}).call(Highcharts);
+//					);
+
+<span id='Chart-ux-Highcharts-RPieSerie'>/**
+</span> * # Plotting Pie Series
+ * There are two ways to plot pie chart from record data: a data point per record and
+ * total values of all the records
+ *
+ * ## Data point per record
+ * Pie series uses two options for mapping category name and data fields: 
+ * *categoryField* and *dataField*, (This is historical reason instead of 
+ * using *xField* and *dataIndex*). Suppose we have data model in the following format:
+ *
+ * &lt;table&gt;
+ *    &lt;tbody&gt;
+ *       &lt;tr&gt;&lt;td&gt;productName&lt;/td&gt;&lt;td&gt;production&lt;/td&gt;&lt;td&gt;sold&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product A&lt;/td&gt;&lt;td&gt;100&lt;/td&gt;&lt;td&gt;15,645,242&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product B&lt;/td&gt;&lt;td&gt;200&lt;/td&gt;&lt;td&gt;22,642,358&lt;/td&gt;&lt;/tr&gt;
+ *       &lt;tr&gt;&lt;td&gt;Product C&lt;/td&gt;&lt;td&gt;50&lt;/td&gt;&lt;td&gt;21,432,330&lt;/td&gt;&lt;/tr&gt;
+ *    &lt;/tbody&gt;
+ * &lt;/table&gt;
+ * Then we can define the series data as:
+ * 
+ *     series: [{
+ *        type: &#39;rpie&#39;,
+ *        categoryField: &#39;productName&#39;,
+ *        dataField: &#39;sold&#39;,
+ *        radiusField: &#39;production&#39;
+ *     }]
+ */
+Ext.define(&#39;Chart.ux.Highcharts.RPieSerie&#39;, {
+	extend : &#39;Chart.ux.Highcharts.Serie&#39;,
+	alternateClassName: [ &#39;highcharts.rpie&#39; ],
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-type'>	type : &#39;rpie&#39;,
+</span>
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-xField'>  /***
+</span>   * @cfg xField
+   * @hide
+   */
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-yField'>  /***
+</span>   * @cfg yField
+   * @hide
+   */
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-dataIndex'>  /***
+</span>   * @cfg dataIndex
+   * @hide
+   */
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-categorieField'>	/**
+</span>	 * @cfg {String} categorieField
+   * the field name mapping to store records for pie category data 
+	 */
+	categorieField : null,
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-totalDataField'>	/**
+</span>	 * @cfg {Boolean} totalDataField
+   * See above. This is used for producing donut chart. Bascially informs
+   * getData method to take the total sum of dataField as the data point value
+   * for those records with the same matching string in the categorieField.
+	 */
+	totalDataField : false,
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-dataField'>	/**
+</span>	 * @cfg {String} dataField
+   * the field name mapping to store records for value data 
+	 */
+	dataField : null,
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-radiusField'>	/**
+</span>	 * @cfg {String} radiusField
+  	 * the field name mapping to store records for radius data 
+	 */
+	radiusField: null,
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-useTotals'>	/***
+</span>	 * @cfg {Boolean} useTotals
+   * use the total value of a categorie of all the records as a data point
+	 */
+	useTotals : false,
+
+<span id='Chart-ux-Highcharts-RPieSerie-cfg-columns'>  /***
+</span>   * @cfg {Array} columns
+   * a list of category names that match the record fields
+   */
+	columns : [],
+
+<span id='Chart-ux-Highcharts-RPieSerie-method-constructor'>	constructor : function(config) {
+</span>		this.callParent(arguments);
+		if(this.useTotals) {
+			this.columnData = {};
+			var length = this.columns.length;
+			for(var i = 0; i &lt; length; i++) {
+				this.columnData[this.columns[i]] = 100 / length;
+			}
+		}
+	},
+
+<span id='Chart-ux-Highcharts-RPieSerie-method-addData'>	//private
+</span>	addData : function(record) {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			this.columnData[c] = this.columnData[c] + record.data[c];
+		}
+	},
+
+<span id='Chart-ux-Highcharts-RPieSerie-method-update'>	//private
+</span>	update : function(record) {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			if(record.modified[c])
+				this.columnData[c] = this.columnData[c] + record.data[c] - record.modified[c];
+		}
+	},
+
+<span id='Chart-ux-Highcharts-RPieSerie-method-removeData'>	//private
+</span>	removeData : function(record, index) {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			this.columnData[c] = this.columnData[c] - record.data[c];
+		}
+	},
+
+<span id='Chart-ux-Highcharts-RPieSerie-method-clear'>	//private
+</span>	clear : function() {
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			this.columnData[c] = 0;
+		}
+	},
+
+<span id='Chart-ux-Highcharts-RPieSerie-method-getData'>	/***
+</span>   * As the implementation of pie series is quite different to other series types,
+   * it is not recommended to override this method
+   */
+	getData : function(record, seriesData) {
+		var p=null;
+		// Summed up the category among the series data
+		if(this.totalDataField) {
+			var found = null;
+			for(var i = 0; i &lt; seriesData.length; i++) {
+				if(seriesData[i].name == record.data[this.categorieField]) {
+					found = i;
+					seriesData[i].y += record.data[this.dataField];
+					break;
+				}
+			}
+			if(found === null) {
+				
+				if (this.colorField &amp;&amp; record.data[this.colorField]) {
+					p={
+						name: record.data[this.categorieField],
+						y: record.data[this.dataField],
+						color: record.data[this.colorField]
+					};
+				} else {
+					p={
+						name: record.data[this.categorieField],
+						y: record.data[this.dataField]
+					};
+				}
+				if(this.radiusValued===true &amp;&amp; this.radiusField){
+				    p.r=record.data[this.radiusField];
+				}
+				seriesData.push(p);
+				i = seriesData.length - 1;
+			}
+			return seriesData[i];
+		}
+
+		if(this.useTotals) {
+			this.addData(record);
+			return [];
+		}
+
+		if (this.colorField &amp;&amp; record.data[this.colorField]) {
+			p= {
+				name: record.data[this.categorieField],
+				y: record.data[this.dataField],
+				color: record.data[this.colorField]
+			};
+		} else {
+			p = {
+				name: record.data[this.categorieField],
+				y: record.data[this.dataField]
+			};
+		}
+		if(this.radiusValued===true &amp;&amp; this.radiusField){
+		    p.r=record.data[this.radiusField];
+		}
+		return p;
+	},
+
+<span id='Chart-ux-Highcharts-RPieSerie-method-getTotals'>	getTotals : function() {
+</span>		var a = new Array();
+		for(var i = 0; i &lt; this.columns.length; i++) {
+			var c = this.columns[i];
+			a.push([c, this.columnData[c]]);
+		}
+		return a;
+	}
+
+});
+</pre>
+</body>
+</html>

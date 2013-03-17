@@ -52,7 +52,7 @@ Ext.define('Highcharts.controller.Charts', {
 
           // Generate the highchart config based on the selected type
           // Create the store if not exists
-          var configs = Ext.create('Chart.ux.ChartsDesktopConfig');
+          var configs = Ext.create(Highcharts.ChartsMobileConfig);
           var hcConfg = null;
           var reloadDisabled = false;
           /*

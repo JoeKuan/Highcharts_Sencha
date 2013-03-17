@@ -13,6 +13,7 @@ $splitCharts = array(
 $pieCharts = array(
                array('text' => 'Pie', 'shortDesc' => 'Single series', 'children' => array(), 'id' => 'pie'),
                array('text' => 'Donut Pie', 'shortDesc' => 'Two series', 'children' => array(), 'id' => 'donut'),
+               array('text' => 'Radius Pie', 'shortDesc' => 'Radius Pie series', 'children' => array(), 'id' => 'rpie'),    
 );
 
 $rangeCharts = array(

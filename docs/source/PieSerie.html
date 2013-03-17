@@ -36,9 +36,9 @@
  * Then we can define the series data as:
  * 
  *     series: [{
- *        type: 'pie',
- *        categoryField: 'productName',
- *        dataField: 'sold'
+ *        type: &#39;pie&#39;,
+ *        categoryField: &#39;productName&#39;,
+ *        dataField: &#39;sold&#39;
  *     }]
  *
  * # Data point as total value of all the records
@@ -56,9 +56,9 @@
  * All we want is to plot distribution of total scores for each subject. Hence, we define
  * the pie series as follows:
  *     series: [{
- *        type: 'pie',
+ *        type: &#39;pie&#39;,
  *        useTotals: true,
- *        column: [ 'english', 'math', 'science' ]
+ *        column: [ &#39;english&#39;, &#39;math&#39;, &#39;science&#39; ]
  *     }]
  * whereas the server-side should return JSON data as follows:
  *     { &quot;root&quot;: [{ &quot;english&quot;: 77, &quot;math&quot;: 81, &quot;science&quot;: 78 },
@@ -67,12 +67,12 @@
  *                .....                                         ]
  *     } 
  * and the data model for the store is defined as follows:
- *     Ext.define('ExamResults', {
- *        extend: 'Ext.data.Model',
+ *     Ext.define(&#39;ExamResults&#39;, {
+ *        extend: &#39;Ext.data.Model&#39;,
  *          fields: [
- *              {name: 'english', type: 'int'},
- *              {name: 'math',  type: 'int'},
- *              {name: 'science',  type: 'int'}
+ *              {name: &#39;english&#39;, type: &#39;int&#39;},
+ *              {name: &#39;math&#39;,  type: &#39;int&#39;},
+ *              {name: &#39;science&#39;,  type: &#39;int&#39;}
  *          ]
  *     });
  *  
@@ -100,21 +100,21 @@
  *       &lt;tr&gt; &lt;td&gt;Product B&lt;/td&gt; &lt;td&gt;4,325,321&lt;/td&gt; &lt;td&gt;Asia&lt;/td&gt; &lt;td&gt;&lt;/td&gt; &lt;/tr&gt;
  *    &lt;/tbody&gt;
  * &lt;/table&gt;
-The series definition for the donut chart should look like this:
+ The series definition for the donut chart should look like this:
  *     series: [{
  *        // Inner pie series
- *        type: 'pie',
- *        categoryField: 'productName',
- *        dataField: 'sold',
- *        size: '60%',
+ *        type: &#39;pie&#39;,
+ *        categoryField: &#39;productName&#39;,
+ *        dataField: &#39;sold&#39;,
+ *        size: &#39;60%&#39;,
  *        totalDataField: true
  *     }, {
  *        // Outer pie series
- *        type: 'pie',
- *        categoryField: 'region',
- *        dataField: 'sold',
- *        innerSize: '60%',
- *        size: '75%'
+ *        type: &#39;pie&#39;,
+ *        categoryField: &#39;region&#39;,
+ *        dataField: &#39;sold&#39;,
+ *        innerSize: &#39;60%&#39;,
+ *        size: &#39;75%&#39;
  *     }]
  * The *totalDataField* informs the first series to take the sum of *dataField* (sold) 
  * on entries with the same *categoryField* value, whereas the second series displays 
@@ -125,163 +125,167 @@ The series definition for the donut chart should look like this:
  * you can create an extra field in your store for the color code and use the 
  * *colorField* option to map the field.
  */
-Ext.define('Chart.ux.Highcharts.PieSerie', {
-	extend : 'Chart.ux.Highcharts.Serie',
-	alternateClassName: [ 'highcharts.pie' ],
-<span id='Chart-ux-Highcharts-PieSerie-cfg-type'>	type : 'pie',
+Ext.define(&#39;Chart.ux.Highcharts.PieSerie&#39;, {
+    extend : &#39;Chart.ux.Highcharts.Serie&#39;,
+    alternateClassName: [ &#39;highcharts.pie&#39; ],
+<span id='Chart-ux-Highcharts-PieSerie-cfg-type'>    type : &#39;pie&#39;,
 </span>
-<span id='Chart-ux-Highcharts-PieSerie-cfg-xField'>  /***
-</span>   * @cfg xField
-   * @hide
-   */
+<span id='Chart-ux-Highcharts-PieSerie-cfg-xField'>    /***
+</span>     * @cfg xField
+     * @hide
+     */
 
-<span id='Chart-ux-Highcharts-PieSerie-cfg-yField'>  /***
-</span>   * @cfg yField
-   * @hide
-   */
+<span id='Chart-ux-Highcharts-PieSerie-cfg-yField'>    /***
+</span>     * @cfg yField
+     * @hide
+     */
 
-<span id='Chart-ux-Highcharts-PieSerie-cfg-dataIndex'>  /***
-</span>   * @cfg dataIndex
-   * @hide
-   */
+<span id='Chart-ux-Highcharts-PieSerie-cfg-dataIndex'>    /***
+</span>     * @cfg dataIndex
+     * @hide
+     */
 
-<span id='Chart-ux-Highcharts-PieSerie-cfg-categorieField'>	/**
-</span>	 * @cfg {String} categorieField
-   * the field name mapping to store records for pie category data 
-	 */
-	categorieField : null,
+<span id='Chart-ux-Highcharts-PieSerie-cfg-categorieField'>    /**
+</span>     * @cfg {String} categorieField
+     * the field name mapping to store records for pie category data 
+     */
+    categorieField : null,
 
-<span id='Chart-ux-Highcharts-PieSerie-cfg-totalDataField'>	/**
-</span>	 * @cfg {Boolean} totalDataField
-   * See above. This is used for producing donut chart. Bascially informs
-   * getData method to take the total sum of dataField as the data point value
-   * for those records with the same matching string in the categorieField.
-	 */
-	totalDataField : false,
+<span id='Chart-ux-Highcharts-PieSerie-cfg-totalDataField'>    /**
+</span>     * @cfg {Boolean} totalDataField
+     * See above. This is used for producing donut chart. Bascially informs
+     * getData method to take the total sum of dataField as the data point value
+     * for those records with the same matching string in the categorieField.
+     */
+    totalDataField : false,
 
-<span id='Chart-ux-Highcharts-PieSerie-cfg-dataField'>	/**
-</span>	 * @cfg {String} dataField
-   * the field name mapping to store records for value data 
-	 */
-	dataField : null,
+<span id='Chart-ux-Highcharts-PieSerie-cfg-dataField'>    /**
+</span>     * @cfg {String} dataField
+     * the field name mapping to store records for value data 
+     */
+    dataField : null,
 
-<span id='Chart-ux-Highcharts-PieSerie-cfg-useTotals'>	/***
-</span>	 * @cfg {Boolean} useTotals
-   * use the total value of a categorie of all the records as a data point
-	 */
-	useTotals : false,
+<span id='Chart-ux-Highcharts-PieSerie-cfg-useTotals'>    /***
+</span>     * @cfg {Boolean} useTotals
+     * use the total value of a categorie of all the records as a data point
+     */
+    useTotals : false,
 
-<span id='Chart-ux-Highcharts-PieSerie-cfg-columns'>  /***
-</span>   * @cfg {Array} columns
-   * a list of category names that match the record fields
-   */
-	columns : [],
+<span id='Chart-ux-Highcharts-PieSerie-cfg-columns'>    /***
+</span>     * @cfg {Array} columns
+     * a list of category names that match the record fields
+     */
+    columns : [],
 
-<span id='Chart-ux-Highcharts-PieSerie-method-constructor'>	constructor : function(config) {
-</span>		this.callParent(arguments);
-		if(this.useTotals) {
-			this.columnData = {};
-			var length = this.columns.length;
-			for(var i = 0; i &lt; length; i++) {
-				this.columnData[this.columns[i]] = 100 / length;
-			}
-		}
-	},
+<span id='Chart-ux-Highcharts-PieSerie-method-constructor'>    constructor : function(config) {
+</span>        this.callParent(arguments);
+        if(this.useTotals) {
+            this.columnData = {};
+            var length = this.columns.length;
+            for(var i = 0; i &lt; length; i++) {
+                this.columnData[this.columns[i]] = 100 / length;
+            }
+        }
+    },
 
-<span id='Chart-ux-Highcharts-PieSerie-method-addData'>	//private
-</span>	addData : function(record) {
-		for(var i = 0; i &lt; this.columns.length; i++) {
-			var c = this.columns[i];
-			this.columnData[c] = this.columnData[c] + record.data[c];
-		}
-	},
+<span id='Chart-ux-Highcharts-PieSerie-method-addData'>    //private
+</span>    addData : function(record) {
+        for(var i = 0; i &lt; this.columns.length; i++) {
+            var c = this.columns[i];
+            this.columnData[c] = this.columnData[c] + record.data[c];
+        }
+    },
 
-<span id='Chart-ux-Highcharts-PieSerie-method-update'>	//private
-</span>	update : function(record) {
-		for(var i = 0; i &lt; this.columns.length; i++) {
-			var c = this.columns[i];
-			if(record.modified[c])
-				this.columnData[c] = this.columnData[c] + record.data[c] - record.modified[c];
-		}
-	},
+<span id='Chart-ux-Highcharts-PieSerie-method-update'>    //private
+</span>    update : function(record) {
+        for(var i = 0; i &lt; this.columns.length; i++) {
+            var c = this.columns[i];
+            if(record.modified[c])
+                this.columnData[c] = this.columnData[c] + record.data[c] - record.modified[c];
+        }
+    },
 
-<span id='Chart-ux-Highcharts-PieSerie-method-removeData'>	//private
-</span>	removeData : function(record, index) {
-		for(var i = 0; i &lt; this.columns.length; i++) {
-			var c = this.columns[i];
-			this.columnData[c] = this.columnData[c] - record.data[c];
-		}
-	},
+<span id='Chart-ux-Highcharts-PieSerie-method-removeData'>    //private
+</span>    removeData : function(record, index) {
+        for(var i = 0; i &lt; this.columns.length; i++) {
+            var c = this.columns[i];
+            this.columnData[c] = this.columnData[c] - record.data[c];
+        }
+    },
 
-<span id='Chart-ux-Highcharts-PieSerie-method-clear'>	//private
-</span>	clear : function() {
-		for(var i = 0; i &lt; this.columns.length; i++) {
-			var c = this.columns[i];
-			this.columnData[c] = 0;
-		}
-	},
+<span id='Chart-ux-Highcharts-PieSerie-method-clear'>    //private
+</span>    clear : function() {
+        for(var i = 0; i &lt; this.columns.length; i++) {
+            var c = this.columns[i];
+            this.columnData[c] = 0;
+        }
+    },
 
-<span id='Chart-ux-Highcharts-PieSerie-method-getData'>	/***
-</span>   * As the implementation of pie series is quite different to other series types,
-   * it is not recommended to override this method
-   */
-	getData : function(record, seriesData) {
+<span id='Chart-ux-Highcharts-PieSerie-method-getData'>    /***
+</span>     * As the implementation of pie series is quite different to other series types,
+     * it is not recommended to override this method
+     */
+    getData : function(record, seriesData) {
 
-		// Summed up the category among the series data
-		if(this.totalDataField) {
-			var found = null;
-			for(var i = 0; i &lt; seriesData.length; i++) {
-				if(seriesData[i].name == record.data[this.categorieField]) {
-					found = i;
-					seriesData[i].y += record.data[this.dataField];
-					break;
-				}
-			}
-			if(found === null) {
-				if (this.colorField &amp;&amp; record.data[this.colorField]) {
-					seriesData.push({
-						name: record.data[this.categorieField],
-						y: record.data[this.dataField],
-						color: record.data[this.colorField]
-					});
-				} else {
-					seriesData.push({
-						name: record.data[this.categorieField],
-						y: record.data[this.dataField]
-					});
-				}
-				i = seriesData.length - 1;
-			}
-			return seriesData[i];
-		}
+        // Summed up the category among the series data
+        if(this.totalDataField) {
+            var found = null;
+            for(var i = 0; i &lt; seriesData.length; i++) {
+                if(seriesData[i].name == record.data[this.categorieField]) {
+                    found = i;
+                    seriesData[i].y += record.data[this.dataField];
+                    break;
+                }
+            }
+            if(found === null) {
+                if (this.colorField &amp;&amp; record.data[this.colorField]) {
+                    seriesData.push({
+                        name: record.data[this.categorieField],
+                        y: record.data[this.dataField],
+                        color: record.data[this.colorField],
+                        record: this.bindRecord ? record : null
+                    });
+                } else {
+                    seriesData.push({
+                        name: record.data[this.categorieField],
+                        y: record.data[this.dataField],
+                        record: this.bindRecord ? record : null
+                    });
+                }
+                i = seriesData.length - 1;
+            }
+            return seriesData[i];
+        }
 
-		if(this.useTotals) {
-			this.addData(record);
-			return [];
-		}
+        if(this.useTotals) {
+            this.addData(record);
+            return [];
+        }
 
-		if (this.colorField &amp;&amp; record.data[this.colorField]) {
-			return {
-				name: record.data[this.categorieField],
-				y: record.data[this.dataField],
-				color: record.data[this.colorField]
-			};
-		} else {
-			return {
-				name: record.data[this.categorieField],
-				y: record.data[this.dataField]
-			};
-		}
-	},
+        if (this.colorField &amp;&amp; record.data[this.colorField]) {
+            return {
+                name: record.data[this.categorieField],
+                y: record.data[this.dataField],
+                color: record.data[this.colorField],
+                record: this.bindRecord ? record : null
+            };
+        } else {
+            return {
+                name: record.data[this.categorieField],
+                y: record.data[this.dataField],
+                record: this.bindRecord ? record : null
+            };
+        }
+    },
 
-<span id='Chart-ux-Highcharts-PieSerie-method-getTotals'>	getTotals : function() {
-</span>		var a = new Array();
-		for(var i = 0; i &lt; this.columns.length; i++) {
-			var c = this.columns[i];
-			a.push([c, this.columnData[c]]);
-		}
-		return a;
-	}
+<span id='Chart-ux-Highcharts-PieSerie-method-getTotals'>    getTotals : function() {
+</span>        var a = new Array();
+        for(var i = 0; i &lt; this.columns.length; i++) {
+            var c = this.columns[i];
+            a.push([c, this.columnData[c]]);
+        }
+        return a;
+    }
 
 });
 </pre>

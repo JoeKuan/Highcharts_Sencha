@@ -90,6 +90,14 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      * @type Boolean
      */
     pointObject: false,
+    
+    /**
+     * @readonly
+     * The {@link Chart.ux.Highcharts} object that has this serie
+     *
+     * @type Object/Chart.ux.Highcharts
+     */
+    chart: null,
 
     /**
      * @cfg {String} xField

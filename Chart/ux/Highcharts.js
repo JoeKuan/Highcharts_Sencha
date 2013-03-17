@@ -245,10 +245,10 @@ Ext.define("Chart.ux.Highcharts", {
     defaultSerieType : 'line',
     
     /**
-     * @cfg {Boolean} resizable
+     * @cfg {Boolean} resizableChart
      * True to allow resizing, false to disable resizing (defaults to true).
      */
-    resizable : true,
+    resizableChart : true,
 
     /**
      * @cfg {Number} updateDelay
@@ -400,6 +400,7 @@ Ext.define("Chart.ux.Highcharts", {
             } else {
                 serieObject = serie;
             }
+	    serieObject.chart=this;
             c.push(serieObject.config);
             n.push(serieObject);
         }
@@ -506,11 +507,6 @@ Ext.define("Chart.ux.Highcharts", {
     },
 
     initEvents : function() {
-        if(this.loadMask) {
-            this.loadMask = new Ext.LoadMask(this.el, Ext.apply({
-                store : this.store
-            }, this.loadMask));
-        }
     },
 
     afterRender : function() {
@@ -616,6 +612,7 @@ Ext.define("Chart.ux.Highcharts", {
                 break;
 
             case 'pie':
+	    case 'rpie':
                 // Summed up the category among the series data
                 if (series.totalDataField) {
                     for (var x = 0; x < items.length; x++) {
@@ -644,7 +641,7 @@ Ext.define("Chart.ux.Highcharts", {
 
         this.log("call draw");
         if(this.chart && this.rendered) {
-            if(this.resizable) {
+            if(this.resizableChart) {
                 for(var i = 0; i < _this.series.length; i++) {
                     _this.series[i].visible = this.chart.series[i].visible;
                 }
@@ -717,10 +714,10 @@ Ext.define("Chart.ux.Highcharts", {
     bindComponent : function(bind) {
         if(bind) {
             this.on('move', this.onMove);
-            this.on('resize', this.onResize);
+            this.on('resize', this._onResize);
         } else {
             this.un('move', this.onMove);
-            this.un('resize', this.onResize);
+            this.un('resize', this._onResize);
         }
     },
 
@@ -757,6 +754,15 @@ Ext.define("Chart.ux.Highcharts", {
         }
 
         this.store = store;
+	
+	if(this.loadMask !== false){
+	    if(this.loadMask === true){
+		this.loadMask = new Ext.LoadMask({target:this,store:this.store});
+	    }else{
+		this.loadMask.bindStore(this.store);
+	    }
+	}
+	
         if(store && !initial) {
             this.refresh();
         }
@@ -808,7 +814,7 @@ Ext.define("Chart.ux.Highcharts", {
                             point = serie.getData(record, x);
                             data[i].push(point);
                         }
-                    } else if (serie.type == 'pie') {
+                    } else if (serie.type == 'pie' || serie.type == 'rpie') {
                         if (serie.useTotals) {
                             if(x == 0)
                                 serie.clear();
@@ -868,9 +874,11 @@ Ext.define("Chart.ux.Highcharts", {
 
                             // Gotcha, we need to be careful with pie series, as the totalDataField
                             // can conflict with the following series data points trimming operations
-                            if (_this.series[i].type == 'pie')
+                            if (_this.series[i].type == 'pie' || _this.series[i].type == 'rpie'){
+				this.chart.series[i].animate=Highcharts.seriesTypes.pie.prototype.animate.bind(this.chart.series[i]);
+				this.chart.series[i].setData(data[i]);
                                 continue;
-
+			    }
                             // Append the rest of the points from store to chart
                             this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);
                             if (chartSeriesLength < storeSeriesLength) {
@@ -984,7 +992,7 @@ Ext.define("Chart.ux.Highcharts", {
             for(var i = 0; i < this.chart.series.length; i++) {
                 var serie = this.chart.series[i];
                 var point = _this.series[i].getData(record, index);
-                if(_this.series[i].type == 'pie' && _this.series[i].useTotals) {
+                if((_this.series[i].type == 'pie' || _this.series[i].type == 'rpie') && _this.series[i].useTotals) {
                     _this.series[i].update(record);
                     this.chart.series[i].setData(_this.series[i].getTotals());
                 } else
@@ -1047,7 +1055,7 @@ Ext.define("Chart.ux.Highcharts", {
             for(var x = 0; x < this.chart.series.length; x++) {
                 var serie = this.chart.series[x], s = _this.series[x];
                 var point = s.getData(record, index + i);
-                if(!(s.type == 'pie' && s.useTotals)) {
+                if(!((s.type == 'pie' || s.type == 'rpie') && s.useTotals)) {
                     serie.addPoint(point, redraw);
                 }
             }
@@ -1059,9 +1067,9 @@ Ext.define("Chart.ux.Highcharts", {
     },
 
     //private
-    onResize : function() {
-        this.callParent(arguments);
-        this.resizable && this.update();
+    _onResize : function() {
+//        this.callParent(arguments);
+        this.resizableChart && this.update();
     },
 
     // private
@@ -1071,7 +1079,7 @@ Ext.define("Chart.ux.Highcharts", {
 
         for(var i = 0; i < _this.series.length; i++) {
             var s = _this.series[i];
-            if(s.type == 'pie' && s.useTotals) {
+            if((s.type == 'pie' || s.type == 'rpie') && s.useTotals) {
                 s.removeData(record, index);
                 this.chart.series[i].setData(s.getTotals());
             } else {
