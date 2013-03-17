@@ -5,7 +5,8 @@ Ext.define('Highcharts.controller.Charts', {
     stores : ['ChartsTree', 'Temperature', 'NumericTemperature', 
               'NullTemperature', 'Browsers', 'IrregularData', 
               'TempSummary', 'Scatter', 'Speedometer', 'Stock', 
-              'NetworkUsage', 'BrowsersJune' ],
+              'NetworkUsage', 'BrowsersJune', 'UpdateNoRecord',
+              'IQ' ],
 
     init : function() {
 
@@ -177,6 +178,24 @@ Ext.define('Highcharts.controller.Charts', {
                     case 'test3':
                         hcConfig = configs.getTest3();
                         store = Ext.create('Highcharts.store.TempSummary');
+                        break;
+                        // Test updateOnNoRecord
+                    case 'test4':
+                        hcConfig = configs.getTest4();
+                        store = Ext.create('Highcharts.store.UpdateNoRecord');
+                        break;
+                        // Test loadmask
+                    case 'test5':
+                        hcConfig = configs.getTest5();
+                        store = Ext.create('Highcharts.store.Scatter');
+                        store.getProxy().extraParams = {
+                            delay: 5
+                        };
+                        break;
+                        // Test reload on diff no. of data points - pie chart
+                    case 'test6':
+                        hcConfig = configs.getTest6();
+                        store = Ext.create('Highcharts.store.IQ');
                         break;
                     }
 

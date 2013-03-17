@@ -29,6 +29,12 @@ $result[] = array('text' => 'Other Tests', 'id' => 'testing', 'leaf' => false, '
            array('text' => 'Fix size chart within the component', 'id' => 'charts/test2','leaf' => true, 
                  'icon' => '../images/piechart.png'),
            array('text' => 'pointclick event listener', 'id' => 'charts/test3','leaf' => true, 
+                 'icon' => '../images/piechart.png'),
+           array('text' => 'Test updateNoRecord', 'id' => 'charts/test4','leaf' => true, 
+                 'icon' => '../images/columnchart.png'),
+           array('text' => 'Test loadmask', 'id' => 'charts/test5','leaf' => true, 
+                 'icon' => '../images/scatter.png'),
+           array('text' => 'Store reload with diff no. of data points', 'id' => 'charts/test6','leaf' => true, 
                  'icon' => '../images/piechart.png')
       )    
 );

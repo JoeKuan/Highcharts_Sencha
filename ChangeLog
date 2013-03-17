@@ -1,3 +1,21 @@
+ver 2.3.3
+Highcharts extension
+- Plot graph for initial animation if data is already loaded
+- Added updateNoRecord option
+- Added loadMaskMsg option
+- Added fixes and enhancements submitted by straccio
+  * Added scope to Highchart Component if not specified
+  * Clone Serie config for scope injection
+  * Added destroy method in Serie class
+  * Fixed LoadMask
+  * Fixed Pie chart update with diff no. of data points
+
+Desktop Demos
+- Added standalone example
+- Added updateNoRecord example
+- Added loadmask example
+- Added pie chart update with diff no. of data points
+
 ver 2.3.2
 Highcharts extension
 - Added support for multiple series with irregular data, dataIndex field can support data array from JsonStore. 

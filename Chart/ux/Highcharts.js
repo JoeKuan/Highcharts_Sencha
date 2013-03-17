@@ -2,11 +2,11 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 2.3.2
+ * version 2.3.3
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 28 Feb 2013
+ * Documentation last updated: 16 Mar 2013
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
@@ -183,7 +183,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.3.2'
+        version: '2.3.3'
     },
 
     /***
@@ -262,6 +262,11 @@ Ext.define("Chart.ux.Highcharts", {
      * loading. Defaults to false.
      */
     loadMask : false,
+
+    /***
+     * @cfg {String} loadMaskMsg Message display for loadmask
+     */
+    loadMaskMsg: 'Loading ... ',
 
     /**
      * @cfg {Boolean} refreshOnChange 
@@ -388,7 +393,14 @@ Ext.define("Chart.ux.Highcharts", {
         var n = new Array(), c = new Array(), cls, serieObject;
         // Add empty data to the serie or just leave it normal. Bug in HighCharts?
         for(var i = 0; i < series.length; i++) {
-            var serie = series[i];
+            // Clone Serie config for scope injection
+            var serie = Ext.clone(series[i]);
+            // Added scope to Highchart Component if not specified
+            if (serie.listeners) {
+                if (!serie.listeners.scope) {
+                    serie.listeners.scope=this;
+                }
+            }
             if(!serie.serieCls) {
                 if(serie.type != null || this.defaultSerieType != null) {
                     cls = serie.type || this.defaultSerieType;
@@ -396,6 +408,7 @@ Ext.define("Chart.ux.Highcharts", {
                 } else {
                     cls = "Chart.ux.Highcharts.Serie";
                 }
+
                 serieObject = Ext.create(cls, serie);
             } else {
                 serieObject = serie;
@@ -507,9 +520,10 @@ Ext.define("Chart.ux.Highcharts", {
 
     initEvents : function() {
         if(this.loadMask) {
-            this.loadMask = new Ext.LoadMask(this.el, Ext.apply({
-                store : this.store
-            }, this.loadMask));
+            this.loadMask = new Ext.LoadMask(this, {
+                store : this.store,
+                msg: this.loadMaskMsg
+            });
         }
     },
 
@@ -568,7 +582,7 @@ Ext.define("Chart.ux.Highcharts", {
             return;
         }
 
-        var data = new Array(), seriesCount = _this.series.length, i;
+        var data = [], seriesCount = _this.series.length, i;
 
         var items = this.store.data.items;
         (_this.chartConfig.series === undefined) && (_this.chartConfig.series = []);
@@ -664,7 +678,7 @@ Ext.define("Chart.ux.Highcharts", {
         } else if(this.rendered) {
             // Create the chart from fresh
 
-            if (!this.initAnimAfterLoad) {
+            if (!this.initAnimAfterLoad || (this.store && this.store.getCount() > 0)) {
                 this.buildInitData();
                 this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
                 this.log("initAnimAfterLoad is off, creating chart from fresh");
@@ -676,7 +690,7 @@ Ext.define("Chart.ux.Highcharts", {
 
         for( i = 0; i < _this.series.length; i++) {
             if(!_this.series[i].visible)
-                this.chart.series[i].hide();
+                _this.series[i].hide();
         }
 
         // Refresh the data only if it is not loading
@@ -806,6 +820,7 @@ Ext.define("Chart.ux.Highcharts", {
                             });
                         } else {
                             point = serie.getData(record, x);
+                            Ext.isObject(point) && (point.record = record);
                             data[i].push(point);
                         }
                     } else if (serie.type == 'pie') {
@@ -813,10 +828,12 @@ Ext.define("Chart.ux.Highcharts", {
                             if(x == 0)
                                 serie.clear();
                             point = serie.getData(record, x);
+                            Ext.isObject(point) && (point.record = record);
                         } else if (serie.totalDataField) {
                             serie.getData(record, data[i]);
                         } else {
                             point = serie.getData(record, x);
+                            Ext.isObject(point) && (point.record = record);
                             data[i].push(point);
                         }
                     } else if (serie.type == 'gauge') {
@@ -840,7 +857,7 @@ Ext.define("Chart.ux.Highcharts", {
                 for( i = 0; i < seriesCount; i++) {
                     if(_this.series[i].useTotals) {
                         this.chart.series[i].setData(_this.series[i].getTotals());
-                    } else if(data[i].length > 0) {
+                    } else if(data[i].length > 0 || _this.series[i].updateNoRecord) {
                         this.chart.series[i].setData(data[i], i == (seriesCount - 1));
                         // true == redraw.
                     }
@@ -856,7 +873,7 @@ Ext.define("Chart.ux.Highcharts", {
                 for( i = 0; i < seriesCount; i++) {
                     if (_this.series[i].useTotals) {
                         this.chart.series[i].setData(_this.series[i].getTotals());
-                    } else if (data[i].length > 0) {
+                    } else if (data[i].length > 0 || _this.series[i].updateNoRecord) {
                         if (!_this.lineShift) {
                             // Need to work out the length between the store dataset and
                             // the current series data set
@@ -868,8 +885,15 @@ Ext.define("Chart.ux.Highcharts", {
 
                             // Gotcha, we need to be careful with pie series, as the totalDataField
                             // can conflict with the following series data points trimming operations
-                            if (_this.series[i].type == 'pie')
+                            if (_this.series[i].type === 'pie') {
+                                this.chart.series[i].setData([]);
+                                for (var x=0;x<data[i].length;x++) {
+                                    this.chart.series[i].addPoint(data[i][x], false, false, false);
+                                }
+                                this.chart.series[i].animate = Highcharts.seriesTypes.pie.prototype.animate.bind(this.chart.series[i]);
+                                this.chart.redraw();
                                 continue;
+                            }
 
                             // Append the rest of the points from store to chart
                             this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);

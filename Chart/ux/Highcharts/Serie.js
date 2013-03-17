@@ -133,6 +133,13 @@ Ext.define('Chart.ux.Highcharts.Serie', {
     clear : Ext.emptyFn,
 
     /***
+     * @cfg {Boolean} updateNoRecord
+     * Setting this option to true will enforce the chart the clear the series if 
+     * there is no record returned for the series
+     */
+    updateNoRecord: false,
+
+    /***
      * @private
      * Resolve color based on the value of colorField
      */
@@ -268,6 +275,11 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
 	  onPointClick:function(evt){
 	      this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
-	  }
+	  },
+
+    destroy: function() {
+        this.clearListeners();
+        this.mixins.observable.destroy();
+    }
 
 });

@@ -149,6 +149,13 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
 <span id='Chart-ux-Highcharts-Serie-method-clear'>    clear : Ext.emptyFn,
 </span>
+<span id='Chart-ux-Highcharts-Serie-cfg-updateNoRecord'>    /***
+</span>     * @cfg {Boolean} updateNoRecord
+     * Setting this option to true will enforce the chart the clear the series if 
+     * there is no record returned for the series
+     */
+    updateNoRecord: false,
+
 <span id='Chart-ux-Highcharts-Serie-method-resolveColor'>    /***
 </span>     * @private
      * Resolve color based on the value of colorField
@@ -181,6 +188,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
         };
         this.xField &amp;&amp; (point.x = record.data[this.xField]);
         this.colorField &amp;&amp; (point.color = this.resolveColor(this.colorField, record, index));
+        this.bindRecord &amp;&amp; (point.record = record);
         return point;
     },
 
@@ -263,10 +271,12 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 		    this.config = config;
 
         this.yField = this.yField || this.dataIndex;
+        
+        this.bindRecord = (this.config.listeners &amp;&amp; this.config.listeners.pointclick !== undefined);
 
         // If colorField is defined, then we have to use data point
         // as object
-        this.colorField &amp;&amp; (this.pointObject = true);
+        (this.colorField || this.bindRecord) &amp;&amp; (this.pointObject = true);
 
         // If getData method is already defined, then overwrite it
         if (!this.getData) {
@@ -282,7 +292,12 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
 <span id='Chart-ux-Highcharts-Serie-method-onPointClick'>	  onPointClick:function(evt){
 </span>	      this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
-	  }
+	  },
+
+<span id='Chart-ux-Highcharts-Serie-method-destroy'>    destroy: function() {
+</span>        this.clearListeners();
+        this.mixins.observable.destroy();
+    }
 
 });
 </pre>
