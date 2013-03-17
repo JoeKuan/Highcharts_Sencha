@@ -5,7 +5,7 @@ var hiRef = '#A41E09';
 var dialColor = '#FA3421';
 var currentRpm = 0;
 
-Ext.define ("Chart.ux.ChartsDesktopConfig", {
+Ext.define ("Highcharts.ChartsDesktopConfig", {
     singleton: true,
     config : {
         spline : {
