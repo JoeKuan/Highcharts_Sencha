@@ -245,10 +245,10 @@ Ext.define("Chart.ux.Highcharts", {
     defaultSerieType : 'line',
     
     /**
-     * @cfg {Boolean} resizable
+     * @cfg {Boolean} resizableChart
      * True to allow resizing, false to disable resizing (defaults to true).
      */
-    resizable : true,
+    resizableChart : true,
 
     /**
      * @cfg {Number} updateDelay
@@ -641,7 +641,7 @@ Ext.define("Chart.ux.Highcharts", {
 
         this.log("call draw");
         if(this.chart && this.rendered) {
-            if(this.resizable) {
+            if(this.resizableChart) {
                 for(var i = 0; i < _this.series.length; i++) {
                     _this.series[i].visible = this.chart.series[i].visible;
                 }
@@ -1069,7 +1069,7 @@ Ext.define("Chart.ux.Highcharts", {
     //private
     _onResize : function() {
 //        this.callParent(arguments);
-        this.resizable && this.update();
+        this.resizableChart && this.update();
     },
 
     // private
