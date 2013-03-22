@@ -396,11 +396,11 @@ Ext.define("Chart.ux.Highcharts", {
             // Clone Serie config for scope injection
             var serie = Ext.clone(series[i]);
             // Added scope to Highchart Component if not specified
-            if (serie.listeners) {
-                if (!serie.listeners.scope) {
-                    serie.listeners.scope=this;
-                }
-            }
+//            if (serie.listeners) {
+//                if (!serie.listeners.scope) {
+//                    serie.listeners.scope=this;
+//                }
+//            }
             if(!serie.serieCls) {
                 if(serie.type != null || this.defaultSerieType != null) {
                     cls = serie.type || this.defaultSerieType;
