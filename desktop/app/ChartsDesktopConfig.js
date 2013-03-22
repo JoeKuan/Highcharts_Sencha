@@ -1126,7 +1126,7 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                 }
             }
         },
-	rpie : {
+	rpie: {
             series : [{
                 type : 'rpie',
 		radiusValued: true,
@@ -1207,25 +1207,11 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                     x : -20
                 },
                 xAxis : [{
-                    title : {
-                        text : 'Time',
-                        margin : 20
-                    },
                     labels : {
                         rotation : 270,
                         y : 35
                     }
                 }],
-                yAxis : {
-                    title : {
-                        text : 'Temperature'
-                    },
-                    plotLines : [{
-                        value : 0,
-                        width : 1,
-                        color : '#808080'
-                    }]
-                },
                 legend : {
                     layout : 'vertical',
                     align : 'right',
@@ -1941,8 +1927,166 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                     }
                 }
             }
+        },
+
+        // Test updateNoRecord
+        test4 : {
+            series : [{
+                type : 'column',
+                dataIndex : 'yesterday',
+                name : 'Yesterday',
+                updateNoRecord: true
+            }, {
+                type : 'column',
+                dataIndex : 'today',
+                name : 'Today'
+            }],
+            height : 500,
+            width : 700,
+            xField : 'time',
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginBottom : 120
+                },
+                title : {
+                    text : "Yesterday series is set with updateNoRecord option.<BR>Click 'Reload Data' and Yesterday series is returned in alternate reload.",
+                    useHTML: true
+                },
+                subtitle : {
+                    text : 'Expected Result: Today series remains and Yesterday appears in alternate reload',
+                    y: 50
+                },
+                xAxis : [{
+                    title : {
+                        text : 'Time',
+                        margin : 20
+                    },
+                    labels : {
+                        rotation : 270,
+                        y : 35,
+                        formatter : function () {
+                            var dt = Ext.Date.parse (parseInt (this.value) / 1000, "U");
+                            if (dt) {
+                                return Ext.Date.format (dt, "H:i:s");
+                            }
+                            return this.value;
+                        }
+
+                    }
+                }],
+                yAxis : {
+                    title : {
+                        text : 'Temperature'
+                    }
+                },
+                legend : {
+                    layout : 'vertical',
+                    align : 'right',
+                    verticalAlign : 'top',
+                    x : -10,
+                    y : 100,
+                    borderWidth : 0
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+
+        // Test load mask
+        test5 : {
+            series : [{
+                type : 'scatter',
+                lineWidth : 1,
+                xField: 'rebars_x',
+                yField: 'rebars_y'
+            }, {
+                type : 'scatter',
+                lineWidth : 0,
+                xField: 'points_x',
+                yField: 'points_y'
+            }],
+            loadMask: true,
+            loadMaskMsg: 'Test LoadMask screen .... ',
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginBottom : 120,
+                    zoomType : 'x'
+                },
+                title : {
+                    text : "Click 'Reload Data' to see the loadMask popup while store is loading.",
+                    x : -20 //center
+                },
+                subtitle : {
+                    text : 'Server side is configured with 5 secs sleep before returning the data',
+                    x : -20
+                },
+                xAxis : [{
+                    labels : {
+                        rotation : 270,
+                        y : 35
+                    }
+                }],
+                legend : {
+                    layout : 'vertical',
+                    align : 'right',
+                    verticalAlign : 'top',
+                    x : -10,
+                    y : 100,
+                    borderWidth : 0
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+        // Test different size of pie series in each update
+        test6 : {
+            series : [{
+                type : 'pie',
+                categorieField: 'name',
+                dataField: 'iq',
+                name: 'IQ'
+            }],
+            height : 500,
+            width : 700,
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginBottom : 120
+                },
+                title : {
+                    text : "Click 'Reload Data' to test add/remove data points for pie series update"
+                },
+                subtitle: {
+                    text: 'The pie series rotate from 1 to 5 data points'
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
         }
 
-    }
+    } // config
 
 });

@@ -52,7 +52,7 @@ Ext.define('Highcharts.controller.Charts', {
 
           // Generate the highchart config based on the selected type
           // Create the store if not exists
-          var configs = Ext.create(Highcharts.ChartsMobileConfig);
+          var configs = new Highcharts.ChartsMobileConfig();
           var hcConfg = null;
           var reloadDisabled = false;
           /*
@@ -112,6 +112,10 @@ Ext.define('Highcharts.controller.Charts', {
             case 'pie':
               hcConfig = configs.getPie();
               store = Ext.create('Highcharts.store.TempSummary');
+              break;
+	    case 'rpie':
+              hcConfig = configs.getRpie();
+              store = Ext.create('Highcharts.store.Fruits');
               break;
             case 'scatter':
               hcConfig = configs.getScatter();

@@ -5,6 +5,9 @@ Ext.define('Highcharts.store.IrregularData', {
   proxy : { 
     type: 'ajax',
     url: './data/irregular.php',
+    extraParams: {
+        delay: 5
+    },
     reader : {
       type: 'json',
       root: 'rows'

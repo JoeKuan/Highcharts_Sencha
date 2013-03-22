@@ -36,9 +36,9 @@
  * Then we can define the series data as:
  * 
  *     series: [{
- *        type: &#39;pie&#39;,
- *        categoryField: &#39;productName&#39;,
- *        dataField: &#39;sold&#39;
+ *        type: 'pie',
+ *        categoryField: 'productName',
+ *        dataField: 'sold'
  *     }]
  *
  * # Data point as total value of all the records
@@ -56,9 +56,9 @@
  * All we want is to plot distribution of total scores for each subject. Hence, we define
  * the pie series as follows:
  *     series: [{
- *        type: &#39;pie&#39;,
+ *        type: 'pie',
  *        useTotals: true,
- *        column: [ &#39;english&#39;, &#39;math&#39;, &#39;science&#39; ]
+ *        column: [ 'english', 'math', 'science' ]
  *     }]
  * whereas the server-side should return JSON data as follows:
  *     { &quot;root&quot;: [{ &quot;english&quot;: 77, &quot;math&quot;: 81, &quot;science&quot;: 78 },
@@ -67,12 +67,12 @@
  *                .....                                         ]
  *     } 
  * and the data model for the store is defined as follows:
- *     Ext.define(&#39;ExamResults&#39;, {
- *        extend: &#39;Ext.data.Model&#39;,
+ *     Ext.define('ExamResults', {
+ *        extend: 'Ext.data.Model',
  *          fields: [
- *              {name: &#39;english&#39;, type: &#39;int&#39;},
- *              {name: &#39;math&#39;,  type: &#39;int&#39;},
- *              {name: &#39;science&#39;,  type: &#39;int&#39;}
+ *              {name: 'english', type: 'int'},
+ *              {name: 'math',  type: 'int'},
+ *              {name: 'science',  type: 'int'}
  *          ]
  *     });
  *  
@@ -103,18 +103,18 @@
  The series definition for the donut chart should look like this:
  *     series: [{
  *        // Inner pie series
- *        type: &#39;pie&#39;,
- *        categoryField: &#39;productName&#39;,
- *        dataField: &#39;sold&#39;,
- *        size: &#39;60%&#39;,
+ *        type: 'pie',
+ *        categoryField: 'productName',
+ *        dataField: 'sold',
+ *        size: '60%',
  *        totalDataField: true
  *     }, {
  *        // Outer pie series
- *        type: &#39;pie&#39;,
- *        categoryField: &#39;region&#39;,
- *        dataField: &#39;sold&#39;,
- *        innerSize: &#39;60%&#39;,
- *        size: &#39;75%&#39;
+ *        type: 'pie',
+ *        categoryField: 'region',
+ *        dataField: 'sold',
+ *        innerSize: '60%',
+ *        size: '75%'
  *     }]
  * The *totalDataField* informs the first series to take the sum of *dataField* (sold) 
  * on entries with the same *categoryField* value, whereas the second series displays 
@@ -125,10 +125,10 @@
  * you can create an extra field in your store for the color code and use the 
  * *colorField* option to map the field.
  */
-Ext.define(&#39;Chart.ux.Highcharts.PieSerie&#39;, {
-    extend : &#39;Chart.ux.Highcharts.Serie&#39;,
-    alternateClassName: [ &#39;highcharts.pie&#39; ],
-<span id='Chart-ux-Highcharts-PieSerie-cfg-type'>    type : &#39;pie&#39;,
+Ext.define('Chart.ux.Highcharts.PieSerie', {
+    extend : 'Chart.ux.Highcharts.Serie',
+    alternateClassName: [ 'highcharts.pie' ],
+<span id='Chart-ux-Highcharts-PieSerie-cfg-type'>    type : 'pie',
 </span>
 <span id='Chart-ux-Highcharts-PieSerie-cfg-xField'>    /***
 </span>     * @cfg xField

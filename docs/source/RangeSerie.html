@@ -24,18 +24,18 @@
  * sorted and unsorted ways of specifying range data. If it is desired to
  * plot range data that are natively in sorted manner, the series can be specified as
  *     series:[{
- *         minDataIndex: &#39;low&#39;,
- *         maxDataIndex: &#39;high&#39;,
- *         type: &#39;columnrange&#39;
+ *         minDataIndex: 'low',
+ *         maxDataIndex: 'high',
+ *         type: 'columnrange'
  *     }]
  * As for plotting range series data that are naturally without high and low ends, do
  *     series:[{
- *         dataIndex: [ &#39;marketOpen&#39;, &#39;marketClose&#39; ],
- *         type: &#39;columnrange&#39;
+ *         dataIndex: [ 'marketOpen', 'marketClose' ],
+ *         type: 'columnrange'
  *     }]
  */
-Ext.define(&#39;Chart.ux.Highcharts.RangeSerie&#39;, {
-	extend : &#39;Chart.ux.Highcharts.Serie&#39;,
+Ext.define('Chart.ux.Highcharts.RangeSerie', {
+	extend : 'Chart.ux.Highcharts.Serie',
 
 <span id='Chart-ux-Highcharts-RangeSerie-cfg-minDataIndex'>  /***
 </span>   * @cfg {String}

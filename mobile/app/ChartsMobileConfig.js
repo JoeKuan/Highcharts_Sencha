@@ -6,7 +6,6 @@
     var currentRpm = 0;
 
 Ext.define ("Highcharts.ChartsMobileConfig", {
-
   config : {
     spline : {
       series : [{
