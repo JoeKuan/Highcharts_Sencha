@@ -260,8 +260,8 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 		        'pointclick'
 		    );
 		    this.config = config;
-
-        this.yField = this.yField || this.dataIndex;
+		    
+        this.yField = this.yField || this.config.dataIndex;
         
         this.bindRecord = (this.config.listeners && this.config.listeners.pointclick !== undefined);
 

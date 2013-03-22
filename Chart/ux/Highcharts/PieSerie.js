@@ -209,29 +209,29 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
      * it is not recommended to override this method
      */
     getData : function(record, seriesData) {
-
+	var _this = (this.chart.sencha.product == 't') ? this.config : this;
         // Summed up the category among the series data
         if(this.totalDataField) {
             var found = null;
             for(var i = 0; i < seriesData.length; i++) {
-                if(seriesData[i].name == record.data[this.categorieField]) {
+                if(seriesData[i].name == record.data[_this.categorieField]) {
                     found = i;
-                    seriesData[i].y += record.data[this.dataField];
+                    seriesData[i].y += record.data[_this.dataField];
                     break;
                 }
             }
             if(found === null) {
-                if (this.colorField && record.data[this.colorField]) {
+                if (_this.colorField && record.data[_this.colorField]) {
                     seriesData.push({
-                        name: record.data[this.categorieField],
-                        y: record.data[this.dataField],
-                        color: record.data[this.colorField],
+                        name: record.data[_this.categorieField],
+                        y: record.data[_this.dataField],
+                        color: record.data[_this.colorField],
                         record: this.bindRecord ? record : null
                     });
                 } else {
                     seriesData.push({
-                        name: record.data[this.categorieField],
-                        y: record.data[this.dataField],
+                        name: record.data[_this.categorieField],
+                        y: record.data[_this.dataField],
                         record: this.bindRecord ? record : null
                     });
                 }
@@ -240,22 +240,22 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
             return seriesData[i];
         }
 
-        if(this.useTotals) {
+        if(_this.useTotals) {
             this.addData(record);
             return [];
         }
 
-        if (this.colorField && record.data[this.colorField]) {
+        if (_this.colorField && record.data[this.colorField]) {
             return {
-                name: record.data[this.categorieField],
-                y: record.data[this.dataField],
-                color: record.data[this.colorField],
+                name: record.data[_this.categorieField],
+                y: record.data[_this.dataField],
+                color: record.data[_this.colorField],
                 record: this.bindRecord ? record : null
             };
         } else {
             return {
-                name: record.data[this.categorieField],
-                y: record.data[this.dataField],
+                name: record.data[_this.categorieField],
+                y: record.data[_this.dataField],
                 record: this.bindRecord ? record : null
             };
         }
