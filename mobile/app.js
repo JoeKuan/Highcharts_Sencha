@@ -18,6 +18,7 @@ Ext.require('Chart.ux.Highcharts.ColumnSerie');
 Ext.require('Chart.ux.Highcharts.GaugeSerie');
 Ext.require('Chart.ux.Highcharts.LineSerie');
 Ext.require('Chart.ux.Highcharts.PieSerie');
+Ext.require('Chart.ux.Highcharts.RPieSerie');
 Ext.require('Chart.ux.Highcharts.RangeSerie');
 Ext.require('Chart.ux.Highcharts.ScatterSerie');
 Ext.require('Chart.ux.Highcharts.SplineSerie');
@@ -60,6 +61,8 @@ Ext.application({
         Ext.require('Highcharts.store.Stock');
         Ext.require('Highcharts.model.Speedometer');
         Ext.require('Highcharts.store.Speedometer');
+	Ext.require('Highcharts.model.Fruits');
+	Ext.require('Highcharts.store.Fruits');
 
         Demo.configs = Ext.create(Highcharts.ChartsMobileConfig);;
 
@@ -233,6 +236,11 @@ Ext.application({
                         reload = false;
                         storeType = 'browsers';
                         break;
+		    case 'rpie':
+			hcConfig = Demo.configs.getRpie();
+			reload = true;
+			storeType = 'fruits';
+			break;	
                     case 'star':
                         hcConfig = Demo.configs.getStar();
                         reload = false;
@@ -331,11 +339,19 @@ Ext.application({
                             storeId: 'chartStore'
                         });
                         break;
+                    case 'fruits':
+                        store = Ext.create('Highcharts.store.Fruits', {
+                            model: 'Highcharts.model.Fruits',
+                            storeId: 'chartStore'
+                        });
+                        break;
                     }
-
+		
+		console.log(Highcharts.getOptions().plotOptions.rpie);
                     Demo.chartComponent && (Demo.chartComponent = Demo.chartComponent.destroy());
                     Demo.chartComponent = chart = Ext.widget('highchart', hcConfig);
-                    chart.bindStore(store, true);
+                    
+		    chart.bindStore(store, true);
 
                     store.load();
 
@@ -346,6 +362,8 @@ Ext.application({
                         Ext.getCmp('addSeries').show();
                     else
                         Ext.getCmp('addSeries').hide();
+		    
+		    
                 }
             }
         });

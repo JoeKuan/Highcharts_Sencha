@@ -798,7 +798,7 @@ Ext.define ("Highcharts.ChartsMobileConfig", {
     },
 
     rpie : {
-            series : [{
+      series : [{
                 type : 'rpie',
 		radiusValued: true,
                 categorieField : 'fruit_name',
@@ -806,45 +806,43 @@ Ext.define ("Highcharts.ChartsMobileConfig", {
 		radiusField : 'revenue',
                 name : 'Fruit production/revenue'
             }],
-            height : 500,
-            width : 700,
-            chartConfig : {
-		chart : {
-		  marginRight : 130,
-		  marginBottom : 120
-		},
-		title : {
-		  text : 'Pie - single series',
-		  x : -20 //center
-		},
-		subtitle : {
-		  text : 'Random Value',
-		  x : -20
-		},
-		tooltip : {
-		  formatter : function () {
-		    return '<b>' + this.point.name + '</b>' + ',temperature is : ' + this.y;
-		  }
-		},
-		legend : {
-		  layout : 'vertical',
-		  align : 'right',
-		  verticalAlign : 'top',
-		  x : -10,
-		  y : 100,
-		  borderWidth : 0
-		},
-		credits : {
-		  text : 'joekuan.wordpress.com',
-		  href : 'http://joekuan.wordpress.com',
-		  style : {
-		    cursor : 'pointer',
-		    color : '#707070',
-		    fontSize : '12px'
-		  }
-		}
-	      }
+      chartConfig : {
+        chart : {
+          marginRight : 130,
+          marginBottom : 120
         },
+        title : {
+          text : 'Pie - single series',
+          x : -20 //center
+        },
+        subtitle : {
+          text : 'Random Value',
+          x : -20
+        },
+        tooltip : {
+          formatter : function () {
+                        return '<b>' + this.point.name + '</b>' + ', production : ' + this.y + ' revenue : ' + this.point.r + "$";
+                    }
+        },
+        legend : {
+          layout : 'vertical',
+          align : 'right',
+          verticalAlign : 'top',
+          x : -10,
+          y : 100,
+          borderWidth : 0
+        },
+        credits : {
+          text : 'joekuan.wordpress.com',
+          href : 'http://joekuan.wordpress.com',
+          style : {
+            cursor : 'pointer',
+            color : '#707070',
+            fontSize : '12px'
+          }
+        }
+      }
+    },
 		
     scatter : {
       series : [{

@@ -84,7 +84,38 @@ function initHighchartsRPieSerie(){
 	    /**
 	     * Set the default options for pie
 	     */
-	    Highcharts.getOptions().plotOptions.rpie = Highcharts.getOptions().plotOptions.pie;
+	    Highcharts.getOptions().plotOptions.rpie= Highcharts.merge(Highcharts.getOptions().plotOptions.pie, {
+		borderColor: '#FFFFFF',
+		borderWidth: 1,
+		center: ['50%', '50%'],
+		colorByPoint: true, // always true for pies
+		dataLabels: {
+			// align: null,
+			// connectorWidth: 1,
+			// connectorColor: point.color,
+			// connectorPadding: 5,
+			distance: 30,
+			enabled: true,
+			formatter: function () {
+				return this.point.name;
+			}
+			// softConnector: true,
+			//y: 0
+		},
+		//innerSize: 0,
+		legendType: 'point',
+		marker: null, // point options are specified in the base options
+		size: '75%',
+		showInLegend: false,
+		slicedOffset: 10,
+		states: {
+			hover: {
+				brightness: 0.1,
+				shadow: false
+			}
+		}
+	});
+	    //Highcharts.getOptions().plotOptions.rpie = Highcharts.getOptions().plotOptions.pie;
 //		    {
 //		borderColor: '#FFFFFF',
 //		borderWidth: 1,

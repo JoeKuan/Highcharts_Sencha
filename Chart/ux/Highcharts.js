@@ -521,7 +521,8 @@ Ext.define("Chart.ux.Highcharts", {
 
     initEvents : function() {
         if(this.loadMask) {
-            this.loadMask = new Ext.LoadMask(this, {
+            this.loadMask = new Ext.LoadMask({
+		target:this,
                 store : this.store,
                 msg: this.loadMaskMsg
             });
@@ -896,7 +897,7 @@ Ext.define("Chart.ux.Highcharts", {
 
                             // Gotcha, we need to be careful with pie series, as the totalDataField
                             // can conflict with the following series data points trimming operations
-                            if (_this.series[i].type === 'pie') {
+                            if (_this.series[i].type === 'pie' || _this.series[i].type ===  'rpie') {
                                 this.chart.series[i].setData([]);
                                 for (var x=0;x<data[i].length;x++) {
                                     this.chart.series[i].addPoint(data[i][x], false, false, false);

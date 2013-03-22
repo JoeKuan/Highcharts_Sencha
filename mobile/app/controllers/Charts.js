@@ -37,6 +37,7 @@ Ext.define('Highcharts.controller.Charts', {
       'chartsTree' : {
         itemclick : function(view, model, item) {
           // Store from the chart
+	  console.log('click');
           var store = null;
           var selectedType = model.data.id.split('/')[1];
           var prevSelected = Ext.getCmp('leftTree').prevSelected;
@@ -62,7 +63,6 @@ Ext.define('Highcharts.controller.Charts', {
           */
           // Clear up special purpose widget
           Ext.getCmp('addSeries').setDisabled(true);
-
           switch (selectedType) {
             case 'spline':
               hcConfig = configs.getSpline();
