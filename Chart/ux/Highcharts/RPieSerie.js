@@ -23,64 +23,8 @@ function initHighchartsRPieSerie(){
 		    PX = 'px',
 		    NONE = 'none',
 		    M = 'M',
-		    L = 'L',
-		    /*
-		     * Empirical lowest possible opacities for TRACKER_FILL
-		     * IE6: 0.002
-		     * IE7: 0.002
-		     * IE8: 0.002
-		     * IE9: 0.00000000001 (unlimited)
-		     * IE10: 0.0001 (exporting only)
-		     * FF: 0.00000000001 (unlimited)
-		     * Chrome: 0.000001
-		     * Safari: 0.000001
-		     * Opera: 0.00000000001 (unlimited)
-		     */
-		    TRACKER_FILL = 'rgba(192,192,192,' + (Highcharts.hasSVG ? 0.0001 : 0.002) + ')', // invisible but clickable
-		    //TRACKER_FILL = 'rgba(192,192,192,0.5)',
-		    NORMAL_STATE = '',
-		    HOVER_STATE = 'hover',
-		    SELECT_STATE = 'select',
-		    MILLISECOND = 'millisecond',
-		    SECOND = 'second',
-		    MINUTE = 'minute',
-		    HOUR = 'hour',
-		    DAY = 'day',
-		    WEEK = 'week',
-		    MONTH = 'month',
-		    YEAR = 'year',
-		    // constants for attributes
-		    FILL = 'fill',
-		    LINEAR_GRADIENT = 'linearGradient',
-		    STOPS = 'stops',
-		    STROKE = 'stroke',
-		    STROKE_WIDTH = 'stroke-width';
-
-	    /**
-	     * Return the first value that is defined. Like MooTools' $.pick.
-	     */
-	    var noop = function() {
-	    };
-
-
-	    /**
-	     * Set the global animation to either a given value, or fall back to the
-	     * given chart's animation option
-	     * @param {Object} animation
-	     * @param {Object} chart
-	     */
-	    function setAnimation(animation, chart) {
-		globalAnimation = Highcharts.pick(animation, chart.animation);
-	    }
-
-	    /**
-	     * Returns true if the object is not null or undefined. Like MooTools' $.defined.
-	     * @param {Object} obj
-	     */
-	    function defined(obj) {
-		return obj !== UNDEFINED && obj !== null;
-	    }
-
+		    L = 'L';
+	    
 	    /**
 	     * Set the default options for pie
 	     */
@@ -115,243 +59,19 @@ function initHighchartsRPieSerie(){
 			}
 		}
 	});
-	    //Highcharts.getOptions().plotOptions.rpie = Highcharts.getOptions().plotOptions.pie;
-//		    {
-//		borderColor: '#FFFFFF',
-//		borderWidth: 1,
-//		center: ['50%', '50%'],
-//		colorByPoint: true, // always true for pies
-//		dataLabels: {
-//		    // align: null,
-//		    // connectorWidth: 1,
-//		    // connectorColor: point.color,
-//		    // connectorPadding: 5,
-//		    distance: 30,
-//		    enabled: true,
-//		    formatter: function() {
-//			return this.point.name;
-//		    }
-//		    // softConnector: true,
-//		    //y: 0
-//		},
-//		//innerSize: 0,
-//		legendType: 'point',
-//		marker: null, // point options are specified in the base options
-//		size: '75%',
-//		showInLegend: false,
-//		slicedOffset: 10,
-//		states: {
-//		    hover: {
-//			brightness: 0.1,
-//			shadow: false
-//		    }
-//		}
-//	    };
-
-	    /**
-	     * Extended point object for pies
-	     */
-	    var RPiePoint = Highcharts.extendClass(Highcharts.Point, {
-		/**
-		 * Initiate the pie slice
-		 */
-		init: function() {
-
-		    Highcharts.Point.prototype.init.apply(this, arguments);
-
-		    var point = this,
-			    toggleSlice;
-
-		    //visible: options.visible !== false,
-		    Highcharts.extend(point, {
-			visible: point.visible !== false,
-			name: Highcharts.pick(point.name, 'Slice')
-		    });
-
-		    // add event listener for select
-		    toggleSlice = function() {
-			point.slice();
-		    };
-		    Highcharts.addEvent(point, 'select', toggleSlice);
-		    Highcharts.addEvent(point, 'unselect', toggleSlice);
-
-		    return point;
-		},
-		/**
-		 * Toggle the visibility of the pie slice
-		 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
-		 *    visibility is toggled
-		 */
-		setVisible: function(vis) {
-		    var point = this,
-			    series = point.series,
-			    chart = series.chart,
-			    tracker = point.tracker,
-			    dataLabel = point.dataLabel,
-			    connector = point.connector,
-			    shadowGroup = point.shadowGroup,
-			    method;
-
-		    // if called without an argument, toggle visibility
-		    point.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-
-		    method = vis ? 'show' : 'hide';
-
-		    point.group[method]();
-		    if (tracker) {
-			tracker[method]();
-		    }
-		    if (dataLabel) {
-			dataLabel[method]();
-		    }
-		    if (connector) {
-			connector[method]();
-		    }
-		    if (shadowGroup) {
-			shadowGroup[method]();
-		    }
-		    if (point.legendItem) {
-			chart.legend.colorizeItem(point, vis);
-		    }
-
-		    // Handle ignore hidden slices
-		    if (!series.isDirty && series.options.ignoreHiddenPoint) {
-			series.isDirty = true;
-			chart.redraw();
-		    }
-		},
-		/**
-		 * Set or toggle whether the slice is cut out from the pie
-		 * @param {Boolean} sliced When undefined, the slice state is toggled
-		 * @param {Boolean} redraw Whether to redraw the chart. True by default.
-		 */
-		slice: function(sliced, redraw, animation) {
-		    var point = this,
-			    series = point.series,
-			    chart = series.chart,
-			    slicedTranslation = point.slicedTranslation,
-			    translation;
-
-		    setAnimation(animation, chart);
-
-		    // redraw is true by default
-		    redraw = Highcharts.pick(redraw, true);
-
-		    // if called without an argument, toggle
-		    sliced = point.sliced = defined(sliced) ? sliced : !point.sliced;
-
-		    translation = {
-			translateX: (sliced ? slicedTranslation[0] : chart.plotLeft),
-			translateY: (sliced ? slicedTranslation[1] : chart.plotTop)
-		    };
-		    point.group.animate(translation);
-		    if (point.shadowGroup) {
-			point.shadowGroup.animate(translation);
-		    }
-
-		}
-	    });
 
 	    /**
 	     * The Pie series class
 	     */
 	    var RPieSeries = {
 		type: 'rpie',
-		isCartesian: false,
-		pointClass: RPiePoint,
-		requireSorting: false,
 		radiusValued: false,
 		minRadius: 40,
-		pointAttrToOptions: {// mapping between SVG attributes and the corresponding options
-		    stroke: 'borderColor',
-		    'stroke-width': 'borderWidth',
-		    fill: 'color'
-		},
 		init: function(chart, options) {
-		    Highcharts.Series.prototype.init.apply(this, arguments);
-		    this.radiusValued = options.radiusValued || false;
+		    Highcharts.seriesTypes.pie.prototype.init.apply(this,arguments);
+		    //Highcharts.Series.prototype.init.apply(this, arguments);
+		    this.radiusValued = options.radiusValued || true;
 		    this.minRadius = options.minRadius || 40;
-		},
-		/**
-		 * Pies have one color each point
-		 */
-		getColor: function() {
-		    // record first color for use in setData
-		    this.initialColor = this.chart.counters.color;
-		},
-		/**
-		 * Animate the pies in
-		 */
-		animate: function() {
-		    var series = this,
-			    points = series.points,
-			    startAngleRad = series.startAngleRad;
-
-		    Highcharts.each(points, function(point) {
-			var graphic = point.graphic,
-				args = point.shapeArgs;
-
-			if (graphic) {
-			    // start values
-			    graphic.attr({
-				r: series.center[3] / 2, // animate from inner radius (#779)
-				start: startAngleRad,
-				end: startAngleRad
-			    });
-
-			    // animate
-			    graphic.animate({
-				r: args.r,
-				start: args.start,
-				end: args.end
-			    }, series.options.animation);
-			}
-		    });
-
-		    // delete this function to allow it only once
-		    series.animate = null;
-
-		},
-		/**
-		 * Extend the basic setData method by running processData and generatePoints immediately,
-		 * in order to access the points from the legend.
-		 */
-		setData: function(data, redraw) {
-		    Highcharts.Series.prototype.setData.call(this, data, false);
-		    this.processData();
-		    this.generatePoints();
-		    if (Highcharts.pick(redraw, true)) {
-			this.chart.redraw();
-		    }
-		},
-		/**
-		 * Get the center of the pie based on the size and center options relative to the
-		 * plot area. Borrowed by the polar and gauge series types.
-		 */
-		getCenter: function() {
-
-		    var options = this.options,
-			    chart = this.chart,
-			    plotWidth = chart.plotWidth,
-			    plotHeight = chart.plotHeight,
-			    positions = options.center.concat([options.size, options.innerSize || 0]),
-			    smallestSize = mathMin(plotWidth, plotHeight),
-			    isPercent;
-
-		    return Highcharts.map(positions, function(length, i) {
-
-			isPercent = /%$/.test(length);
-			return isPercent ?
-				/*
-				 * i == 0: centerX, relative to width
-				 * i == 1: centerY, relative to height
-				 * i == 2: size, relative to smallestSize
-				 * i == 4: innerSize, relative to smallestSize
-				 */
-				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
-				Highcharts.pInt(length) / 100 :
-				length;
-		    });
 		},
 		/**
 		 * Do translation for pie slices
@@ -507,97 +227,7 @@ function initHighchartsRPieSerie(){
 
 		    this.setTooltipPoints();
 		},
-		/**
-		 * Render the slices
-		 */
-		render: function() {
-		    var series = this;
-
-		    // cache attributes for shapes
-		    series.getAttribs();
-
-		    this.drawPoints();
-
-		    // draw the mouse tracking area
-		    if (series.options.enableMouseTracking !== false) {
-			series.drawTracker();
-		    }
-
-		    this.drawDataLabels();
-
-		    if (series.options.animation && series.animate) {
-			series.animate();
-		    }
-
-		    // (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
-		    series.isDirty = false; // means data is in accordance with what you see
-		},
-		/**
-		 * Draw the data points
-		 */
-		drawPoints: function() {
-		    var series = this,
-			    chart = series.chart,
-			    renderer = chart.renderer,
-			    groupTranslation,
-			    //center,
-			    graphic,
-			    group,
-			    shadow = series.options.shadow,
-			    shadowGroup,
-			    shapeArgs;
-
-		    // draw the slices
-		    Highcharts.each(series.points, function(point) {
-			graphic = point.graphic;
-			shapeArgs = point.shapeArgs;
-			group = point.group;
-			shadowGroup = point.shadowGroup;
-
-			// put the shadow behind all points
-			if (shadow && !shadowGroup) {
-			    shadowGroup = point.shadowGroup = renderer.g('shadow')
-				    .attr({zIndex: 4})
-				    .add();
-			}
-
-			// create the group the first time
-			if (!group) {
-			    group = point.group = renderer.g('point')
-				    .attr({zIndex: 5})
-				    .add();
-			}
-
-			// if the point is sliced, use special translation, else use plot area traslation
-			groupTranslation = point.sliced ? point.slicedTranslation : [chart.plotLeft, chart.plotTop];
-			group.translate(groupTranslation[0], groupTranslation[1]);
-			if (shadowGroup) {
-			    shadowGroup.translate(groupTranslation[0], groupTranslation[1]);
-			}
-
-			// draw the slice
-			if (graphic) {
-			    graphic.animate(shapeArgs);
-			} else {
-			    point.graphic = graphic = renderer.arc(shapeArgs)
-				    .setRadialReference(series.center)
-				    .attr(Highcharts.extend(
-				    point.pointAttr[NORMAL_STATE],
-				    {'stroke-linejoin': 'round'}
-			    ))
-				    .add(point.group)
-				    .shadow(shadow, shadowGroup);
-
-			}
-
-			// detect point specific visibility
-			if (point.visible === false) {
-			    point.setVisible(false);
-			}
-
-		    });
-
-		},
+		
 		/**
 		 * Override the base drawDataLabels method by pie specific functionality
 		 */
@@ -621,9 +251,9 @@ function initHighchartsRPieSerie(){
 			    labelPos,
 			    labelHeight,
 			    halves = [// divide the points into right and left halves for anti collision
-			[], // right
-			[]  // left
-		    ],
+				[], // right
+				[]  // left
+			    ],
 			    x,
 			    y,
 			    visibility,
@@ -852,24 +482,9 @@ function initHighchartsRPieSerie(){
 			    }
 			}
 		    }
-		},
-		alignDataLabel: noop,
-		/**
-		 * Draw point specific tracker objects. Inherit directly from column series.
-		 */
-		drawTracker: Highcharts.seriesTypes.column.prototype.drawTracker,
-		/**
-		 * Use a simple symbol from column prototype
-		 */
-		drawLegendSymbol: Highcharts.seriesTypes.area.prototype.drawLegendSymbol,
-		/**
-		 * Pies don't have point marker symbols
-		 */
-		getSymbol: function() {
 		}
-
 	    };
-	    RPieSeries = Highcharts.extendClass(Highcharts.Series, RPieSeries);
+	    RPieSeries = Highcharts.extendClass(Highcharts.seriesTypes.pie, RPieSeries);
 	    Highcharts.seriesTypes.rpie = RPieSeries;
 	}).call(Highcharts);
 }
@@ -964,6 +579,22 @@ Ext.define('Chart.ux.Highcharts.RPieSerie', {
 	    }
 	}
     },
+    buildInitData:function(items){
+	// Summed up the category among the series data
+	var record;
+	var data = this.config.data = [];
+	if (this.config.totalDataField) {
+	    for (var x = 0; x < items.length; x++) {
+		record = items[x];
+		this.getData(record,data);
+	    }
+	} else {
+	    for (var x = 0; x < items.length; x++) {
+		record = items[x];
+		data.push(this.getData(record));
+	    }
+	}
+    },	        
     //private
     addData: function(record) {
 	for (var i = 0; i < this.columns.length; i++) {
