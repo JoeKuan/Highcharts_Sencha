@@ -170,6 +170,23 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
             }
         }
     },
+	    
+    buildInitData:function(items){
+	// Summed up the category among the series data
+	var record;
+	var data = this.config.data = [];
+	if (this.config.totalDataField) {
+	    for (var x = 0; x < items.length; x++) {
+		record = items[x];
+		this.getData(record,data);
+	    }
+	} else {
+	    for (var x = 0; x < items.length; x++) {
+		record = items[x];
+		data.push(this.getData(record));
+	    }
+	}
+    },
 
     //private
     addData : function(record) {
@@ -210,6 +227,7 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
      */
     getData : function(record, seriesData) {
 	var _this = (this.chart.sencha.product == 't') ? this.config : this;
+
         // Summed up the category among the series data
         if(this.totalDataField) {
             var found = null;
@@ -226,13 +244,15 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
                         name: record.data[_this.categorieField],
                         y: record.data[_this.dataField],
                         color: record.data[_this.colorField],
-                        record: this.bindRecord ? record : null
+                        record: this.bindRecord ? record : null,
+			events:this.dataEvents
                     });
                 } else {
                     seriesData.push({
                         name: record.data[_this.categorieField],
                         y: record.data[_this.dataField],
-                        record: this.bindRecord ? record : null
+                        record: this.bindRecord ? record : null,
+			events:this.dataEvents
                     });
                 }
                 i = seriesData.length - 1;
@@ -250,13 +270,15 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
                 name: record.data[_this.categorieField],
                 y: record.data[_this.dataField],
                 color: record.data[_this.colorField],
-                record: this.bindRecord ? record : null
+                record: this.bindRecord ? record : null,
+		events:this.dataEvents
             };
         } else {
             return {
                 name: record.data[_this.categorieField],
                 y: record.data[_this.dataField],
-                record: this.bindRecord ? record : null
+                record: this.bindRecord ? record : null,
+		events:this.dataEvents
             };
         }
     },

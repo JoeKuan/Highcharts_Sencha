@@ -588,67 +588,10 @@ Ext.define("Chart.ux.Highcharts", {
 
         var items = this.store.data.items;
         (_this.chartConfig.series === undefined) && (_this.chartConfig.series = []);
-        for( i = 0; i < seriesCount; i++) {
-
-            if (!_this.chartConfig.series[i])
-                _this.chartConfig.series[i] = { data: [] };
-            else 
-                _this.chartConfig.series[i].data = [];
-
-            // Sort out the type for this series
+	for( i = 0; i < seriesCount; i++) {
             series = _this.series[i];
-            chartConfigSeries = _this.chartConfig.series[i];
-
-            var seriesType = series.type || _this.chartConfig.chart.type || _this.chartConfig.chart.defaultSeriesType || 'line';
-            var data = chartConfigSeries.data = chartConfigSeries.data || {};
-            bindRecord = series.bindRecord;
-
-            switch(seriesType) {
-            case 'line':
-            case 'spline':
-            case 'area':
-            case 'areaspline':
-            case 'scatter':
-            case 'bar':
-            case 'column':
-            case 'columnrange':
-            case 'arearange':
-            case 'areasplinerange':
-                for (var x = 0; x < items.length; x++) {
-                    record = items[x];
-                    // Should use the pre-constructed getData template method to extract
-                    // record data into the data point (Array of values or Point object)
-                    data.push(series.getData(record, x));
-                }
-
-                var xAxis = (Ext.isArray(_this.chartConfig.xAxis)) ? _this.chartConfig.xAxis[0] : _this.chartConfig.xAxis;
-                // Build the first x-axis categories
-                if (_this.xField && (!xAxis.categories || xAxis.categories.length < items.length)) {
-                    xAxis.categories = xAxis.categories || [];
-                    for (var x = 0; x < items.length; x++) {
-                        xAxis.categories.push(items[x].data[_this.xField]);
-                    }
-                }
-                break;
-
-            case 'pie':
-	    case 'rpie':
-                // Summed up the category among the series data
-                if (series.totalDataField) {
-                    for (var x = 0; x < items.length; x++) {
-                        record = items[x];
-                        series.getData(record,data);
-                    }
-                } else {
-                    for (var x = 0; x < items.length; x++) {
-                        record = items[x];
-                        data.push(series.getData(record));
-                    }
-                }
-                break;
-            }
-
-        }
+	    series.buildInitData(items);
+	}
     },
 
     /**
