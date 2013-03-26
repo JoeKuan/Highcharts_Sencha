@@ -258,11 +258,14 @@ Ext.define('Chart.ux.Highcharts.Serie', {
         this.yField = this.yField || this.config.dataIndex;
         
         this.bindRecord = (this.config.listeners && this.config.listeners.pointclick !== undefined);
-	Ext.apply(this.config,{
-	    events:{
-		      click:this.onPointClick.bind(this)
-	    }
+	Ext.applyIf(this.config,{
+	    events:{}
 	});
+	Ext.applyIf(this.config.events,
+	    {
+		  click:this.onPointClick.bind(this)
+	    }
+	);
 	
         // If colorField is defined, then we have to use data point
         // as object
