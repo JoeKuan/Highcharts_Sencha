@@ -200,7 +200,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 </span>         * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.3.2'
+        version: '2.3.3'
     },
 
 <span id='Chart-ux-Highcharts-property-debug'>    /***
@@ -261,11 +261,11 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      */
     defaultSerieType : 'line',
     
-<span id='Chart-ux-Highcharts-cfg-resizable'>    /**
-</span>     * @cfg {Boolean} resizable
+<span id='Chart-ux-Highcharts-cfg-resizableChart'>    /**
+</span>     * @cfg {Boolean} resizableChart
      * True to allow resizing, false to disable resizing (defaults to true).
      */
-    resizable : true,
+    resizableChart : true,
 
 <span id='Chart-ux-Highcharts-cfg-updateDelay'>    /**
 </span>     * @cfg {Number} updateDelay
@@ -413,11 +413,11 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
             // Clone Serie config for scope injection
             var serie = Ext.clone(series[i]);
             // Added scope to Highchart Component if not specified
-            if (serie.listeners) {
-                if (!serie.listeners.scope) {
-                    serie.listeners.scope=this;
-                }
-            }
+//            if (serie.listeners) {
+//                if (!serie.listeners.scope) {
+//                    serie.listeners.scope=this;
+//                }
+//            }
             if(!serie.serieCls) {
                 if(serie.type != null || this.defaultSerieType != null) {
                     cls = serie.type || this.defaultSerieType;
@@ -430,6 +430,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
             } else {
                 serieObject = serie;
             }
+	    serieObject.chart=this;
             c.push(serieObject.config);
             n.push(serieObject);
         }
@@ -647,6 +648,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                 break;
 
             case 'pie':
+	    case 'rpie':
                 // Summed up the category among the series data
                 if (series.totalDataField) {
                     for (var x = 0; x &lt; items.length; x++) {
@@ -675,7 +677,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
         this.log(&quot;call draw&quot;);
         if(this.chart &amp;&amp; this.rendered) {
-            if(this.resizable) {
+            if(this.resizableChart) {
                 for(var i = 0; i &lt; _this.series.length; i++) {
                     _this.series[i].visible = this.chart.series[i].visible;
                 }
@@ -748,10 +750,10 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 <span id='Chart-ux-Highcharts-method-bindComponent'>    bindComponent : function(bind) {
 </span>        if(bind) {
             this.on('move', this.onMove);
-            this.on('resize', this.onResize);
+            this.on('resize', this._onResize);
         } else {
             this.un('move', this.onMove);
-            this.un('resize', this.onResize);
+            this.un('resize', this._onResize);
         }
     },
 
@@ -788,6 +790,15 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         }
 
         this.store = store;
+	
+	if(this.loadMask !== false){
+	    if(this.loadMask === true){
+		this.loadMask = new Ext.LoadMask({target:this,store:this.store});
+	    }else{
+		this.loadMask.bindStore(this.store);
+	    }
+	}
+	
         if(store &amp;&amp; !initial) {
             this.refresh();
         }
@@ -840,7 +851,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                             Ext.isObject(point) &amp;&amp; (point.record = record);
                             data[i].push(point);
                         }
-                    } else if (serie.type == 'pie') {
+                    } else if (serie.type == 'pie' || serie.type == 'rpie') {
                         if (serie.useTotals) {
                             if(x == 0)
                                 serie.clear();
@@ -908,10 +919,9 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                                     this.chart.series[i].addPoint(data[i][x], false, false, false);
                                 }
                                 this.chart.series[i].animate = Highcharts.seriesTypes.pie.prototype.animate.bind(this.chart.series[i]);
-                                this.chart.redraw();
+                                //this.chart.redraw();
                                 continue;
                             }
-
                             // Append the rest of the points from store to chart
                             this.log(&quot;chartSeriesLength &quot; + chartSeriesLength + &quot;, storeSeriesLength &quot; + storeSeriesLength);
                             if (chartSeriesLength &lt; storeSeriesLength) {
@@ -1025,7 +1035,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
             for(var i = 0; i &lt; this.chart.series.length; i++) {
                 var serie = this.chart.series[i];
                 var point = _this.series[i].getData(record, index);
-                if(_this.series[i].type == 'pie' &amp;&amp; _this.series[i].useTotals) {
+                if((_this.series[i].type == 'pie' || _this.series[i].type == 'rpie') &amp;&amp; _this.series[i].useTotals) {
                     _this.series[i].update(record);
                     this.chart.series[i].setData(_this.series[i].getTotals());
                 } else
@@ -1088,7 +1098,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
             for(var x = 0; x &lt; this.chart.series.length; x++) {
                 var serie = this.chart.series[x], s = _this.series[x];
                 var point = s.getData(record, index + i);
-                if(!(s.type == 'pie' &amp;&amp; s.useTotals)) {
+                if(!((s.type == 'pie' || s.type == 'rpie') &amp;&amp; s.useTotals)) {
                     serie.addPoint(point, redraw);
                 }
             }
@@ -1099,10 +1109,10 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
     },
 
-<span id='Chart-ux-Highcharts-method-onResize'>    //private
-</span>    onResize : function() {
-        this.callParent(arguments);
-        this.resizable &amp;&amp; this.update();
+<span id='Chart-ux-Highcharts-method-_onResize'>    //private
+</span>    _onResize : function() {
+//        this.callParent(arguments);
+        this.resizableChart &amp;&amp; this.update();
     },
 
 <span id='Chart-ux-Highcharts-method-onRemove'>    // private
@@ -1112,7 +1122,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
         for(var i = 0; i &lt; _this.series.length; i++) {
             var s = _this.series[i];
-            if(s.type == 'pie' &amp;&amp; s.useTotals) {
+            if((s.type == 'pie' || s.type == 'rpie') &amp;&amp; s.useTotals) {
                 s.removeData(record, index);
                 this.chart.series[i].setData(s.getTotals());
             } else {

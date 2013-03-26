@@ -1,0 +1,29 @@
+{ "rows":[
+	{
+	    "fruit_name":"Apple",
+	    "production":100,
+	    "revenue": 2300
+	},
+	{
+	    "fruit_name":"Pear",
+	    "production":100,
+	    "revenue": 1500
+	},
+	{
+	    "fruit_name":"Peach",
+	    "production":10,
+	    "revenue": 1100
+	},
+	{
+	    "fruit_name":"Strawberry",
+	    "production":10,
+	    "revenue": 980
+	},
+	{
+	    "fruit_name":"Plum",
+	    "production":100,
+	    "revenue": 400
+	}
+    ],
+	    "success":true
+}

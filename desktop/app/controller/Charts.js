@@ -57,7 +57,8 @@ Ext.define('Highcharts.controller.Charts', {
 
                     // Generate the highchart config based on the selected type
                     // Create the store if not exists
-                    var configs = Chart.ux.ChartsDesktopConfig;
+                    var configs = Highcharts.ChartsDesktopConfig;
+		    console.log(configs);
                     var hcConfg = null;
                     var reloadDisabled = false;
 
@@ -122,6 +123,10 @@ Ext.define('Highcharts.controller.Charts', {
                         hcConfig = configs.getPie();
                         store = Ext.create('Highcharts.store.TempSummary');
                         break;
+		    case 'rpie':
+			hcConfig = configs.getRpie();
+			store = Ext.create('Highcharts.store.Fruits');
+			break;
                     case 'scatter':
                         hcConfig = configs.getScatter();
                         store = Ext.create('Highcharts.store.Scatter');
@@ -219,5 +224,4 @@ Ext.define('Highcharts.controller.Charts', {
             }
         });
     }
-
 });

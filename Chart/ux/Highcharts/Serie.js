@@ -90,6 +90,14 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      * @type Boolean
      */
     pointObject: false,
+    
+    /**
+     * @readonly
+     * The {@link Chart.ux.Highcharts} object that has this serie
+     *
+     * @type Object/Chart.ux.Highcharts
+     */
+    chart: null,
 
     /**
      * @cfg {String} xField
@@ -233,12 +241,6 @@ Ext.define('Chart.ux.Highcharts.Serie', {
             config.data = [];
         }
 
-		    Ext.apply(config,{
-		        events:{
-			          click:this.onPointClick.bind(this)
-		        }
-		    });
-
 		    this.mixins.observable.constructor.call(this, config);
 		    this.addEvents(
 		        /**
@@ -251,12 +253,20 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 		         */
 		        'pointclick'
 		    );
-		    this.config = config;
-
-        this.yField = this.yField || this.dataIndex;
+		    this.config =config;
+		    
+        this.yField = this.yField || this.config.dataIndex;
         
         this.bindRecord = (this.config.listeners && this.config.listeners.pointclick !== undefined);
-
+	Ext.applyIf(this.config,{
+	    events:{}
+	});
+	Ext.applyIf(this.config.events,
+	    {
+		  click:this.onPointClick.bind(this)
+	    }
+	);
+	
         // If colorField is defined, then we have to use data point
         // as object
         (this.colorField || this.bindRecord) && (this.pointObject = true);
@@ -272,9 +282,37 @@ Ext.define('Chart.ux.Highcharts.Serie', {
             }
         }
     },
+	  buildInitData:function(items,data){
+		var chartConfig = (this.chart.sencha.product == 't') ? this.chart.config.chartConfig : this.chart.chartConfig;
+	
+		var record;
+ 		var data = this.config.data = [];
+		// Sort out the type for this series
+		//chartConfigSeries = this.config;
 
+		//var data = chartConfig.data = chartConfig.data || {};
+		//var bindRecord = this.bindRecord;
+
+                for (var x = 0; x < items.length; x++) {
+                    record = items[x];
+                    // Should use the pre-constructed getData template method to extract
+                    // record data into the data point (Array of values or Point object)
+                    data.push(this.getData(record, x));
+                }
+
+                var xAxis = (Ext.isArray(chartConfig.xAxis)) ? chartConfig.xAxis[0] : chartConfig.xAxis;
+		
+                // Build the first x-axis categories
+                if (this.chart.xField && (!xAxis.categories || xAxis.categories.length < items.length)) {
+                    xAxis.categories = xAxis.categories || [];
+                    for (var x = 0; x < items.length; x++) {
+                        xAxis.categories.push(items[x].data[this.chart.xField]);
+                    }
+                }
+	  },
 	  onPointClick:function(evt){
 	      this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
+	      //return true;
 	  },
 
     destroy: function() {
