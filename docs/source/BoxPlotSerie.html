@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-BoxPlotSerie'>/**
+</span> * Serie class for BoxPlot series type
+ *
+ * See {@link Chart.ux.Highcharts.RangeSerie} class for more info
+ * 
+ * Here is an example of BoxPlot series config:
+ *      series: [{
+ *          type: 'boxplot',
+ *          minDataIndex: 'min',
+ *          lowQtrDataIndex: 'q1',
+ *          medianDataIndex: 'med',
+ *          highQtrDataIndex: 'q2',
+ *          maxDataIndex: 'max',
+ *          xField: 'date'
+ *      }]     
+ *
+ */
+Ext.define('Chart.ux.Highcharts.BoxPlotSerie', {
+	  extend : 'Chart.ux.Highcharts.RangeSerie',
+	  alternateClassName: [ 'highcharts.boxplot' ],
+<span id='Chart-ux-Highcharts-BoxPlotSerie-cfg-type'>	  type : 'boxplot',
+</span>
+<span id='Chart-ux-Highcharts-BoxPlotSerie-cfg-lowQtrDataIndex'>    /**
+</span>     * @cfg {String} lowQtrDataIndex
+     * The low Quartile data field 
+     */
+    lowQtrDataIndex: null,
+
+<span id='Chart-ux-Highcharts-BoxPlotSerie-cfg-highQtrDataIndex'>    /**
+</span>     * @cfg {String} highQtrDataIndex
+     * The high Quartile data field 
+     */
+    highQtrDataIndex: null,
+
+<span id='Chart-ux-Highcharts-BoxPlotSerie-cfg-medianDataIndex'>    /**
+</span>     * @cfg {String} medianDataIndex
+     * The median data field
+     */
+    medianDataIndex: null,
+
+<span id='Chart-ux-Highcharts-BoxPlotSerie-method-getData'>    getData: function(record, index) {
+</span>        return [ 
+            record.data[ this.minDataIndex ], 
+            record.data[ this.lowQtrDataIndex ],
+            record.data[ this.medianDataIndex ],
+            record.data[ this.highQtrDataIndex ],
+            record.data[ this.maxDataIndex ]
+        ];
+    }
+});
+</pre>
+</body>
+</html>

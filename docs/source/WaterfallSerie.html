@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-WaterfallSerie'>/**
+</span> * Serie class for water fall series type
+ *
+ * See {@link Chart.ux.Highcharts.Serie} class for more info
+ *
+ * The following is the config example converted from the original 
+ * [Highcharts waterfall demo][1]
+ * [1]: http://www.highcharts.com/demo/waterfall
+ *
+ *     series: [{
+ *         type: 'waterfall',
+ *         upColor: Highcharts.getOptions().colors[2],
+ *         color: Highcharts.getOptions().colors[3],
+ *         categorieField: 'category',
+ *         yField: 'value',
+ *         colorField: 'color',
+ *         sumTypeField: 'sum',
+ *         dataLabels: {
+ *             ....
+ *         }
+ *     }]
+ *
+ * The Json data returning from the server side should look like as follows:
+ * 
+ *     {&quot;root&quot;:[{ &quot;category&quot;:&quot;Start&quot;,&quot;value&quot;:120000 }, 
+ *              { &quot;category&quot;:&quot;Product Revenue&quot;,&quot;value&quot;:569000 },
+ *              { &quot;category&quot;:&quot;Service Revenue&quot;,&quot;value&quot;:231000 },
+ *              { &quot;category&quot;:&quot;Positive Balance&quot;,&quot;color&quot;: &quot;#0d233a&quot;, &quot;sum&quot;: &quot;intermediate&quot; },
+ *              { &quot;category&quot;:&quot;Fixed Costs&quot;,&quot;value&quot;:-342000 },
+ *              { &quot;category&quot;:&quot;Variable Cost&quot;,&quot;value&quot;: -233000 },
+ *              { &quot;category&quot;:&quot;Balance&quot;,&quot;color&quot;: &quot;#0d233a&quot;, &quot;sum&quot;: &quot;final&quot; }
+ *     ]}
+ *
+ */
+Ext.define('Chart.ux.Highcharts.WaterfallSerie', {
+	  extend : 'Chart.ux.Highcharts.Serie',
+	  alternateClassName: [ 'highcharts.waterfall' ],
+<span id='Chart-ux-Highcharts-WaterfallSerie-cfg-type'>	  type : 'waterfall',
+</span>
+<span id='Chart-ux-Highcharts-WaterfallSerie-cfg-sumTypeField'>    /**
+</span>     * @cfg {String} sumTypeField
+     * Column value is whether derived from precious values. 
+     * Possible values: 'intermediate', 'final' or null (expect dataIndex or yField contains value)
+     */
+    sumTypeField: null,
+
+<span id='Chart-ux-Highcharts-WaterfallSerie-method-constructor'>    constructor: function(config) {
+</span>
+        this.callParent(arguments);
+        this.valField = this.yField || this.dataIndex;
+        this.nameField = this.categorieField || this.xField;
+    },
+
+<span id='Chart-ux-Highcharts-WaterfallSerie-method-getData'>    getData: function(record, index) {
+</span>
+        var dataObj = {
+            y: record.data[ this.valField ],
+            name: record.data[ this.nameField ]
+        };
+
+        // Only define color if there is value, otherwise it column
+        // won't take any global color definitiion
+        record.data [ this.colorField ] &amp;&amp; (dataObj.color = record.data[this.colorField]);
+
+        if (this.sumTypeField) {
+            if (record.data[this.sumTypeField] == &quot;intermediate&quot;) {
+                dataObj.isIntermediateSum = true;
+            } else if (record.data[this.sumTypeField] == &quot;final&quot;) {
+                dataObj.isSum = true;
+            }
+        }
+
+        return dataObj;
+    }
+});
+</pre>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-FunnelSerie'>/**
+</span> * Serie class for Funnel series type
+ *
+ * See {@link Chart.ux.Highcharts.Serie} class for more info
+ *
+ * Example of series config:
+ *
+ *     series: [{
+ *         type: 'funnel',
+ *         // or xField
+ *         categorieField: 'category',
+ *         yField: 'value',
+ *     }]
+ *
+ * **Note**: You must load Highcharts module http://code.highcharts.com/modules/funnel.js in 
+ * your HTML file, otherwise you get unknown series type error 
+ */
+Ext.define('Chart.ux.Highcharts.FunnelSerie', {
+	  extend : 'Chart.ux.Highcharts.WaterfallSerie',
+	  alternateClassName: [ 'highcharts.funnel' ],
+<span id='Chart-ux-Highcharts-FunnelSerie-cfg-type'>	  type : 'funnel',
+</span>
+<span id='Chart-ux-Highcharts-FunnelSerie-cfg-sumTypeField'>    /**
+</span>     * @cfg sumTypeField
+     * @hide
+     */
+
+    getData: function(record, index) {
+
+        var dataObj = {
+            y: record.data[ this.valField ],
+            name: record.data[ this.nameField ]
+        };
+
+        // Only define color if there is value, otherwise it column
+        // won't take any global color definitiion
+        record.data [ this.colorField ] &amp;&amp; (dataObj.color = record.data[this.colorField]);
+
+        return dataObj;
+    }
+});
+</pre>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{"rows":[{
+"category":"Start","value":120000 
+}, {
+"category":"Product Revenue","value":569000
+},{
+"category":"Service Revenue","value":231000
+},{
+"category":"Positive Balance","color": "#0d233a", "sum": "intermediate"
+},{
+"category":"Fixed Costs","value":-342000
+},{
+"category":"Variable Cost","value": -233000
+},{
+"category":"Balance","color": "#0d233a", "sum": "final"
+}]}
