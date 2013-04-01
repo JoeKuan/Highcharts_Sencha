@@ -97,6 +97,23 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      */
     type : null,
 
+<span id='Chart-ux-Highcharts-Serie-property-chart'>    /**
+</span>     * @readonly
+     * The {@link Chart.ux.Highcharts} chart object owns this serie.
+     * @type Object/Chart.ux.Highcharts
+     *
+     * This can be useful with pointclick event when you need to use an Ext.Component.
+     *     pointclick:{
+     *         fn:function(serie,point,record,event){
+     *         //Get parent window to replace the chart inside (me)
+     *         var window=this.chart.up('windows');
+     *         }
+     *     }
+     * Setting the scope on the listeners at runtime can cause trouble in Highcharts on 
+     * parsing the listener
+     */
+    chart: null,
+
 <span id='Chart-ux-Highcharts-Serie-property-pointObject'>    /**
 </span>     * @private
      * The default action for series point data is to use array instead of point object
@@ -151,7 +168,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 </span>
 <span id='Chart-ux-Highcharts-Serie-cfg-updateNoRecord'>    /***
 </span>     * @cfg {Boolean} updateNoRecord
-     * Setting this option to true will enforce the chart the clear the series if 
+     * Setting this option to true will enforce the chart to clear the series if 
      * there is no record returned for the series
      */
     updateNoRecord: false,
@@ -250,29 +267,33 @@ Ext.define('Chart.ux.Highcharts.Serie', {
             config.data = [];
         }
 
-		    Ext.apply(config,{
-		        events:{
-			          click:this.onPointClick.bind(this)
-		        }
-		    });
+        this.mixins.observable.constructor.call(this, config);
 
-		    this.mixins.observable.constructor.call(this, config);
-		    this.addEvents(
-<span id='Chart-ux-Highcharts-Serie-event-pointclick'>		        /**
-</span>		         * @event pointclick
-		         * Fires when the point of the serie is clicked.
-		         * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
-		         * @param {Object} point the point clicked
-		         * @param {Ext.data.Record} record the record associated to the point
-		         * @param {Object} evt the event param
-		         */
-		        'pointclick'
-		    );
-		    this.config = config;
+        this.addEvents(
+<span id='Chart-ux-Highcharts-Serie-event-pointclick'>            /**
+</span>             * @event pointclick
+             * Fires when the point of the serie is clicked.
+             * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
+             * @param {Object} point the point clicked
+             * @param {Ext.data.Record} record the record associated to the point
+             * @param {Object} evt the event param
+             */
+            'pointclick'
+        );
 
-        this.yField = this.yField || this.dataIndex;
-        
+        this.config = config;
+
+        this.yField = this.yField || this.config.dataIndex;
+
         this.bindRecord = (this.config.listeners &amp;&amp; this.config.listeners.pointclick !== undefined);
+
+        // If Highcharts series event is already defined, then don't support this
+        // pointclick event
+        Ext.applyIf(config,{
+            events:{
+                click:this.onPointClick.bind(this)
+            }
+        });
 
         // If colorField is defined, then we have to use data point
         // as object
@@ -290,9 +311,44 @@ Ext.define('Chart.ux.Highcharts.Serie', {
         }
     },
 
-<span id='Chart-ux-Highcharts-Serie-method-onPointClick'>	  onPointClick:function(evt){
-</span>	      this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
-	  },
+<span id='Chart-ux-Highcharts-Serie-method-buildInitData'>    /***
+</span>     *  @private
+     *  Build the initial data set if there are data already
+     *  inside the store.
+     */
+    buildInitData:function(items, data) {
+        var chartConfig = (Chart.ux.Highcharts.sencha.product == 't') ? 
+            this.chart.config.chartConfig : this.chart.chartConfig;
+        
+        var record;
+        var data = this.config.data = [];
+
+        record = items[0];
+        if (this.dataIndex &amp;&amp; record &amp;&amp; Ext.isArray(record.data[this.dataIndex])) {
+            this.config.data = record.data[this.dataIndex];
+        } else {
+            for (var x = 0; x &lt; items.length; x++) {
+                record = items[x];
+                // Should use the pre-constructed getData template method to extract
+                // record data into the data point (Array of values or Point object)
+                data.push(this.getData(record, x));
+            }
+        }
+        
+        var xAxis = (Ext.isArray(chartConfig.xAxis)) ? chartConfig.xAxis[0] : chartConfig.xAxis;
+        
+        // Build the first x-axis categories
+        if (this.chart.xField &amp;&amp; (!xAxis.categories || xAxis.categories.length &lt; items.length)) {
+            xAxis.categories = xAxis.categories || [];
+            for (var x = 0; x &lt; items.length; x++) {
+                xAxis.categories.push(items[x].data[this.chart.xField]);
+            }
+        }
+    },
+
+<span id='Chart-ux-Highcharts-Serie-method-onPointClick'>    onPointClick:function(evt){
+</span>        this.fireEvent('pointclick',this,evt.point,evt.point.record,evt);
+    },
 
 <span id='Chart-ux-Highcharts-Serie-method-destroy'>    destroy: function() {
 </span>        this.clearListeners();

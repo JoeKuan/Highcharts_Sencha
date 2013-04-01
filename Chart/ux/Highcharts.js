@@ -2,15 +2,15 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 2.3.3
+ * version 2.4.0
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 16 Mar 2013
+ * Documentation last updated: 25 Mar 2013
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
- * - Supports the latest Highcharts (2.3.x)
+ * - Supports the latest Highcharts (3.0.0)
  * - Supports both Sencha ExtJs 4 and Touch 2
  * - Supports Highcharts animations
  *
@@ -183,7 +183,39 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.3.3'
+        version: '2.4.0',
+
+        /***
+         * @property {Object} sencha
+         * @readonly
+         * Contain shorthand representations of which Sencha product is the 
+         * Highcharts extension currently running in. 
+         *     // Under Sencha ExtJs
+         *     { product: 'e', major: 4, name: 'e4' }
+         *     // Under Sencha Touch 2
+         *     { product: 't', major: 2, name: 't2' }
+         */
+        sencha: function() {
+            if (Ext.versions.extjs) {
+                return {
+                    product: 'e',
+                    major: Ext.versions.extjs.major,
+                    name: 'e' + Ext.versions.extjs.major
+                };
+            }
+            if (Ext.versions.touch) {
+                return {
+                    product: 't',
+                    major: Ext.versions.touch.major,
+                    name: 't' + Ext.versions.touch.major
+                };
+            }
+            return {
+                product: null,
+                major: null,
+                name: null
+            };
+        }()
     },
 
     /***
@@ -195,39 +227,6 @@ Ext.define("Chart.ux.Highcharts", {
     switchDebug : function() {
         this.debug = true;
     },
-
-    /***
-     * @property {Object} sencha
-     * @readonly
-     * Contain shorthand representations of which Sencha product is the 
-     * Highcharts extension currently running in. 
-     *     // Under Sencha ExtJs
-     *     { product: 'e', major: 4, name: 'e4' }
-     *     // Under Sencha Touch 2
-     *     { product: 't', major: 2, name: 't2' }
-     */
-    sencha: function() {
-        if (Ext.versions.extjs) {
-            return {
-                product: 'e',
-                major: Ext.versions.extjs.major,
-                name: 'e' + Ext.versions.extjs.major
-            };
-        }
-        if (Ext.versions.touch) {
-            return {
-                product: 't',
-                major: Ext.versions.touch.major,
-                name: 't' + Ext.versions.touch.major
-            };
-        }
-        return {
-            product: null,
-            major: null,
-            name: null
-        };
-
-    }(),
 
     /***
      * This method is called by other routines within this extension to output debugging log.
@@ -355,7 +354,7 @@ Ext.define("Chart.ux.Highcharts", {
         this.callParent(arguments);
 
         // Important: Sencha Touch needs this
-        (this.sencha.product == 't') && this.on('show', this.afterRender);
+        (this.statics().sencha.product == 't') && this.on('show', this.afterRender);
 
     },
 
@@ -388,19 +387,13 @@ Ext.define("Chart.ux.Highcharts", {
         append = (append === null || append === true) ? true : false;
 
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         var n = new Array(), c = new Array(), cls, serieObject;
         // Add empty data to the serie or just leave it normal. Bug in HighCharts?
         for(var i = 0; i < series.length; i++) {
             // Clone Serie config for scope injection
             var serie = Ext.clone(series[i]);
-            // Added scope to Highchart Component if not specified
-            if (serie.listeners) {
-                if (!serie.listeners.scope) {
-                    serie.listeners.scope=this;
-                }
-            }
             if(!serie.serieCls) {
                 if(serie.type != null || this.defaultSerieType != null) {
                     cls = serie.type || this.defaultSerieType;
@@ -413,6 +406,9 @@ Ext.define("Chart.ux.Highcharts", {
             } else {
                 serieObject = serie;
             }
+
+            serieObject.chart = this;
+
             c.push(serieObject.config);
             n.push(serieObject);
         }
@@ -452,7 +448,7 @@ Ext.define("Chart.ux.Highcharts", {
      */
     removeSerie : function(id, redraw) {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         redraw = redraw || true;
         if(this.chart) {
@@ -468,7 +464,7 @@ Ext.define("Chart.ux.Highcharts", {
      */
     removeAllSeries : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
         var sc = _this.series.length;
         for(var i = 0; i < sc; i++) {
             this.removeSerie(0);
@@ -487,7 +483,7 @@ Ext.define("Chart.ux.Highcharts", {
     setTitle : function(title) {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         if(_this.chartConfig.title)
             _this.chartConfig.title.text = title;
@@ -506,7 +502,7 @@ Ext.define("Chart.ux.Highcharts", {
     setSubTitle : function(title) {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         if(_this.chartConfig.subtitle)
             _this.chartConfig.subtitle.text = title;
@@ -519,18 +515,13 @@ Ext.define("Chart.ux.Highcharts", {
     },
 
     initEvents : function() {
-        if(this.loadMask) {
-            this.loadMask = new Ext.LoadMask(this, {
-                store : this.store,
-                msg: this.loadMaskMsg
-            });
-        }
+
     },
 
     afterRender : function() {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         if(this.store)
             this.bindStore(this.store, true);
@@ -540,7 +531,7 @@ Ext.define("Chart.ux.Highcharts", {
         // Ext.applyIf causes problem in 4.1.x but works fine with
         // 4.0.x
         Ext.apply(_this.chartConfig.chart, {
-            renderTo : (this.sencha.product == 't') ? this.element.dom : this.el.dom
+            renderTo : (this.statics().sencha.product == 't') ? this.element.dom : this.el.dom
         });
 
         Ext.applyIf(_this.chartConfig, {
@@ -552,6 +543,7 @@ Ext.define("Chart.ux.Highcharts", {
         }
 
         if(_this.series) {
+            this.log("Call addSeries");
             this.addSeries(_this.series, false);
         } else
             _this.series = [];
@@ -573,11 +565,12 @@ Ext.define("Chart.ux.Highcharts", {
     buildInitData : function() {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
         var series = null, chartConfigSeries = null;
-        var ptObject = null, record = null, colorField = null, bindRecord = null;
+        var ptObject = null, record = null, colorField = null;
 
-        if (!this.store || this.store.isLoading() || !_this.chartConfig || this.initAnim === false ||
+        if (!this.store || this.store.isLoading() || 
+            !_this.chartConfig || this.initAnim === false ||
             _this.chartConfig.chart.animation === false) {
             return;
         }
@@ -595,56 +588,7 @@ Ext.define("Chart.ux.Highcharts", {
 
             // Sort out the type for this series
             series = _this.series[i];
-            chartConfigSeries = _this.chartConfig.series[i];
-
-            var seriesType = series.type || _this.chartConfig.chart.type || _this.chartConfig.chart.defaultSeriesType || 'line';
-            var data = chartConfigSeries.data = chartConfigSeries.data || {};
-            bindRecord = series.bindRecord;
-
-            switch(seriesType) {
-            case 'line':
-            case 'spline':
-            case 'area':
-            case 'areaspline':
-            case 'scatter':
-            case 'bar':
-            case 'column':
-            case 'columnrange':
-            case 'arearange':
-            case 'areasplinerange':
-                for (var x = 0; x < items.length; x++) {
-                    record = items[x];
-                    // Should use the pre-constructed getData template method to extract
-                    // record data into the data point (Array of values or Point object)
-                    data.push(series.getData(record, x));
-                }
-
-                var xAxis = (Ext.isArray(_this.chartConfig.xAxis)) ? _this.chartConfig.xAxis[0] : _this.chartConfig.xAxis;
-                // Build the first x-axis categories
-                if (_this.xField && (!xAxis.categories || xAxis.categories.length < items.length)) {
-                    xAxis.categories = xAxis.categories || [];
-                    for (var x = 0; x < items.length; x++) {
-                        xAxis.categories.push(items[x].data[_this.xField]);
-                    }
-                }
-                break;
-
-            case 'pie':
-                // Summed up the category among the series data
-                if (series.totalDataField) {
-                    for (var x = 0; x < items.length; x++) {
-                        record = items[x];
-                        series.getData(record,data);
-                    }
-                } else {
-                    for (var x = 0; x < items.length; x++) {
-                        record = items[x];
-                        data.push(series.getData(record));
-                    }
-                }
-                break;
-            }
-
+            series.buildInitData(items);
         }
     },
 
@@ -654,7 +598,7 @@ Ext.define("Chart.ux.Highcharts", {
      */
     draw : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         this.log("call draw");
         if(this.chart && this.rendered) {
@@ -710,7 +654,7 @@ Ext.define("Chart.ux.Highcharts", {
     //private
     updatexAxisData : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         var data = [], items = this.store.data.items;
 
@@ -731,10 +675,10 @@ Ext.define("Chart.ux.Highcharts", {
     bindComponent : function(bind) {
         if(bind) {
             this.on('move', this.onMove);
-            this.on('resize', this.onResize);
+            this.on('resize', this._onResize);
         } else {
             this.un('move', this.onMove);
-            this.un('resize', this.onResize);
+            this.un('resize', this._onResize);
         }
     },
 
@@ -771,6 +715,15 @@ Ext.define("Chart.ux.Highcharts", {
         }
 
         this.store = store;
+
+        if (this.loadMask !== false) {
+            if (this.loadMask === true) {
+                this.loadMask = new Ext.LoadMask({target:this,store:this.store});
+            } else {
+                this.loadMask.bindStore(this.store);
+            }
+        }
+        
         if(store && !initial) {
             this.refresh();
         }
@@ -783,7 +736,7 @@ Ext.define("Chart.ux.Highcharts", {
      */
     refresh : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         this.log("Call refresh ");
         if(this.store && this.chart) {
@@ -811,7 +764,8 @@ Ext.define("Chart.ux.Highcharts", {
                     // if serie.config.getData is defined, it doesn't need
                     // reference to dataIndex or yField, it just direct access
                     // to fields inside the implementation
-                    if (serie.dataIndex || serie.yField || serie.minDataIndex || serie.config.getData) {
+                    if (serie.dataIndex || serie.yField || 
+                        serie.minDataIndex || serie.config.getData) {
                         // record.data[dataIndex] is an array, then treat it as an array of 
                         // data points
                         if (Ext.isArray(record.data[serie.dataIndex])) {
@@ -820,7 +774,7 @@ Ext.define("Chart.ux.Highcharts", {
                             });
                         } else {
                             point = serie.getData(record, x);
-                            Ext.isObject(point) && (point.record = record);
+                            serie.bindRecord && (point.record = record);
                             data[i].push(point);
                         }
                     } else if (serie.type == 'pie') {
@@ -828,12 +782,12 @@ Ext.define("Chart.ux.Highcharts", {
                             if(x == 0)
                                 serie.clear();
                             point = serie.getData(record, x);
-                            Ext.isObject(point) && (point.record = record);
+                            serie.bindRecord && (point.record = record);
                         } else if (serie.totalDataField) {
                             serie.getData(record, data[i]);
                         } else {
                             point = serie.getData(record, x);
-                            Ext.isObject(point) && (point.record = record);
+                            serie.bindRecord && (point.record = record);
                             data[i].push(point);
                         }
                     } else if (serie.type == 'gauge') {
@@ -899,11 +853,10 @@ Ext.define("Chart.ux.Highcharts", {
                             this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);
                             if (chartSeriesLength < storeSeriesLength) {
                                 for (var y = 0; y < (storeSeriesLength - chartSeriesLength); y++, x++) {
-                                    // If data[i][x] is a numeric point, that means x-axis is categorie axis
-                                    // with string labels. We need to make sure the data points are appended
-                                    // in the right order
-                                    if (Ext.isNumeric(data[i][x])) {
-                                        this.chart.series[i].addPoint([x, data[i][x]], false, false, true);
+                                    if (Ext.isObject(data[i][x])) {
+                                        // Can be an object if the data point includes colorField dataIndex
+                                        (data[i][x].x === undefined) && (data[i][x].x = x);
+                                        this.chart.series[i].addPoint(data[i][x], false, false, true);
                                     } else {
                                         this.chart.series[i].addPoint(data[i][x], false, false, true);
                                     }
@@ -991,6 +944,7 @@ Ext.define("Chart.ux.Highcharts", {
                     this.chart.xAxis[0].setCategories(xFieldData, false);
                 }
 
+                this.log("Call chart redraw");
                 this.chart.redraw();
             }
         }
@@ -1001,7 +955,7 @@ Ext.define("Chart.ux.Highcharts", {
      */
     refreshRow : function(record) {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         var index = this.store.indexOf(record);
         if(this.chart) {
@@ -1043,7 +997,7 @@ Ext.define("Chart.ux.Highcharts", {
         // In Sencha Touch, load method issue clear event
         // this will call refresh twice which removes the
         // animation effect
-        if (this.sencha.product == 't' && this.store && !this.store.isLoading()) {
+        if (this.statics().sencha.product == 't' && this.store && !this.store.isLoading()) {
             this.refresh();
         }
     },
@@ -1056,7 +1010,7 @@ Ext.define("Chart.ux.Highcharts", {
     // private
     onAdd : function(ds, records, index) {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         var redraw = false, xFieldData = [];
 
@@ -1083,15 +1037,14 @@ Ext.define("Chart.ux.Highcharts", {
     },
 
     //private
-    onResize : function() {
-        this.callParent(arguments);
+    _onResize : function() {
         this.resizable && this.update();
     },
 
     // private
     onRemove : function(ds, record, index, isUpdate) {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         for(var i = 0; i < _this.series.length; i++) {
             var s = _this.series[i];
@@ -1115,7 +1068,7 @@ Ext.define("Chart.ux.Highcharts", {
     onLoad : function() {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         if (!this.chart && this.initAnimAfterLoad) {
             this.log("Call refresh from onLoad for initAnim");
@@ -1133,7 +1086,7 @@ Ext.define("Chart.ux.Highcharts", {
      */
     destroy : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         delete _this.series;
         if(this.chart) {

@@ -21,7 +21,6 @@ Ext.require('Chart.ux.Highcharts.PieSerie');
 Ext.require('Chart.ux.Highcharts.RangeSerie');
 Ext.require('Chart.ux.Highcharts.ScatterSerie');
 Ext.require('Chart.ux.Highcharts.SplineSerie');
-Ext.require('Chart.ux.ChartsMobileConfig');
 
 // ALWAYS POST!!
 Ext.override(Ext.data.proxy.Ajax,{ 
@@ -34,6 +33,9 @@ Ext.ns('Demo');
 
 Ext.application({
     name: 'Highcharts',
+    requires:[
+        'Highcharts.ChartsMobileConfig'
+    ],
     appFolder: 'app',
 
     launch : function() {
@@ -59,7 +61,7 @@ Ext.application({
         Ext.require('Highcharts.model.Speedometer');
         Ext.require('Highcharts.store.Speedometer');
 
-        Demo.configs = Ext.create('Chart.ux.ChartsMobileConfig');
+        Demo.configs = Ext.create('Highcharts.ChartsMobileConfig');
 
         Ext.define('ChartDemo', {
             extend: 'Ext.data.Model',

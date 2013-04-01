@@ -1,3 +1,25 @@
+ver 2.4.0
+- Added support for Highcharts 3.0
+  * Bubble series
+  * Error bar series
+  * Box Plot series
+  * Funnel Series
+- Fixed initial loading on irregular data series
+- Moved sencha property into static field
+- Added compatability fix for Sencha Touch 2.1.1
+- Added fixes and enhancements submitted by straccio
+  * Added compatability fixes for Sencha 4.2
+  * Point click event compatibility issue with Highcharts 3.0
+  * Refactor buildInitData method
+
+Desktop Demos
+- Added multiple irregular bubble series demo
+- Added single bubble series demo
+- Added error bar demo
+- Added funnel demo
+- Fixed donut demo
+- Fixed scheduler runner in gauge demo
+
 ver 2.3.3
 Highcharts extension
 - Plot graph for initial animation if data is already loaded

@@ -6,7 +6,9 @@ Ext.define('Highcharts.controller.Charts', {
               'NullTemperature', 'Browsers', 'IrregularData', 
               'TempSummary', 'Scatter', 'Speedometer', 'Stock', 
               'NetworkUsage', 'BrowsersJune', 'UpdateNoRecord',
-              'IQ' ],
+              'IQ', 'BubbleMulti', 'BoxPlotStore', 'WaterfallStore',
+              'BubbleSingle', 'FunnelStore'
+             ],
 
     init : function() {
 
@@ -53,11 +55,15 @@ Ext.define('Highcharts.controller.Charts', {
                         Ext.getCmp('centerpane').remove(mainChart);
                         mainChart.destroy();
                         chartStore && chartStore.destroy();
+
+                        // Remove any existing gauge task
+                        Demo.gaugeRunnerTask && 
+                            (Demo.gaugeRunnerTask = Demo.gaugeRunnerTask.destroy());
                     }
 
                     // Generate the highchart config based on the selected type
                     // Create the store if not exists
-                    var configs = Chart.ux.ChartsDesktopConfig;
+                    var configs = Highcharts.ChartsDesktopConfig;
                     var hcConfg = null;
                     var reloadDisabled = false;
 
@@ -166,6 +172,36 @@ Ext.define('Highcharts.controller.Charts', {
                         hcConfig = configs.getStar();
                         reloadDisabled = true;
                         store = Ext.create('Highcharts.store.BrowsersJune');
+                        break;
+                    case 'bubblesingle':
+                        hcConfig = configs.getBubbleSingle();
+                        reloadDisabled = true;
+                        store = Ext.create('Highcharts.store.BubbleSingle');
+                        break;
+                    case 'bubblemulti':
+                        hcConfig = configs.getBubbleMulti();
+                        reloadDisabled = true;
+                        store = Ext.create('Highcharts.store.BubbleMulti');
+                        break;
+                    case 'error':
+                        hcConfig = configs.getErrorBar();
+                        reloadDisabled = true;
+                        store = Ext.create('Highcharts.store.Stock');
+                        break;
+                    case 'boxplot':
+                        hcConfig = configs.getBoxPlot();
+                        reloadDisabled = true;
+                        store = Ext.create('Highcharts.store.BoxPlotStore');
+                        break;
+                    case 'waterfall':
+                        hcConfig = configs.getWaterfall();
+                        reloadDisabled = true;
+                        store = Ext.create('Highcharts.store.WaterfallStore');
+                        break;
+                    case 'funnel':
+                        hcConfig = configs.getFunnel();
+                        reloadDisabled = true;
+                        store = Ext.create('Highcharts.store.FunnelStore');
                         break;
                     case 'test1':
                         hcConfig = configs.getTest1();

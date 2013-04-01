@@ -30,6 +30,9 @@ Ext.define('Chart.ux.Highcharts.RangeSerie', {
    * data field mapping to store record which has maximum value
    */
 	maxDataIndex: null,
+  /***
+   * @private
+   */
 	needSorting: null,
 
   /***

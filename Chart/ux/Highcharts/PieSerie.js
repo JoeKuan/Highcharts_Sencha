@@ -210,29 +210,33 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
      */
     getData : function(record, seriesData) {
 
+        var _this = (Chart.ux.Highcharts.sencha.product == 't') ? this.config : this;
+
         // Summed up the category among the series data
         if(this.totalDataField) {
             var found = null;
             for(var i = 0; i < seriesData.length; i++) {
-                if(seriesData[i].name == record.data[this.categorieField]) {
+                if(seriesData[i].name == record.data[_this.categorieField]) {
                     found = i;
-                    seriesData[i].y += record.data[this.dataField];
+                    seriesData[i].y += record.data[_this.dataField];
                     break;
                 }
             }
             if(found === null) {
-                if (this.colorField && record.data[this.colorField]) {
+                if (this.colorField && record.data[_this.colorField]) {
                     seriesData.push({
-                        name: record.data[this.categorieField],
-                        y: record.data[this.dataField],
-                        color: record.data[this.colorField],
-                        record: this.bindRecord ? record : null
+                        name: record.data[_this.categorieField],
+                        y: record.data[_this.dataField],
+                        color: record.data[_this.colorField],
+                        record: this.bindRecord ? record : null,
+                        events: this.dataEvents
                     });
                 } else {
                     seriesData.push({
-                        name: record.data[this.categorieField],
-                        y: record.data[this.dataField],
-                        record: this.bindRecord ? record : null
+                        name: record.data[_this.categorieField],
+                        y: record.data[_this.dataField],
+                        record: this.bindRecord ? record : null,
+                        events: this.dataEvents
                     });
                 }
                 i = seriesData.length - 1;
@@ -247,16 +251,18 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
 
         if (this.colorField && record.data[this.colorField]) {
             return {
-                name: record.data[this.categorieField],
-                y: record.data[this.dataField],
-                color: record.data[this.colorField],
-                record: this.bindRecord ? record : null
+                name: record.data[_this.categorieField],
+                y: record.data[_this.dataField],
+                color: record.data[_this.colorField],
+                record: this.bindRecord ? record : null,
+                events: this.dataEvents
             };
         } else {
             return {
-                name: record.data[this.categorieField],
-                y: record.data[this.dataField],
-                record: this.bindRecord ? record : null
+                name: record.data[_this.categorieField],
+                y: record.data[_this.dataField],
+                record: this.bindRecord ? record : null,
+                events: this.dataEvents
             };
         }
     },
@@ -268,6 +274,28 @@ Ext.define('Chart.ux.Highcharts.PieSerie', {
             a.push([c, this.columnData[c]]);
         }
         return a;
+    },
+
+    /***
+     *  @private
+     *  Build the initial data set if there are data already
+     *  inside the store.
+     */
+    buildInitData:function(items, data) {
+        // Summed up the category among the series data
+        var record;
+        var data = this.config.data = [];
+        if (this.config.totalDataField) {
+            for (var x = 0; x < items.length; x++) {
+                record = items[x];
+                this.getData(record,data);
+            }
+        } else {
+            for (var x = 0; x < items.length; x++) {
+                record = items[x];
+                data.push(this.getData(record));
+            }
+        }
     }
 
 });
