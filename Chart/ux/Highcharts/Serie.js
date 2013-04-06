@@ -274,7 +274,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
         // pointclick event
         Ext.applyIf(config,{
             events:{
-                click:this.onPointClick.bind(this)
+                click: Ext.bind(this.onPointClick, this)
             }
         });
 
