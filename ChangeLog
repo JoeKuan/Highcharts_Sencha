@@ -1,3 +1,12 @@
+ver 2.4.2
+- Fixed draw method error on hidden series
+
+Desktop Demos
+- Added draw method on hidden series demo 
+
+ver 2.4.1
+- Fixed Javascript error on IE 8
+
 ver 2.4.0
 - Added support for Highcharts 3.0
   * Bubble series

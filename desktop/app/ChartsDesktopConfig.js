@@ -344,6 +344,88 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
             }
         },
 
+        /***
+         * Test redraw hidden series
+         */
+        drawHiddenSeries : {
+            series : [{
+                type : 'spline',
+                dataIndex : 'yesterday',
+                name : 'Yesterday',
+                xField : 'time'
+            }, {
+                type : 'spline',
+                dataIndex : 'today',
+                name : 'Today',
+                xField : 'time',
+                visible: false
+            }],
+            lineShift: true,
+            height : 500,
+            width : 700,
+            listeners: {
+                afterChartRendered: function() {
+                    // Test draw method on the hidden series
+                    var task = new Ext.util.DelayedTask(function(){
+                        Ext.getCmp('main_chart').draw();
+                    });
+                    task.delay(2000);
+                }
+            },
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginBottom : 120
+                },
+                title : {
+                    text : 'Test draw method on hidden series',
+                    x : -20 //center
+                },
+                subtitle : {
+                    text : 'draw method is called every 2 seconds',
+                    x : -20
+                },
+                xAxis : [{
+                    type: 'datetime',
+                    title : {
+                        text : 'Time',
+                        margin : 20
+                    },
+                    labels : {
+                        rotation : 270,
+                        y : 35
+                    }
+                }],
+                yAxis : {
+                    title : {
+                        text : 'Temperature'
+                    },
+                    plotLines : [{
+                        value : 0,
+                        width : 1,
+                        color : '#808080'
+                    }]
+                },
+                legend : {
+                    layout : 'vertical',
+                    align : 'right',
+                    verticalAlign : 'top',
+                    x : -10,
+                    y : 100,
+                    borderWidth : 0
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+
         /*********************************************
          *    Spline - ExtJs Popup menu
          *********************************************/

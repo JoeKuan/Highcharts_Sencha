@@ -37,6 +37,8 @@ $result[] = array('text' => 'Other Tests', 'id' => 'testing', 'leaf' => false, '
                  'leaf' => true, 'icon' => '../images/linechart.png'),
            array('text' => 'Spline - Line Shift (Category x-axis)', 'id' => 'charts/splineCatShift', 'leaf' => true, 
                  'icon' => '../images/linechart.png'),
+           array('text' => 'Spline - Line Shift (draw hidden series)', 'id' => 'charts/drawHiddenSeries', 'leaf' => true, 
+                 'icon' => '../images/linechart.png'),
            array('text' => 'Store reload with diff no. of data points', 'id' => 'charts/test1','leaf' => true, 
                  'icon' => '../images/linechart.png'),
            array('text' => 'Fix size chart within the component', 'id' => 'charts/test2','leaf' => true, 

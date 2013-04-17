@@ -384,6 +384,7 @@ Ext.define("Chart.ux.Highcharts", {
      * @param {Boolean} append Append the series if true, otherwise replace all the existing chart series. Optional parameter, Defaults to true if not specified
      */
     addSeries : function(series, append) {
+
         append = (append === null || append === true) ? true : false;
 
         // Sencha Touch uses config to access properties
@@ -634,7 +635,7 @@ Ext.define("Chart.ux.Highcharts", {
 
         for( i = 0; i < _this.series.length; i++) {
             if(!_this.series[i].visible)
-                _this.series[i].hide();
+                _this.chart.series[i].hide();
         }
 
         // Refresh the data only if it is not loading

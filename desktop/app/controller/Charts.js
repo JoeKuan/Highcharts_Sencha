@@ -89,6 +89,10 @@ Ext.define('Highcharts.controller.Charts', {
                         hcConfig = configs.getSplineNumShift();
                         store = Ext.create('Highcharts.store.NumericTemperature');
                         break;
+                    case 'drawHiddenSeries':
+                        hcConfig = configs.getDrawHiddenSeries();
+                        store = Ext.create('Highcharts.store.NumericTemperature');
+                        break;
                     case 'splineAddSeries': 
                         hcConfig = configs.getSplineAddSeries();
                         store = Ext.create('Highcharts.store.Temperature');
