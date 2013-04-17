@@ -2,11 +2,11 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 2.4.1
+ * version 2.4.2
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 6 Apr 2013
+ * Documentation last updated: 17 Apr 2013
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
@@ -183,7 +183,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.4.1',
+        version: '2.4.2',
 
         /***
          * @property {Object} sencha
