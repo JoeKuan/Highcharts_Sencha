@@ -72,6 +72,7 @@ Ext.application({
       hidden : false,
       shadow : false,
       maximizable : true,
+      collapsible: true,
       title : 'Highchart example',
       renderTo : Ext.getBody(),
       layout : 'fit',
@@ -87,14 +88,12 @@ Ext.application({
       items : [{
         xtype : 'highchart',
         id : 'chart',
-        defaultSeriesType : 'spline',
+        defaultSerieType : 'spline',
         series : [{
-          type : 'spline',
           dataIndex : 'yesterday',
           name : 'Yesterday',
           visible : true
         }, {
-          type : 'spline',
           dataIndex : 'today',
           name : 'Today',
           visible : true
@@ -103,6 +102,7 @@ Ext.application({
         xField : 'time',
         chartConfig : {
           chart : {
+            type: 'spline',
             marginRight : 130,
             marginBottom : 120,
             zoomType : 'x',

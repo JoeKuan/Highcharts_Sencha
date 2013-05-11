@@ -2,11 +2,11 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 2.4.2
+ * version 2.4.3
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 17 Apr 2013
+ * Documentation last updated: 11 May 2013
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
@@ -222,7 +222,7 @@ Ext.define("Chart.ux.Highcharts", {
      * @property {Boolean} debug
      * Switch on the debug logging to the console
      */
-    debug: false,
+    debug: true,
 
     switchDebug : function() {
         this.debug = true;
@@ -239,7 +239,9 @@ Ext.define("Chart.ux.Highcharts", {
     
     /**
      * @cfg {Object} defaultSerieType
-     * If the series.type is not defined, then it will refer to this option
+     * If the series.type is not defined, then it will follow the precedence of
+     * Highcharts (inside chartConfig) chart.type -> Highcharts chart.defaultSeriesType ->
+     * and finally this option
      */
     defaultSerieType : 'line',
     
@@ -396,8 +398,9 @@ Ext.define("Chart.ux.Highcharts", {
             // Clone Serie config for scope injection
             var serie = Ext.clone(series[i]);
             if(!serie.serieCls) {
-                if(serie.type != null || this.defaultSerieType != null) {
-                    cls = serie.type || this.defaultSerieType;
+                if(serie.type != null || _this.defaultSerieType != null) {
+                    cls = serie.type || _this.chartConfig.chart.type || 
+                        _this.chartConfig.chart.defaultSeriesType || _this.defaultSerieType;
                     cls = "highcharts." + cls;  // See alternateClassName
                 } else {
                     cls = "Chart.ux.Highcharts.Serie";
@@ -826,6 +829,14 @@ Ext.define("Chart.ux.Highcharts", {
                 var xCatStartIdx = -1;
                 this.log("Update animation with line shift: " + _this.lineShift);
                 for( i = 0; i < seriesCount; i++) {
+
+                    // If this series is hidden, then we just simple update the whole series
+                    // without any micro management of the data update
+                    if (_this.chart.series[i].visible === false) {
+                        _this.chart.series[i].setData(data[i]);
+                        continue;
+                    }
+
                     if (_this.series[i].useTotals) {
                         this.chart.series[i].setData(_this.series[i].getTotals());
                     } else if (data[i].length > 0 || _this.series[i].updateNoRecord) {
@@ -834,7 +845,10 @@ Ext.define("Chart.ux.Highcharts", {
                             // the current series data set
                             var chartSeriesLength = this.chart.series[i].points.length;
                             var storeSeriesLength = data[i].length;
+                            this.log("chartSeriesLength " + chartSeriesLength + 
+                                     ", storeSeriesLength " + storeSeriesLength);
                             for (var x = 0; x < Math.min(chartSeriesLength, storeSeriesLength); x++) {
+                                console.log(this.chart.series[i]);
                                 this.chart.series[i].points[x].update(data[i][x], false, true);
                             }
 
@@ -851,7 +865,6 @@ Ext.define("Chart.ux.Highcharts", {
                             }
 
                             // Append the rest of the points from store to chart
-                            this.log("chartSeriesLength " + chartSeriesLength + ", storeSeriesLength " + storeSeriesLength);
                             if (chartSeriesLength < storeSeriesLength) {
                                 for (var y = 0; y < (storeSeriesLength - chartSeriesLength); y++, x++) {
                                     if (Ext.isObject(data[i][x])) {

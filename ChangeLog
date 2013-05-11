@@ -1,3 +1,8 @@
+ver 2.4.3
+- Fixed hidden series update 
+- Refers to Highcharts defaultSeriesType/type option if 
+  series type is not defined
+
 ver 2.4.2
 - Fixed draw method error on hidden series
 

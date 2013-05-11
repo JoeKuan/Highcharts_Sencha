@@ -10,11 +10,9 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
     config : {
         spline : {
             series : [{
-                type : 'spline',
                 dataIndex : 'yesterday',
                 name : 'Yesterday'
             }, {
-                type : 'spline',
                 dataIndex : 'today',
                 name : 'Today'
             }],
@@ -25,7 +23,8 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                 chart : {
                     marginRight : 130,
                     marginBottom : 120,
-                    zoomType : 'x'
+                    zoomType : 'x',
+                    type: 'spline'
                 },
                 title : {
                     text : 'Highcharts (' + Highcharts.version + ') Example For ExtJs ' + Ext.versions.core.version,
@@ -95,11 +94,9 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
          ****************************************************/
         splineNoAnim : {
             series : [{
-                type : 'spline',
                 dataIndex : 'yesterday',
                 name : 'Yesterday'
             }, {
-                type : 'spline',
                 getData: function(record, index) {
                     return record.data.today;
                 },
@@ -113,7 +110,8 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                 chart : {
                     marginRight : 130,
                     marginBottom : 120,
-                    zoomType : 'x'
+                    zoomType : 'x',
+                    defaultSeriesType: 'spline'
                 },
                 title : {
                     text : 'No Animation for initial and update, ignore Highcharts animation configuration',
@@ -385,7 +383,7 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                     text : 'draw method is called every 2 seconds',
                     x : -20
                 },
-                xAxis : [{
+                xAxis : {
                     type: 'datetime',
                     title : {
                         text : 'Time',
@@ -395,7 +393,7 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                         rotation : 270,
                         y : 35
                     }
-                }],
+                },
                 yAxis : {
                     title : {
                         text : 'Temperature'
@@ -2120,6 +2118,10 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                 },
                 title : {
                     text : "Click 'Reload Data' several times to test add/remove data points in series update",
+                    x : -20 //center
+                },
+                subtitle : {
+                    text : "Additional test: hide the series and click 'Reload Data' several times'",
                     x : -20 //center
                 },
                 credits : {
