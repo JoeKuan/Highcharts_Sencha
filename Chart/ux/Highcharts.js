@@ -649,7 +649,9 @@ Ext.define("Chart.ux.Highcharts", {
         }
     },
 
-    //@deprecated
+    /***
+     * @deprecated
+     **/
     onContainerResize : function() {
         Ext.log("onContainerResize");
         this.draw();

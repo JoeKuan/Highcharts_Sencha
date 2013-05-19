@@ -239,7 +239,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 </span>     * @property {Boolean} debug
      * Switch on the debug logging to the console
      */
-    debug: true,
+    debug: false,
 
 <span id='Chart-ux-Highcharts-method-switchDebug'>    switchDebug : function() {
 </span>        this.debug = true;
@@ -666,8 +666,10 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         }
     },
 
-<span id='Chart-ux-Highcharts-method-onContainerResize'>    //@deprecated
-</span>    onContainerResize : function() {
+<span id='Chart-ux-Highcharts-method-onContainerResize'>    /***
+</span>     * @deprecated
+     **/
+    onContainerResize : function() {
         Ext.log(&quot;onContainerResize&quot;);
         this.draw();
     },
@@ -865,7 +867,6 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                             this.log(&quot;chartSeriesLength &quot; + chartSeriesLength + 
                                      &quot;, storeSeriesLength &quot; + storeSeriesLength);
                             for (var x = 0; x &lt; Math.min(chartSeriesLength, storeSeriesLength); x++) {
-                                console.log(this.chart.series[i]);
                                 this.chart.series[i].points[x].update(data[i][x], false, true);
                             }
 
