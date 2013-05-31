@@ -287,7 +287,7 @@ Ext.define ("Highcharts.ChartsMobileConfig", {
           x : -20
         },
         xAxis : [{
-          type: 'datetime',
+	        type: 'datetime',
           title : {
             text : 'Time',
             margin : 20
@@ -825,6 +825,7 @@ Ext.define ("Highcharts.ChartsMobileConfig", {
             text : 'Time',
             margin : 20
           },
+          tickInterval: 10,
           labels : {
             rotation : 270,
             y : 35

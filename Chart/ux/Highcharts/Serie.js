@@ -264,6 +264,13 @@ Ext.define('Chart.ux.Highcharts.Serie', {
             'pointclick'
         );
 
+        // Sencha Touch initialises fields differently
+        if (Chart.ux.Highcharts.sencha.product == 't') {
+            config.xField && (this.xField = config.xField);
+            config.yField && (this.yField = config.yField);
+            config.dataIndex && (this.dataIndex = config.dataIndex);
+        }
+
         this.config = config;
 
         this.yField = this.yField || this.config.dataIndex;
@@ -300,9 +307,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      *  inside the store.
      */
     buildInitData:function(items, data) {
-        var chartConfig = (Chart.ux.Highcharts.sencha.product == 't') ? 
-            this.chart.config.chartConfig : this.chart.chartConfig;
-        
+        var chartConfig = null, xField = null;
         var record;
         var data = this.config.data = [];
 
@@ -318,13 +323,27 @@ Ext.define('Chart.ux.Highcharts.Serie', {
             }
         }
         
+        // Sencha touch initiates the config field differently
+        if (Chart.ux.Highcharts.sencha.product == 't') {
+            chartConfig = this.chart.config.chartConfig;
+            // If xField is part of this series configuration (which is not shared
+            // by multiple series), then we don't need to populate
+            // xAxis category
+            if (this.xField === null) {
+                xField = this.chart.config.xField || this.config.xField;
+            }
+        } else {
+            chartConfig = this.chart.chartConfig;
+            xField = this.chart.xField;
+        }
+        
         var xAxis = (Ext.isArray(chartConfig.xAxis)) ? chartConfig.xAxis[0] : chartConfig.xAxis;
         
         // Build the first x-axis categories
-        if (this.chart.xField && (!xAxis.categories || xAxis.categories.length < items.length)) {
+        if (xField && (!xAxis.categories || xAxis.categories.length < items.length)) {
             xAxis.categories = xAxis.categories || [];
             for (var x = 0; x < items.length; x++) {
-                xAxis.categories.push(items[x].data[this.chart.xField]);
+                xAxis.categories.push(items[x].data[xField]);
             }
         }
     },

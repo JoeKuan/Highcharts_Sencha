@@ -2,11 +2,11 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 2.4.3
+ * version 2.4.4
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 11 May 2013
+ * Documentation last updated: 31 May 2013
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
@@ -183,7 +183,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.4.2',
+        version: '2.4.4',
 
         /***
          * @property {Object} sencha
@@ -200,6 +200,7 @@ Ext.define("Chart.ux.Highcharts", {
                 return {
                     product: 'e',
                     major: Ext.versions.extjs.major,
+                    minor: Ext.versions.extjs.minor,
                     name: 'e' + Ext.versions.extjs.major
                 };
             }
@@ -207,6 +208,7 @@ Ext.define("Chart.ux.Highcharts", {
                 return {
                     product: 't',
                     major: Ext.versions.touch.major,
+                    minor: Ext.versions.touch.minor,
                     name: 't' + Ext.versions.touch.major
                 };
             }
@@ -580,7 +582,6 @@ Ext.define("Chart.ux.Highcharts", {
         }
 
         var data = [], seriesCount = _this.series.length, i;
-
         var items = this.store.data.items;
         (_this.chartConfig.series === undefined) && (_this.chartConfig.series = []);
         for( i = 0; i < seriesCount; i++) {
@@ -742,6 +743,8 @@ Ext.define("Chart.ux.Highcharts", {
      */
     refresh : function() {
         // Sencha Touch uses config to access properties
+        // _this is used to access the initial series configuration, not the 
+        // instantiated chart series configuration
         var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         this.log("Call refresh ");
@@ -834,8 +837,8 @@ Ext.define("Chart.ux.Highcharts", {
 
                     // If this series is hidden, then we just simple update the whole series
                     // without any micro management of the data update
-                    if (_this.chart.series[i].visible === false) {
-                        _this.chart.series[i].setData(data[i]);
+                    if (this.chart.series[i].visible === false) {
+                        this.chart.series[i].setData(data[i]);
                         continue;
                     }
 
