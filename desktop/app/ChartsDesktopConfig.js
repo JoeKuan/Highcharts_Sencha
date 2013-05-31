@@ -1270,10 +1270,10 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                     }
                 },
                 title : {
-                    text : 'Highcharts (' + Highcharts.version + ') Donut Pie for ExtJs ' + Ext.versions.core.version,
+                    text : 'Highcharts (' + Highcharts.version + ') Donut Pie for ExtJs ' + Ext.versions.core.version
                 },
                 subtitle : {
-                    text : 'Browser market share, April, 2011',
+                    text : 'Browser market share, April, 2011'
                 },
                 tooltip : {
                     formatter : function () {
