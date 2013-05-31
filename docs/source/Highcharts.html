@@ -19,11 +19,11 @@
 </span> * @author 
  * Joe Kuan &lt;kuan.joe@gmail.com&gt;
  *
- * version 2.4.3
+ * version 2.4.4
  *
  * &lt;!-- You are not permitted to remove the author section (above) from this file. --&gt;
  *
- * Documentation last updated: 11 May 2013
+ * Documentation last updated: 31 May 2013
  *
  * A much improved &amp; ported from ExtJs 3 Highchart adapter. 
  *
@@ -200,7 +200,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 </span>         * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.4.2',
+        version: '2.4.4',
 
 <span id='Chart-ux-Highcharts-property-sencha'>        /***
 </span>         * @property {Object} sencha
@@ -217,6 +217,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                 return {
                     product: 'e',
                     major: Ext.versions.extjs.major,
+                    minor: Ext.versions.extjs.minor,
                     name: 'e' + Ext.versions.extjs.major
                 };
             }
@@ -224,6 +225,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                 return {
                     product: 't',
                     major: Ext.versions.touch.major,
+                    minor: Ext.versions.touch.minor,
                     name: 't' + Ext.versions.touch.major
                 };
             }
@@ -597,7 +599,6 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         }
 
         var data = [], seriesCount = _this.series.length, i;
-
         var items = this.store.data.items;
         (_this.chartConfig.series === undefined) &amp;&amp; (_this.chartConfig.series = []);
         for( i = 0; i &lt; seriesCount; i++) {
@@ -759,6 +760,8 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      */
     refresh : function() {
         // Sencha Touch uses config to access properties
+        // _this is used to access the initial series configuration, not the 
+        // instantiated chart series configuration
         var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
         this.log(&quot;Call refresh &quot;);
@@ -851,8 +854,8 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
                     // If this series is hidden, then we just simple update the whole series
                     // without any micro management of the data update
-                    if (_this.chart.series[i].visible === false) {
-                        _this.chart.series[i].setData(data[i]);
+                    if (this.chart.series[i].visible === false) {
+                        this.chart.series[i].setData(data[i]);
                         continue;
                     }
 
