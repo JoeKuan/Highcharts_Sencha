@@ -29,7 +29,8 @@ $result = array('success' => true, 'children' => array(
      array('icon' => './images/donut.png', 'text' => 'Polar/Radar Chart', 'leaf' => true, 'id' => 'polar'),
      array('icon' => './images/donut.png', 'text' => 'Star Chart', 'leaf' => true, 'id' => 'star'),
      array('icon' => './images/donut.png', 'text' => 'Range Charts','children' => $rangeCharts),
-     array('icon' => './images/donut.png', 'text' => 'Gauge/Dial Chart', 'id' => 'gauge', 'leaf' => true)
+     array('icon' => './images/donut.png', 'text' => 'Gauge/Dial Chart', 'id' => 'gauge', 'leaf' => true),
+     array('icon' => '', 'text' => 'Bubble Chart', 'id' => 'bubble', 'leaf' => true)
   )
 );
 /*

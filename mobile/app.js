@@ -21,6 +21,7 @@ Ext.require('Chart.ux.Highcharts.PieSerie');
 Ext.require('Chart.ux.Highcharts.RangeSerie');
 Ext.require('Chart.ux.Highcharts.ScatterSerie');
 Ext.require('Chart.ux.Highcharts.SplineSerie');
+Ext.require('Chart.ux.Highcharts.BubbleSerie');
 
 // ALWAYS POST!!
 Ext.override(Ext.data.proxy.Ajax,{ 
@@ -58,6 +59,8 @@ Ext.application({
         Ext.require('Highcharts.store.NetworkUsage');
         Ext.require('Highcharts.model.Stock');
         Ext.require('Highcharts.store.Stock');
+        Ext.require('Highcharts.model.BubbleSingle');
+        Ext.require('Highcharts.store.BubbleSingle');
         Ext.require('Highcharts.model.Speedometer');
         Ext.require('Highcharts.store.Speedometer');
 
@@ -107,7 +110,9 @@ Ext.application({
                     align: 'right',
                     text: 'Version Info',
                     handler: function() {
-                        Ext.Msg.alert('Info', 'Highcharts (' + Highcharts.version + ') Example For Sencha Touch (' + Ext.version.version + ')');
+                        Ext.Msg.alert('Info', 'Highcharts version: ' + Highcharts.version + 
+                                              '<BR>Sencha Touch: ' + Ext.version.version + 
+                                              '<BR>Extension Version: ' + Chart.ux.Highcharts.version);
                     }
                 }, {
                     align: 'left',
@@ -172,7 +177,8 @@ Ext.application({
 
                     var detailContainer = nestedList.getDetailContainer();
                     var hcConfig = null, chart = null, store = null,
-                    storeType = '', reload = false, addSeries = false;
+                    storeType = '', reload = false, addSeries = false, 
+                    initLoad = true;
                     //detailContainer.removeAll();
 
                     switch (record.data.id) {
@@ -258,6 +264,11 @@ Ext.application({
                         hcConfig = Demo.configs.getGauge();
                         storeType = 'speedometer';
                         break;
+                    case 'bubble':
+                        hcConfig = Demo.configs.getBubbleSingle();
+                        storeType = 'bubble';
+                        reload = true;
+                        break;
                     default: 
                         return;
                     }
@@ -331,13 +342,20 @@ Ext.application({
                             storeId: 'chartStore'
                         });
                         break;
+                    case 'bubble':
+                        store = Ext.create('Highcharts.store.BubbleSingle', {
+                            model: 'Highcharts.model.BubbleSingle',
+                            storeId: 'chartStore'
+                        });
+                        initLoad = false;
+                        break;
                     }
 
                     Demo.chartComponent && (Demo.chartComponent = Demo.chartComponent.destroy());
                     Demo.chartComponent = chart = Ext.widget('highchart', hcConfig);
                     chart.bindStore(store, true);
 
-                    store.load();
+                    initLoad && store.load();
 
                     detailContainer.add([chart]).show();
 

@@ -1,3 +1,10 @@
+ver 2.4.5
+- Fixed initial empty chart display on Sencha Touch
+
+Mobile Demo
+- Added bubble demo with initial empty chart
+- Removed unnecessary files
+
 ver 2.4.4
 - Fixed Javascript errors with Sencha Touch 2.2.1
 

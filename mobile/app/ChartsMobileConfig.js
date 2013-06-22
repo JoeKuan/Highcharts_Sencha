@@ -1148,6 +1148,46 @@ Ext.define ("Highcharts.ChartsMobileConfig", {
         }
     },
 
+        /********************************************************************
+         * Bubble single series - use xField, yField and radius
+         ********************************************************************/
+        bubbleSingle : {
+            series : [{
+                type : 'bubble',
+                xField: 'x',
+                yField: 'y',
+                radiusField: 'r',
+                marker: {
+                    fillColor: {
+                        radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                        stops: [
+                            [0, 'rgba(255,255,255,0.5)'],
+                            [1, 'rgba(69,114,167,0.5)']
+                        ]
+                    }
+                }
+            }],
+            initAnimAfterLoad: false,
+            chartConfig : {
+                chart : {
+
+                },
+                title : {
+                    text : "Single bubble series - start with an empty chart. Click refresh button to load the store",
+                    x : -20 //center
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+
     gauge: {
       series : [{
         type : 'gauge',

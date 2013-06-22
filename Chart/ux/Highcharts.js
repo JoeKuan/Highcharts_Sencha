@@ -2,7 +2,7 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 2.4.4
+ * version 2.4.5
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
@@ -183,7 +183,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.4.4',
+        version: '2.4.5',
 
         /***
          * @property {Object} sencha
@@ -576,7 +576,7 @@ Ext.define("Chart.ux.Highcharts", {
         var ptObject = null, record = null, colorField = null;
 
         if (!this.store || this.store.isLoading() || 
-            !_this.chartConfig || this.initAnim === false ||
+            !_this.chartConfig || _this.initAnim === false ||
             _this.chartConfig.chart.animation === false) {
             return;
         }
@@ -627,7 +627,7 @@ Ext.define("Chart.ux.Highcharts", {
         } else if(this.rendered) {
             // Create the chart from fresh
 
-            if (!this.initAnimAfterLoad || (this.store && this.store.getCount() > 0)) {
+            if (!_this.initAnimAfterLoad || (this.store && this.store.getCount() > 0)) {
                 this.buildInitData();
                 this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
                 this.log("initAnimAfterLoad is off, creating chart from fresh");
@@ -1088,7 +1088,7 @@ Ext.define("Chart.ux.Highcharts", {
         // Sencha Touch uses config to access properties
         var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
-        if (!this.chart && this.initAnimAfterLoad) {
+        if (!this.chart && _this.initAnimAfterLoad) {
             this.log("Call refresh from onLoad for initAnim");
             this.buildInitData();
             this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
