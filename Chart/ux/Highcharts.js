@@ -356,10 +356,11 @@ Ext.define("Chart.ux.Highcharts", {
         }
 
         this.callParent(arguments);
-
         // Important: Sencha Touch needs this
-        (this.statics().sencha.product == 't') && this.on('show', this.afterRender);
-
+        if (this.statics().sencha.product == 't') {
+            this.on('show', this.afterRender);
+            Ext.apply(this, config);
+        }
     },
 
     initComponent : function() {
@@ -626,8 +627,7 @@ Ext.define("Chart.ux.Highcharts", {
 
         } else if(this.rendered) {
             // Create the chart from fresh
-
-            if (!_this.initAnimAfterLoad || (this.store && this.store.getCount() > 0)) {
+            if (!this.initAnimAfterLoad || (this.store && this.store.getCount() > 0)) {
                 this.buildInitData();
                 this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
                 this.log("initAnimAfterLoad is off, creating chart from fresh");
@@ -1088,7 +1088,7 @@ Ext.define("Chart.ux.Highcharts", {
         // Sencha Touch uses config to access properties
         var _this = (this.statics().sencha.product == 't') ? this.config : this;
 
-        if (!this.chart && _this.initAnimAfterLoad) {
+        if (!this.chart && this.initAnimAfterLoad) {
             this.log("Call refresh from onLoad for initAnim");
             this.buildInitData();
             this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
