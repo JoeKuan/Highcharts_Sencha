@@ -753,6 +753,45 @@ Ext.define ("Highcharts.ChartsMobileConfig", {
       }
     },
 
+      /***
+       * Column for embedded data store
+       */
+      columnEmbeddedData : {
+          series : [{
+              dataIndex : 'x'
+          }, {
+              dataIndex : 'y'
+          }, {
+              dataIndex : 'z'
+          }],
+          xField : 'category',
+          // Because the store already embedded with data, no need to do autoLoad
+          // from the server. So don't defer creating the chart until a load is done
+          // for initial data for initial animation
+          // Setting initAnimAfterLoad to false will tell the extension create a
+          // chart straight without waiting for data from async load
+          initAnimAfterLoad: false,
+          chartConfig : {
+              chart : {
+                  type: 'column',
+                  zoomType : 'x'
+              },
+              title : {
+                  text : 'Column chart for store with emdedded data',
+                  x : -20 //center
+              },
+              credits : {
+                  text : 'joekuan.wordpress.com',
+                  href : 'http://joekuan.wordpress.com',
+                  style : {
+                      cursor : 'pointer',
+                      color : '#707070',
+                      fontSize : '12px'
+                  }
+              }
+          }
+      },
+      
     pie : {
       series : [{
         type : 'pie',

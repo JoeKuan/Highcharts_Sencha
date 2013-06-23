@@ -63,6 +63,8 @@ Ext.application({
         Ext.require('Highcharts.store.BubbleSingle');
         Ext.require('Highcharts.model.Speedometer');
         Ext.require('Highcharts.store.Speedometer');
+        Ext.require('Highcharts.model.EmbeddedData');
+        Ext.require('Highcharts.store.EmbeddedData');
 
         Demo.configs = Ext.create('Highcharts.ChartsMobileConfig');
 
@@ -269,6 +271,11 @@ Ext.application({
                         storeType = 'bubble';
                         reload = true;
                         break;
+                    case 'columnEmbedData':
+                        hcConfig = Demo.configs.getColumnEmbeddedData();
+                        storeType = 'embedData';
+                        reload = true;
+                        break;
                     default: 
                         return;
                     }
@@ -288,6 +295,13 @@ Ext.application({
                             storeId: 'chartStore'
                         });
                         break;
+                    case 'embedData':
+                        store = Ext.create('Highcharts.store.EmbeddedData', {
+                            model: 'Highcharts.model.EmbeddedData',
+                            storeId: 'chartStore'
+                        });
+                        initLoad = false;
+                        break;                        
                     case 'nullTemperature':
                         store = Ext.create('Highcharts.store.NullTemperature', {
                             model: 'Highcharts.model.NullTemperature',
