@@ -37,6 +37,9 @@ Ext.application({
     requires:[
         'Highcharts.ChartsMobileConfig'
     ],
+    viewport: {
+        autoMaximize: true
+    },
     appFolder: 'app',
 
     launch : function() {

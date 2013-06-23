@@ -2,6 +2,7 @@ ver 2.4.5
 - Fixed initial empty chart display on Sencha Touch
 
 Mobile Demo
+- Fixed full screen issue
 - Added bubble demo with initial empty chart
 - Added column demo for store with embedded data
 - Removed unnecessary files
