@@ -19,92 +19,96 @@
 </span> * @author 
  * Joe Kuan &lt;kuan.joe@gmail.com&gt;
  *
- * version 2.4.4
+ * version 3.0.1
  *
  * &lt;!-- You are not permitted to remove the author section (above) from this file. --&gt;
  *
- * Documentation last updated: 31 May 2013
+ * Documentation last updated: 9 May 2014
  *
  * A much improved &amp; ported from ExtJs 3 Highchart adapter. 
  *
- * - Supports the latest Highcharts (3.0.0)
+ * - Supports the latest Highcharts
  * - Supports both Sencha ExtJs 4 and Touch 2
  * - Supports Highcharts animations
+ * - Supports Highmaps
+ * - Supports 3D Charts
  *
  * In order to use this extension, you are expected to know how to use Highcharts and Sencha products (ExtJs 4 &amp;amp; Touch 2). 
  *
  * # Configuring Highcharts Extension
  * The Highcharts extension requires a few changes from an existing Highcharts configuration. Suppose we already have a
  * configuration as follows:
- *     @example
+ *
  *     var chart = new Highcharts.Chart({
  *       chart: {
- *          renderTo: 'container',
- *          type: 'spline'
+ *          renderTo: &#39;container&#39;,
+ *          type: &#39;spline&#39;
  *       },
  *       title: {
- *          text: 'A simple graph'
+ *          text: &#39;A simple graph&#39;
  *       },
  *       xAxis: {
- *          categories: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
- *                        'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ]
+ *          categories: [ &#39;Jan&#39;, &#39;Feb&#39;, &#39;Mar&#39;, &#39;Apr&#39;, &#39;May&#39;, &#39;Jun&#39;, &#39;Jul&#39;,
+ *                        &#39;Aug&#39;, &#39;Sep&#39;, &#39;Oct&#39;, &#39;Nov&#39;, &#39;Dec&#39; ]
  *       },
  *       series: [{
- *          dashStyle: 'DashDot',
+ *          dashStyle: &#39;DashDot&#39;,
  *          data: [54.7, 54.7, 53.9, 54.8, 54.4, 54.2, 52.4, 51.0, 49.0, 47.4, 47.0, 46 ]
  *       }]
  *     });
+ *
  * ## Step 1: Remove data related fields
  *
  * The first step is to take out the configuration 
  * object and remove any data related properties such as: *xAxis.categories* and *series[0].data*. Then removes 
  * *chart.renderTo* option as the extension will fill in that property internally. This leaves us with the following config:
- *     @example
- *     chart: {
- *        type: 'spline'
- *     },
- *     title: {
- *        text: 'A simple graph'
- *     },
- *     series: [{
- *        dashStyle: 'DashDot'
- *     }]
+ *
+ *      chart: {
+ *         type: &#39;spline&#39;
+ *      },
+ *      title: {
+ *         text: &#39;A simple graph&#39;
+ *      },
+ *      series: [{
+ *         dashStyle: &#39;DashDot&#39;
+ *      }]
+ *
  * ## Step 2: Create chartConfig
  *
  * The next step is to create an object called, *chartConfig*, and put the above configuration in it. Then we extract the 
  * series array to an upper level which gives the followings:
- *     @example
+ *
  *     series: [{
- *       dashStyle: 'DashDot'
+ *       dashStyle: &#39;DashDot&#39;
  *     }],
  *     chartConfig: {
  *       chart: {
- *           type: 'spline'
+ *           type: &#39;spline&#39;
  *       },
  *       title: {
- *           text: 'A simple graph'
+ *           text: &#39;A simple graph&#39;
  *       }
  *     }
  * ## Step 3: Create ExtJs Store and data mappings
  *
  * Then we create a ExtJs Store object to map the data fields.
- *     @example
- *     Ext.define('SampleData', {
- *        extend: 'Ext.data.Model',
+ *
+ *     Ext.define(&#39;SampleData&#39;, {
+ *        extend: &#39;Ext.data.Model&#39;,
  *          fields: [
- *              {name: 'month', type: 'string'},
- *              {name: 'value',  type: 'float'}
+ *              {name: &#39;month&#39;, type: &#39;string&#39;},
+ *              {name: &#39;value&#39;,  type: &#39;float&#39;}
  *          ]
  *     });
  *     
- *     var store = Ext.create('Ext.data.Store', {
- *        model: 'SampleData',
+ *     var store = Ext.create(&#39;Ext.data.Store&#39;, {
+ *        model: &#39;SampleData&#39;,
  *        proxy: {
- *            type: 'ajax',
- *            url: '/getData.php',
+ *            type: &#39;ajax&#39;,
+ *            url: &#39;/getData.php&#39;,
  *            reader: {
- *                type: 'json',
- *                root: 'rows'
+ *                type: &#39;json&#39;,
+ *                root: &#39;rows&#39;
  *            }
  *        },
  *        autoLoad: false
@@ -112,41 +116,41 @@
  * Then we modify the series array with data mappings to Store; we add *xField* outside the series array 
  * as categories data and *dataIndex* for the y-axis values. For historical reason, we can also use *yField*, 
  * just an alias name for *dataIndex*.
- *     @example
- *     series:[{
- *        dashStyle: 'DashDot',
- *        dataIndex: 'value'
- *     }],
- *     xField: 'month',
- *     store: store,
- *     chartConfig: {
- *        chart: {
- *        ....
+ *
+ *      series:[{
+ *         dashStyle: &#39;DashDot&#39;,
+ *         dataIndex: &#39;value&#39;
+ *      }],
+ *      xField: &#39;month&#39;,
+ *      store: store,
+ *      chartConfig: {
+ *         chart: {
+ *         ....
  *
  * ## Step 4: Create ExtJs Highcharts Component
  *
  * The final step is to create a Highcharts component with the whole config as an object specifier.
- *     @example
- *     var win = new Ext.create('Ext.window.Window', {
- *         layout: 'fit',
- *         items: [{
- *            xtype: 'highchart',
- *            series:[{
- *               dashStyle: 'DashDot',
- *               dataIndex: 'value'
- *            }],
- *            xField: 'month',
- *            store: store,
- *            chartConfig: {
- *               chart: {
- *                  type: 'spline'
- *               },
- *               title: {
- *                  text: 'A simple graph'
- *               }
- *            }
- *         }]
- *     }).show();
+ *
+ *       var win = new Ext.create(&#39;Ext.window.Window&#39;, {
+ *           layout: &#39;fit&#39;,
+ *           items: [{
+ *              xtype: &#39;highchart&#39;,
+ *              series:[{
+ *                 dashStyle: &#39;DashDot&#39;,
+ *                 dataIndex: &#39;value&#39;
+ *              }],
+ *              xField: &#39;month&#39;,
+ *              store: store,
+ *              chartConfig: {
+ *                 chart: {
+ *                    type: &#39;spline&#39;
+ *                 },
+ *                 title: {
+ *                    text: &#39;A simple graph&#39;
+ *                 }
+ *              }
+ *           }]
+ *       }).show();
  *
  * # Updating Highcharts chart properties dynamically
  * Some of the Highcharts properties cannot be updated interactively such as relocating legend box, 
@@ -155,12 +159,12 @@
  * contains a *chartConfig* object which holds the existing native Highcharts configurations. At runtime,
  * options inside *chartConfig* can be modified and call method *draw* which interally destroys and
  * creates a new chart. As a result, the chart appears as a dynamic smooth update
- *     @example
- *     var chart = new Ext.create('Chart.ux.Highcharts', {
- *                     ....
- *                 });
- *     chart.chartConfig.plotOptions.column.stacking = 'normal';
- *     chart.draw();
+ *
+ *       var chart = new Ext.create(&#39;Chart.ux.Highcharts&#39;, {
+ *                       ....
+ *                   });
+ *       chart.chartConfig.plotOptions.column.stacking = &#39;normal&#39;;
+ *       chart.draw();
  * 
  * # Mapping between JsonStore and series data
  * The data mapping between JsonStore and chart series option is quite straightforward. Please refers
@@ -176,57 +180,59 @@
  * The extension can be created without necessary binding to a store. Suppose there are too many possible series
  * that are not practical to be initiated as part of chart data. Instead, the chart component can be
  * created without any datasets. However, the chart initial animation ({@link Chart.ux.Highcharts#cfg-initAnimAfterLoad})
- * must be switched off, so that the extension won't defer plotting the chart waiting for data.
- *     xtype: 'highchart',
- *     initAnimAfterLoad: false,
- *     chartConfig : {
- *         chart : {
- *             // Show the empty chart - See Highcharts option
- *             showAxes: true,
- *             ....
- *         },
- *         ...
- *     }
+ * must be switched off, so that the extension won&#39;t defer plotting the chart waiting for data.
+ *
+ *      xtype: &#39;highchart&#39;,
+ *      initAnimAfterLoad: false,
+ *      chartConfig : {
+ *          chart : {
+ *              // Show the empty chart - See Highcharts option
+ *              showAxes: true,
+ *              ....
+ *          },
+ *          ...
+ *      }
  * Once the chart is displayed, the dynamic series can be displayed via {@link Chart.ux.Highcharts#method-addSeries} method
- * using the 'data' field. This can further called by a separate store's load method triggered by some form of
+ * using the &#39;data&#39; field. This can further called by a separate store&#39;s load method triggered by some form of
  * interactions from the UI.
  */
 Ext.define(&quot;Chart.ux.Highcharts&quot;, {
-    extend : 'Ext.Component',
-    alias : ['widget.highchart'],
+    extend : &#39;Ext.Component&#39;,
+    alias : [&#39;widget.highchart&#39;, &#39;widget.highcharts&#39;],
 
     statics: {
 <span id='Chart-ux-Highcharts-static-property-version'>        /***
 </span>         * @static
          * Version string of the current Highcharts extension
          */
-        version: '2.4.4',
+        version: &#39;3.0.1&#39;,
 
-<span id='Chart-ux-Highcharts-property-sencha'>        /***
+<span id='Chart-ux-Highcharts-static-property-sencha'>        /***
 </span>         * @property {Object} sencha
          * @readonly
          * Contain shorthand representations of which Sencha product is the 
          * Highcharts extension currently running in. 
+	 *
          *     // Under Sencha ExtJs
-         *     { product: 'e', major: 4, name: 'e4' }
+         *     { product: &#39;e&#39;, major: 4, name: &#39;e4&#39; }
          *     // Under Sencha Touch 2
-         *     { product: 't', major: 2, name: 't2' }
+         *     { product: &#39;t&#39;, major: 2, name: &#39;t2&#39; }
          */
         sencha: function() {
             if (Ext.versions.extjs) {
                 return {
-                    product: 'e',
+                    product: &#39;e&#39;,
                     major: Ext.versions.extjs.major,
                     minor: Ext.versions.extjs.minor,
-                    name: 'e' + Ext.versions.extjs.major
+                    name: &#39;e&#39; + Ext.versions.extjs.major
                 };
             }
             if (Ext.versions.touch) {
                 return {
-                    product: 't',
+                    product: &#39;t&#39;,
                     major: Ext.versions.touch.major,
                     minor: Ext.versions.touch.minor,
-                    name: 't' + Ext.versions.touch.major
+                    name: &#39;t&#39; + Ext.versions.touch.major
                 };
             }
             return {
@@ -241,19 +247,21 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 </span>     * @property {Boolean} debug
      * Switch on the debug logging to the console
      */
-    debug: false,
+    debug: true,
 
 <span id='Chart-ux-Highcharts-method-switchDebug'>    switchDebug : function() {
 </span>        this.debug = true;
     },
 
+<span id='Chart-ux-Highcharts-property-basicSerieCls'>    basicSerieCls: &quot;Chart.ux.Highcharts.Serie&quot;,
+</span>
 <span id='Chart-ux-Highcharts-method-log'>    /***
 </span>     * This method is called by other routines within this extension to output debugging log.
      * This method can be overrided with Ext.emptyFn for product deployment
      * @param {String} msg debug message to the console
      */
     log: function(msg) {
-        (typeof console !== 'undefined' &amp;&amp; this.debug) &amp;&amp; console.log(msg);
+        (typeof console !== &#39;undefined&#39; &amp;&amp; this.debug) &amp;&amp; console.log(msg);
     },
     
 <span id='Chart-ux-Highcharts-cfg-defaultSerieType'>    /**
@@ -262,7 +270,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      * Highcharts (inside chartConfig) chart.type -&gt; Highcharts chart.defaultSeriesType -&gt;
      * and finally this option
      */
-    defaultSerieType : 'line',
+    defaultSerieType : &#39;line&#39;,
     
 <span id='Chart-ux-Highcharts-cfg-resizable'>    /**
 </span>     * @cfg {Boolean} resizable
@@ -286,14 +294,14 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 <span id='Chart-ux-Highcharts-cfg-loadMaskMsg'>    /***
 </span>     * @cfg {String} loadMaskMsg Message display for loadmask
      */
-    loadMaskMsg: 'Loading ... ',
+    loadMaskMsg: &#39;Loading ... &#39;,
 
 <span id='Chart-ux-Highcharts-cfg-refreshOnChange'>    /**
 </span>     * @cfg {Boolean} refreshOnChange 
      * chart refresh data when store datachanged event is triggered,
      * i.e. records are added, removed, or updated.
      * If your application is just purely showing data from store load, 
-     * then you don't need this.
+     * then you don&#39;t need this.
      */
     refreshOnChange: false,
 
@@ -336,13 +344,14 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      * is rendered. **Note**: Do not call initial {@link Ext.data.Store#method-load} inside this handler, 
      * especially with *initAnimAfterLoad* set to true because {@link Ext.data.Store#method-load} will
      * never be called as the chart is deferring to render waiting for the store data. Here is an example
-     * of how this should be called. This 'this' keyword refers to the Highcharts ExtJs component whereas
+     * of how this should be called. This &#39;this&#39; keyword refers to the Highcharts ExtJs component whereas
      * chart refers to the created Highcharts chart object
+     *
      *       items: [{
-     *          xtype: 'highchart',
+     *          xtype: &#39;highchart&#39;,
      *          listeners: {
      *              afterChartRendered: function(chart) {
-     *                  // 'this' refers to the 'highchart' ExtJs component
+     *                  // &#39;this&#39; refers to the &#39;highchart&#39; ExtJs component
      *                  var size = this.getSize();
      *                  // Get the average value of the first series
      *                  var temp = 0;
@@ -350,11 +359,11 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      *                      temp += data;
      *                  });
      *                  temp = temp / chart.series[0].data.length;
-     *                  Ext.Msg.alert('Info', 'The average value is ' + temp);
+     *                  Ext.Msg.alert(&#39;Info&#39;, &#39;The average value is &#39; + temp);
      *              }
      *          },
      *          series:[ ... ],
-     *          xField: 'month',
+     *          xField: &#39;month&#39;,
      *          store: store,
      *          chartConfig: {
      *             ....
@@ -363,7 +372,8 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
     afterChartRendered: null,
 
 <span id='Chart-ux-Highcharts-method-constructor'>    constructor: function(config) {
-</span>        config.listeners &amp;&amp; (this.afterChartRendered = config.listeners.afterChartRendered);
+</span>console.log(config);
+        config.listeners &amp;&amp; (this.afterChartRendered = config.listeners.afterChartRendered);
         this.afterChartRendered &amp;&amp; (this.afterChartRendered = Ext.bind(this.afterChartRendered, this));
         if (config.animation == false) {
             this.animation = false;
@@ -373,10 +383,11 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         }
 
         this.callParent(arguments);
-
         // Important: Sencha Touch needs this
-        (this.statics().sencha.product == 't') &amp;&amp; this.on('show', this.afterRender);
-
+        if (this.statics().sencha.product == &#39;t&#39;) {
+            this.on(&#39;show&#39;, this.afterRender);
+            Ext.apply(this, config);
+        }
     },
 
 <span id='Chart-ux-Highcharts-method-initComponent'>    initComponent : function() {
@@ -395,9 +406,10 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 <span id='Chart-ux-Highcharts-method-addSeries'>    /***
 </span>     * Add one or more series to the chart. The addSeries method can be used with Serie field name configurations referring to fields from the store
      * or static data using the data field as the native Highcharts series configuration
+     *
      *     // Append a series with specific data
      *     addSeries([{
-     *         name: 'Series A',
+     *         name: &#39;Series A&#39;,
      *         data: [ [ 3, 5 ], [ 4, 6 ], [ 5, 7 ] ]
      *     }], true);
      *
@@ -409,7 +421,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         append = (append === null || append === true) ? true : false;
 
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         var n = new Array(), c = new Array(), cls, serieObject;
         // Add empty data to the serie or just leave it normal. Bug in HighCharts?
@@ -422,7 +434,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                         _this.chartConfig.chart.defaultSeriesType || _this.defaultSerieType;
                     cls = &quot;highcharts.&quot; + cls;  // See alternateClassName
                 } else {
-                    cls = &quot;Chart.ux.Highcharts.Serie&quot;;
+                    cls = _this.basicSerieCls;
                 }
 
                 serieObject = Ext.create(cls, serie);
@@ -471,7 +483,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      */
     removeSerie : function(id, redraw) {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         redraw = redraw || true;
         if(this.chart) {
@@ -487,11 +499,13 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      */
     removeAllSeries : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
-        var sc = _this.series.length;
-        for(var i = 0; i &lt; sc; i++) {
-            this.removeSerie(0);
-        }
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
+	if (_this.chart) {
+	    var sc = _this.chart.series.length;
+            for(var i = 0; i &lt; sc; i++) {
+		this.removeSerie(0);
+            }
+	}
         // Need to also clean up the previous categories data if
         // there are any
         Ext.each(_this.chartConfig.xAxis, function(xAxis) {
@@ -506,7 +520,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
     setTitle : function(title) {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         if(_this.chartConfig.title)
             _this.chartConfig.title.text = title;
@@ -525,7 +539,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
     setSubTitle : function(title) {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         if(_this.chartConfig.subtitle)
             _this.chartConfig.subtitle.text = title;
@@ -544,7 +558,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 <span id='Chart-ux-Highcharts-method-afterRender'>    afterRender : function() {
 </span>
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         if(this.store)
             this.bindStore(this.store, true);
@@ -554,7 +568,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         // Ext.applyIf causes problem in 4.1.x but works fine with
         // 4.0.x
         Ext.apply(_this.chartConfig.chart, {
-            renderTo : (this.statics().sencha.product == 't') ? this.element.dom : this.el.dom
+            renderTo : (this.statics().sencha.product == &#39;t&#39;) ? this.element.dom : this.el.dom
         });
 
         Ext.applyIf(_this.chartConfig, {
@@ -588,12 +602,12 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
     buildInitData : function() {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
         var series = null, chartConfigSeries = null;
         var ptObject = null, record = null, colorField = null;
 
         if (!this.store || this.store.isLoading() || 
-            !_this.chartConfig || this.initAnim === false ||
+            !_this.chartConfig || _this.initAnim === false ||
             _this.chartConfig.chart.animation === false) {
             return;
         }
@@ -615,12 +629,15 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
     },
 
 <span id='Chart-ux-Highcharts-method-draw'>    /**
-</span>     * Redraw the chart. It internally destroys existing chart (if already display) and 
-     * re-creates the chart object. Call this method to reflect any structural changes in chart configuration 
+</span>     * This method is automatically called when the component is created.
+     * Alternatively, call this method to redraw the chart. 
+     * It internally destroys existing chart (if already display) and 
+     * re-creates the chart object. Call this method to reflect any structural changes 
+     * in chart configuration 
      */
     draw : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         this.log(&quot;call draw&quot;);
         if(this.chart &amp;&amp; this.rendered) {
@@ -643,7 +660,6 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
         } else if(this.rendered) {
             // Create the chart from fresh
-
             if (!this.initAnimAfterLoad || (this.store &amp;&amp; this.store.getCount() &gt; 0)) {
                 this.buildInitData();
                 this.chart = new Highcharts.Chart(_this.chartConfig, this.afterChartRendered);
@@ -678,7 +694,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 <span id='Chart-ux-Highcharts-method-updatexAxisData'>    //private
 </span>    updatexAxisData : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         var data = [], items = this.store.data.items;
 
@@ -698,11 +714,11 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
 <span id='Chart-ux-Highcharts-method-bindComponent'>    bindComponent : function(bind) {
 </span>        if(bind) {
-            this.on('move', this.onMove);
-            this.on('resize', this._onResize);
+            this.on(&#39;move&#39;, this.onMove);
+            this.on(&#39;resize&#39;, this._onResize);
         } else {
-            this.un('move', this.onMove);
-            this.un('resize', this._onResize);
+            this.un(&#39;move&#39;, this.onMove);
+            this.un(&#39;resize&#39;, this._onResize);
         }
     },
 
@@ -762,7 +778,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         // Sencha Touch uses config to access properties
         // _this is used to access the initial series configuration, not the 
         // instantiated chart series configuration
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         this.log(&quot;Call refresh &quot;);
         if(this.store &amp;&amp; this.chart) {
@@ -787,7 +803,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
                 for( i = 0; i &lt; seriesCount; i++) {
                     var serie = _this.series[i], point;
-                    // if serie.config.getData is defined, it doesn't need
+                    // if serie.config.getData is defined, it doesn&#39;t need
                     // reference to dataIndex or yField, it just direct access
                     // to fields inside the implementation
                     if (serie.dataIndex || serie.yField || 
@@ -803,7 +819,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                             serie.bindRecord &amp;&amp; (point.record = record);
                             data[i].push(point);
                         }
-                    } else if (serie.type == 'pie') {
+                    } else if (serie.type == &#39;pie&#39;) {
                         if (serie.useTotals) {
                             if(x == 0)
                                 serie.clear();
@@ -816,7 +832,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                             serie.bindRecord &amp;&amp; (point.record = record);
                             data[i].push(point);
                         }
-                    } else if (serie.type == 'gauge') {
+                    } else if (serie.type == &#39;gauge&#39;) {
                         // Gauge is a dial type chart, so the data can only
                         // have one value
                         data[i][0] = serie.getData(record, x); 
@@ -875,7 +891,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
                             // Gotcha, we need to be careful with pie series, as the totalDataField
                             // can conflict with the following series data points trimming operations
-                            if (_this.series[i].type === 'pie') {
+                            if (_this.series[i].type === &#39;pie&#39;) {
                                 this.chart.series[i].setData([]);
                                 for (var x=0;x&lt;data[i].length;x++) {
                                     this.chart.series[i].addPoint(data[i][x], false, false, false);
@@ -900,7 +916,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                             // Remove the excessive points from the chart
                             else if (chartSeriesLength &gt; storeSeriesLength) {
                                 for (var y = 0; y &lt; (chartSeriesLength - storeSeriesLength); y++) {
-                                    // Points.length is not immediately updated after remove call, so don't use points.length
+                                    // Points.length is not immediately updated after remove call, so don&#39;t use points.length
                                     var last = chartSeriesLength - y - 1;
                                     this.log(&quot;Remove point at pos &quot; + last);
                                     this.chart.series[i].points[last].remove(false, true);
@@ -990,14 +1006,14 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      */
     refreshRow : function(record) {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         var index = this.store.indexOf(record);
         if(this.chart) {
             for(var i = 0; i &lt; this.chart.series.length; i++) {
                 var serie = this.chart.series[i];
                 var point = _this.series[i].getData(record, index);
-                if(_this.series[i].type == 'pie' &amp;&amp; _this.series[i].useTotals) {
+                if(_this.series[i].type == &#39;pie&#39; &amp;&amp; _this.series[i].useTotals) {
                     _this.series[i].update(record);
                     this.chart.series[i].setData(_this.series[i].getTotals());
                 } else
@@ -1019,6 +1035,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         if(!this.updateTask) {
             this.updateTask = new Ext.util.DelayedTask(this.draw, this);
         }
+	console.log(&quot;update delay &quot; + cdelay);
         this.updateTask.delay(cdelay);
     },
 
@@ -1032,7 +1049,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         // In Sencha Touch, load method issue clear event
         // this will call refresh twice which removes the
         // animation effect
-        if (this.statics().sencha.product == 't' &amp;&amp; this.store &amp;&amp; !this.store.isLoading()) {
+        if (this.statics().sencha.product == &#39;t&#39; &amp;&amp; this.store &amp;&amp; !this.store.isLoading()) {
             this.refresh();
         }
     },
@@ -1045,7 +1062,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 <span id='Chart-ux-Highcharts-method-onAdd'>    // private
 </span>    onAdd : function(ds, records, index) {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         var redraw = false, xFieldData = [];
 
@@ -1060,7 +1077,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
             for(var x = 0; x &lt; this.chart.series.length; x++) {
                 var serie = this.chart.series[x], s = _this.series[x];
                 var point = s.getData(record, index + i);
-                if(!(s.type == 'pie' &amp;&amp; s.useTotals)) {
+                if(!(s.type == &#39;pie&#39; &amp;&amp; s.useTotals)) {
                     serie.addPoint(point, redraw);
                 }
             }
@@ -1073,17 +1090,18 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 
 <span id='Chart-ux-Highcharts-method-_onResize'>    //private
 </span>    _onResize : function() {
-        this.resizable &amp;&amp; this.update();
+	this.log(&quot;call _onResize&quot;);
+        this.resizable &amp;&amp; this.draw();
     },
 
 <span id='Chart-ux-Highcharts-method-onRemove'>    // private
 </span>    onRemove : function(ds, record, index, isUpdate) {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         for(var i = 0; i &lt; _this.series.length; i++) {
             var s = _this.series[i];
-            if(s.type == 'pie' &amp;&amp; s.useTotals) {
+            if(s.type == &#39;pie&#39; &amp;&amp; s.useTotals) {
                 s.removeData(record, index);
                 this.chart.series[i].setData(s.getTotals());
             } else {
@@ -1103,7 +1121,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 </span>    onLoad : function() {
 
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         if (!this.chart &amp;&amp; this.initAnimAfterLoad) {
             this.log(&quot;Call refresh from onLoad for initAnim&quot;);
@@ -1121,7 +1139,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
      */
     destroy : function() {
         // Sencha Touch uses config to access properties
-        var _this = (this.statics().sencha.product == 't') ? this.config : this;
+        var _this = (this.statics().sencha.product == &#39;t&#39;) ? this.config : this;
 
         delete _this.series;
         if(this.chart) {

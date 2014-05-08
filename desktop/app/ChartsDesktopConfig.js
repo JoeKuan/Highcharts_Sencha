@@ -948,6 +948,102 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
         /*************************************************
          * Column config
          *************************************************/
+        column3d : {
+            series : [{
+                type : 'column',
+                dataIndex : 'yesterday',
+                name : 'Yesterday'
+            }, {
+                type : 'column',
+                dataIndex : 'today',
+                name : 'Today'
+            }],
+            height : 500,
+            width : 700,
+            xField : 'time',
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginBottom : 120,
+                    zoomType : 'x',
+		    options3d: {
+			enabled: true,
+			alpha: 15,
+			beta: 15,
+			depth: 50
+		    },
+		    type: 'column'
+                },
+		plotOptions: {
+		    column: {
+			depth: 25
+		    }
+		},
+                title : {
+                    text : 'Multi Series 3D column chart',
+                    x : -20 //center
+                },
+                subtitle : {
+                    text : "Click 'Reload Data' to see the 3D columns animate",
+                    x : -20
+                },
+                xAxis : [{
+                    title : {
+                        text : 'Time',
+                        margin : 20
+                    },
+                    labels : {
+                        rotation : 270,
+                        y : 35,
+                        formatter : function () {
+                            var dt = Ext.Date.parse (parseInt (this.value) / 1000, "U");
+                            if (dt) {
+                                return Ext.Date.format (dt, "H:i:s");
+                            }
+                            return this.value;
+                        }
+
+                    }
+                }],
+                yAxis : {
+                    title : {
+                        text : 'Temperature'
+                    },
+                    plotLines : [{
+                        value : 0,
+                        width : 1,
+                        color : '#808080'
+                    }]
+                },
+                tooltip : {
+                    formatter : function () {
+                        var dt = Ext.Date.parse (parseInt (this.x) / 1000, "U");
+                        return 'At <b>' + this.series.name + '</b>' + Ext.Date.format (dt, "H:i:s") + ',<br/>temperature is : ' + this.y;
+                    }
+
+                },
+                legend : {
+                    layout : 'vertical',
+                    align : 'right',
+                    verticalAlign : 'top',
+                    x : -10,
+                    y : 100,
+                    borderWidth : 0
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+        /*************************************************
+         * Column config
+         *************************************************/
         column : {
             series : [{
                 type : 'column',
@@ -1123,6 +1219,65 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
             }
         },
 
+        pie3d : {
+            series : [{
+                type : 'pie',
+                categorieField : 'time',
+                dataField : 'temperature',
+                name : 'Temperature'
+            }],
+            height : 500,
+            width : 700,
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginBottom : 120,
+		    type: 'pie',
+		    options3d: {
+			enabled: true,
+			alpha: 45,
+			beta: 0
+		    }
+                },
+                title : {
+                    text : 'Highcharts (' + Highcharts.version + ') Example For ExtJs ' + Ext.versions.core.version,
+                    x : -20 //center
+                },
+                subtitle : {
+                    text : 'Random Value',
+                    x : -20
+                },
+                plotOptions: { 
+                    pie: { 
+			depth: 35,
+                        allowPointSelect: true 
+                    } 
+                },
+                tooltip : {
+                    formatter : function () {
+                        return '<b>' + this.point.name + '</b>' + ',temperature is : ' + this.y;
+                    }
+                },
+                legend : {
+                    layout : 'vertical',
+                    align : 'right',
+                    verticalAlign : 'top',
+                    x : -10,
+                    y : 100,
+                    borderWidth : 0
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+
         pie : {
             series : [{
                 type : 'pie',
@@ -1163,6 +1318,65 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                     y : 100,
                     borderWidth : 0
                 },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+        },
+
+        scatter3d : {
+            series : [{
+                type : 'scatter',
+                xField: 'x',
+		yField: 'y',
+		zField: 'z'
+            }],
+            chartConfig : {
+                chart : {
+                    marginRight : 130,
+                    marginTop : 130,
+                    zoomType : 'x',
+		    options3d: {
+			enabled: true,
+			alpha: 20,
+			beta: 30,
+			depth: 200,
+			viewDistance: 10,
+			frame: {
+			    bottom: {
+				size: 1,
+				color: 'rgba(0,0,0,0.05)'
+			    }
+			}
+		    }
+                },
+                title : {
+                    text : '3D Scatter Chart with (x, y, z) coordinates',
+                },
+                subtitle : {
+                    text : "Click 'Reload Data' to see the data points animate in 3D space",
+                    
+                },
+                yAxis : {
+		    min: 0,
+		    max: 10
+		},
+		xAxis: {
+		    min: 0,
+		    max: 10,
+		    gridLineWidth: 1
+		},
+		zAxis: {
+		    min: 0,
+		    max: 10,
+		    gridLineWidth: 1
+		},
                 credits : {
                     text : 'joekuan.wordpress.com',
                     href : 'http://joekuan.wordpress.com',
@@ -2056,6 +2270,47 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
                 }
             }
         },
+
+	pyramid: {
+            series : [{
+                type: 'pyramid',
+                categorieField: 'category',
+                yField: 'value'
+            }],
+            height : 500,
+            width : 700,
+            chartConfig : {
+                chart : {
+                    marginRight : 100
+                },
+                title : {
+                    text: "Sales Pyramid demo",
+                    x: -50 //center
+                },
+		plotOptions: {
+		    series: {
+			dataLabels: {
+			    enabled: true,
+			    format: '<b>{point.name}</b> ({point.y:,.0f})',
+			    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
+			    softConnector: true
+			}
+		    }
+		},
+                legend: {
+                    enabled: false
+                },
+                credits : {
+                    text : 'joekuan.wordpress.com',
+                    href : 'http://joekuan.wordpress.com',
+                    style : {
+                        cursor : 'pointer',
+                        color : '#707070',
+                        fontSize : '12px'
+                    }
+                }
+            }
+	},
 
         /********************************************************************
          * Funnel demo

@@ -23,19 +23,19 @@
  * Example of series config:
  *
  *     series: [{
- *         type: 'funnel',
+ *         type: &#39;funnel&#39;,
  *         // or xField
- *         categorieField: 'category',
- *         yField: 'value',
+ *         categorieField: &#39;category&#39;,
+ *         yField: &#39;value&#39;,
  *     }]
  *
  * **Note**: You must load Highcharts module http://code.highcharts.com/modules/funnel.js in 
  * your HTML file, otherwise you get unknown series type error 
  */
-Ext.define('Chart.ux.Highcharts.FunnelSerie', {
-	  extend : 'Chart.ux.Highcharts.WaterfallSerie',
-	  alternateClassName: [ 'highcharts.funnel' ],
-<span id='Chart-ux-Highcharts-FunnelSerie-cfg-type'>	  type : 'funnel',
+Ext.define(&#39;Chart.ux.Highcharts.FunnelSerie&#39;, {
+	  extend : &#39;Chart.ux.Highcharts.WaterfallSerie&#39;,
+	  alternateClassName: [ &#39;highcharts.funnel&#39; ],
+<span id='Chart-ux-Highcharts-FunnelSerie-cfg-type'>	  type : &#39;funnel&#39;,
 </span>
 <span id='Chart-ux-Highcharts-FunnelSerie-cfg-sumTypeField'>    /**
 </span>     * @cfg sumTypeField
@@ -50,7 +50,7 @@ Ext.define('Chart.ux.Highcharts.FunnelSerie', {
         };
 
         // Only define color if there is value, otherwise it column
-        // won't take any global color definitiion
+        // won&#39;t take any global color definitiion
         record.data [ this.colorField ] &amp;&amp; (dataObj.color = record.data[this.colorField]);
 
         return dataObj;

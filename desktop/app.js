@@ -27,6 +27,7 @@ Ext.require('Chart.ux.Highcharts.RangeSerie');
 Ext.require('Chart.ux.Highcharts.ScatterSerie');
 Ext.require('Chart.ux.Highcharts.SplineSerie');
 Ext.require('Chart.ux.Highcharts.WaterfallSerie');
+Ext.require('Chart.ux.Highcharts.PyramidSerie');
 
 // ALWAYS POST!!
 Ext.override(Ext.data.proxy.Ajax,{ 
@@ -51,31 +52,29 @@ Ext.application({
         if (Ext.get('loading-mask')) 
             Ext.get('loading-mask').fadeOut({remove:true});
 
-        Ext.create('Ext.container.Viewport', {
+    var size = Ext.getBody().getViewSize();
+    var title = 'ExtJs version: ' + Ext.versions.core.version + ", " +
+                      'Highcharts version: ' + Highcharts.version + ", " +
+                      'Chart.ux.Highchart: ' + Chart.ux.Highcharts.version;
+
+        var size = Ext.getBody().getViewSize();
+        var referer = $("#demo",parent.document.body).length;
+
+        Ext.create('Ext.window.Window', {
             layout : 'border',
             border : '5 5 5 5',
+      title: title,
+            width: referer ? size.width : size.width - 10,
+            height: referer ? size.height : size.height - 10,
+            closable: referer,
+      listeners: {
+        close: function(window) {
+	    $("#layerslider", parent.document.body).slideDown(400, function() {
+		$('#demo', parent.document.body).html('');
+	    });
+	}
+      },
             items : [{
-                region : 'north',
-                listeners: {
-                    'render': function(panel) {
-                        panel.body.on('click', function() {
-                            Ext.Msg.alert('Info', 
-                                          'ExtJs version: ' + Ext.versions.core.version + ", <br/>" + 
-                                          'Highcharts version: ' + Highcharts.version + ", <br/>" + 
-                                          'Chart.ux.Highchart: ' + Chart.ux.Highcharts.version);
-                        });
-                    }
-                },
-                html : '<h1 class="x-panel-header">Highcharts examples</h1>',
-                height: 40,
-                id: 'banner',
-                border : false,
-                margins : '0 0 5 0',
-                bodyStyle: { 'background-image': 'url(../images/banner.gif)',
-                             'background-repeat': 'repeat-x',
-                             color: '#7a7a7a'
-                           }
-            }, {
                 region : 'west',
                 width : 200,
                 title : 'Charts',
@@ -101,7 +100,7 @@ Ext.application({
                     action: 'addSeries'
                 }]
             }]
-        });
+        }).show();
 
     }
 });

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-MapSerie'>/***
+</span> * MapSerie class is the most basic map series class and it is the default
+ * map series type. Other map classes are extended from MapSerie. 
+ * All the native Highmaps series options can be specfied in the map series
+ * which will be included when the map is rendered.
+ *
+ * The following is a more advance example with series data and mapData
+ * from separate stores and also different index fields.
+ *
+ *     series : [{
+ *
+ *         // Following fields are to construct map series data
+ *         // field
+ *         dataNameField: &#39;name&#39;,
+ *         dataValueField: &#39;value&#39;,
+ *         store: Ext.StoreMgr.get(&#39;PopDensity1&#39;),
+ *
+ *         // Get the mapData from store instead
+ *         mapDataStore: Ext.StoreMgr.get(&#39;MapData2&#39;),
+ *         mapDataPathField: &#39;path&#39;,
+ *
+ *         // Both stores have different index field names.
+ *         // Use joinBy as an array to link both stores data
+ *         // getData method will extract code2 value from 
+ *         // MapData2 and getMapData will also get code1 value
+ *         // from PopDensity1
+ *         joinBy: [ &#39;code2&#39;, &#39;code1&#39; ],
+ *
+ *         // other Highmaps options
+ *         name: &#39;Population density&#39;,
+ *         borderColor: &#39;black&#39;,
+ *         borderWidth: 0.2,
+ *         states: {
+ *             hover: {
+ *                 borderWidth: 1
+ *             }
+ *         },
+ *         tooltip: {
+ *             valueSuffix: &#39;/km²&#39;
+ *         }
+ *     }]
+ */
+Ext.define(&#39;Chart.ux.Highcharts.MapSerie&#39;, {
+    extend : &#39;Chart.ux.Highcharts.Serie&#39;,
+    alternateClassName: [ &#39;highcharts.map&#39; ],
+<span id='Chart-ux-Highcharts-MapSerie-cfg-type'>    type : &#39;map&#39;,
+</span>
+    config: {
+<span id='Chart-ux-Highcharts-MapSerie-cfg-map'>        /**
+</span>	 * @private
+         * Refer to the owner - Highmaps component
+         */
+        map: null
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-chart'>    /**
+</span>     * @cfg chart
+     * @hide
+     */
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-dataPathField'>    /**
+</span>     * @cfg {String} dataPathField
+     * map path field from the data store. 
+     */
+    dataPathField: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-dataNameField'>    /**
+</span>     * @cfg {String} dataNameField
+     * map name field from the data store
+     */
+    dataNameField: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-dataColorField'>    /**
+</span>     * @cfg {String} dataColorField
+     * map color field from the data store
+     */
+    dataColorField: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-dataValueField'>    /**
+</span>     * @cfg {String} dataValueField
+     * map value field from the data store
+     */
+    dataValueField: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-dataDrilldownField'>    /**
+</span>     * @cfg {String} dataDrilldownField
+     * If the map is configured drilldown option, then this is the id field to 
+     * associate with the drilldown data
+     */
+    dataDrilldownField: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-store'>    /**
+</span>     * @cfg {Object} store
+     * Store with series data. If a store object is specified,
+     * data field options are required to map the data from store.
+     * Depending on the application, not all the data fields mappings
+     * are required
+     */
+    store: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-mapDataStore'>    /**
+</span>     * @cfg {Object} mapDataStore
+     * Optional field for users prefer to extract mapData from a store.
+     * If this is specified, then users must also map the path field
+     * from the store. Below is an example:
+     *
+     *      series : [{
+     *          // US Counties Map with counties region value
+     *
+     *          // data only with name and value fields
+     *          store: Ext.StoreMgr.get(&#39;USCountiesData&#39;),
+     *          dataNameField: &#39;name&#39;,
+     *          dataValueField: &#39;value&#39;,
+     *
+     *          mapDataPathField: &#39;path&#39;,
+     *          mapDataStore : Ext.StoreMgr.get(&#39;USCountiesMap&#39;),
+     *          // the extension will expect &#39;name&#39; field from mapDataStore
+     *          // because indicated by joinBy field
+     *          joinBy: &#39;name&#39;,
+     *
+     */
+    mapDataStore: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-mapDataPathField'>    /**
+</span>     * @cfg {String|Number} mapDataPathField
+     * path field for mapData store. If users want to redirect mapData from a store, then
+     * this field must be specified.
+     */
+    mapDataPathField: null,
+
+<span id='Chart-ux-Highcharts-MapSerie-property-dataReady'>    dataReady: false,
+</span>
+<span id='Chart-ux-Highcharts-MapSerie-method-setMap'>    /**
+</span>     * @private setMap
+     * Bind this series onto highmaps and setup store&#39;s load event handler if needed
+     */
+    setMap: function(highmaps) {
+        // Now we got the parent highmaps object.
+        // We need to bind the load map to reflect any change to the map
+        if (this.updateMap &amp;&amp; this.store) {
+            var handler = this.store.on(&#39;load&#39;, function(store) {
+                console.log(&quot;call store load handler to getData()&quot;);
+                var data = this.getData();
+                var highmaps = this.getMap();
+                Ext.each(highmaps.chart.series, function(series) {
+                    (series.name === this.name) &amp;&amp;
+                        highmaps.chart.series.setData(data);
+                }, this);
+            }, this, { destroyable: true });
+
+            // Record the load handler in the highmaps
+            highmaps.registerHandler({
+                hObj: this.store,
+                eventName: &#39;load&#39;,
+                handler: handler
+            });
+        }
+
+        this.config.map = highmaps;
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-method-getMapData'>    /**
+</span>     * @method getMapData
+     * Returns all the records mapData from store. If mapDataStore and mapDataPathField
+     * are defined, this method is called internally once the store is loaded
+     *
+     * @param {Object} record
+     * record containing SVG path data for a map region
+     *
+     * @return {Array} 
+     * returns an array of all the map regions
+     * [data object](http://api.highcharts.com/highmaps#series.mapData)
+     */
+    getMapData: function(record) {
+        var data = {};
+        this.mapCodeField &amp;&amp; (data[this.mapCodeField] = record.data[this.mapCodeField]);
+        data[&#39;path&#39;] = record.data[this.mapDataPathField];
+        return data;
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-method-getMData'>    /**
+</span>     * @private
+     */
+    getMData: function() {
+        var store = this.mapDataStore;
+        var mapData = [];
+
+        if (this.mapDataStore) {
+            store.each(function(record) {
+                mapData.push(this.getMapData(record));
+            }, this);
+        }
+        return mapData;
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-method-getData'>    /** 
+</span>     * @method getData
+     * getData is the core mechanism for transferring from Store&#39;s record data into the map series data.
+     * This routine acts as a Template Method for any map series class, i.e. any new series type class must 
+     * support this method.
+     * 
+     * Generally, you don&#39;t need to override this method in the config.
+     *
+     * @param {Object} record
+     * record containing map series data
+     *
+     * @return {Array} 
+     * returns an array of map series 
+     * [data object](http://api.highcharts.com/highmaps#series.data)
+     */
+    getData: function(record) {
+        var data = {};
+
+        this.dataCodeField &amp;&amp; (data[this.dataCodeField] = record.data[this.dataCodeField]);
+        this.dataPathField &amp;&amp; (data.path = record.data[this.dataPathField]);
+        this.dataNameField &amp;&amp; (data.name = record.data[this.dataNameField]);
+        this.dataColorField &amp;&amp; (data.color = record.data[this.dataColorField]);
+        this.dataValueField &amp;&amp; (data.value = record.data[this.dataValueField]);
+
+        return data;
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-method-getMapSeriesData'>    /***
+</span>     * @method getMapSeriesData
+     * Returns the series data from the store(s). This
+     * method is called internally when the store(s) is/are loaded.
+     * @return {Array} array of record
+     */
+    getMapSeriesData: function() {
+
+        // getData is called after 
+        // 1. Highmaps has assigned the series store from series store or highmaps store.
+        // 2. Store is already loaded
+        var items = this.store &amp;&amp; this.store.data.items;
+        var data = [];
+
+        Ext.isArray(items) &amp;&amp; console.log(&quot;Call getMapSeriesData. Size &quot; + items.length);
+        Ext.each(items, function(record, index) {
+            data.push(this.getData(record));
+        }, this);           
+
+        console.log(&quot;Finish getMapSeriesData. Size &quot; + data.length);
+        return data;
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-method-createMapSeries'>    /***
+</span>     * @method createMapSeries
+     * Returns a Highmaps series config with actual data from the store(s). This
+     * method is called internally when the store(s) is/are loaded.
+     * @return {Object} Highmaps series config
+     */
+    createMapSeries: function() {
+
+        var seriesOpts = { store: null, mapDataStore: null };
+
+        Ext.applyIf(seriesOpts, this.serie_config);
+
+        // Extract series map data from the store if 
+        // &#39;data&#39; field is not pre-configured
+        (!seriesOpts.data) &amp;&amp; (seriesOpts.data = this.getMapSeriesData());
+
+        // Extract series name if from series store
+        this.nameField &amp;&amp; (seriesOpts.name = this.name);
+
+        // Extract series name if from series store
+        this.colorField &amp;&amp; (seriesOpts.color = this.color);
+
+        // Extract series name if from series store
+        this.mapDataStore &amp;&amp; (seriesOpts.mapData = this.getMData());
+
+        return seriesOpts;
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-method-storesLoaded'>    /***
+</span>     * @method storesLoaded
+     * an utility method for checking whether the series store(s) have
+     * been loaded
+     * @return {Boolean}
+     */
+    storesLoaded: function() {
+
+        return (this.mdsLoaded &amp;&amp; this.mssLoaded);
+    },
+    
+<span id='Chart-ux-Highcharts-MapSerie-method-addSeriesAfterLoad'>    /**
+</span>     * @private
+     * Must be called after setMap
+     * Used by Highmaps to register it&#39;s own map series
+     */
+    addSeriesAfterLoad: function(highmaps) {
+
+        this.mdsLoaded = true;
+        this.mssLoaded = true;
+
+        console.log(&quot;MapSerie addSeriesAfterLoad&quot;);
+        console.log(highmaps);
+
+        var createLoadHandler = function(loadedVar) {
+            return function() {
+                this[loadedVar] = true;
+                if (this.storesLoaded()) {
+                    // Mark this series has data ready
+                    this.dataReady = true;
+
+                    // Tells the parent to inspect other
+                    // series data is ready. If all ready,
+                    // then construct the map
+                    highmaps.drawMapWhenReady();
+                }
+            };
+        };
+
+        // Call both stores&#39; load 
+        // and call addSeries when both load methods
+        // have finished
+        if (this.mapDataStore) {
+            this.mdsLoaded = false;
+            console.log(&quot;Call mds store load method&quot;);
+            this.mapDataStore.load({
+                scope: this,
+                callback: createLoadHandler(&quot;mdsLoaded&quot;)
+            });
+        }
+
+        if (this.store) {
+            this.mssLoaded = false;
+            console.log(&quot;Call mss store load method&quot;);
+            this.store.load({
+                scope: this,
+                callback: createLoadHandler(&quot;mssLoaded&quot;)
+            });
+        } else {
+            // Just simply add 
+            console.log(&quot;No store - simply call highmaps.addSeries&quot;);
+            this.dataReady = true;
+            highmaps.drawMapWhenReady();
+        }
+    },
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-updateNoRecord'>    /***
+</span>     * @cfg updateNoRecord
+     * @hide
+     */
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-xField'>    /***
+</span>     * @cfg xField
+     * @hide
+     */
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-yField'>    /***
+</span>     * @cfg yField
+     * @hide
+     */
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-colorField'>    /***
+</span>     * @cfg colorField
+     * @hide
+     */
+
+<span id='Chart-ux-Highcharts-MapSerie-cfg-dataIndex'>    /***
+</span>     * @cfg dataIndex
+     * @hide
+     */
+
+<span id='Chart-ux-Highcharts-MapSerie-event-pointclick'>    /***
+</span>     * @event pointclick
+     * @hide
+     */
+
+    constructor : function(config) {
+
+        // Keeping the original series config separate
+        Ext.apply(this, config);
+        this.serie_config = config;
+
+        if (Ext.isArray(this.joinBy)) {
+            this.dataCodeField = this.joinBy[1];
+            this.mapCodeField = this.joinBy[0];
+            console.log(&quot;mapCodeField: &quot; + this.mapCodeField + &quot;, dataCodeField: &quot; +
+                        this.dataCodeField);
+        } else {
+            this.dataCodeField = this.joinBy;
+            this.mapCodeField = this.joinBy;
+        }
+    }
+
+});
+</pre>
+</body>
+</html>

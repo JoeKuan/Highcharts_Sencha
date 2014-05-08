@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-MapBubbleSerie'>/***
+</span> * MapBubble Serie class is for plotting bubble data points on the map.
+ * Expect z-axis value from the data store.
+ */
+Ext.define(&#39;Chart.ux.Highcharts.MapBubbleSerie&#39;, {
+    extend : &#39;Chart.ux.Highcharts.MapSerie&#39;,
+    alternateClassName: [ &#39;highcharts.mapbubble&#39; ],
+<span id='Chart-ux-Highcharts-MapBubbleSerie-cfg-type'>    type : &#39;mapbubble&#39;,
+</span>
+<span id='Chart-ux-Highcharts-MapBubbleSerie-cfg-zField'>    /**
+</span>     * @cfg {String} zField
+     * The field used to access the z value (bubble size) from the data
+     * source. 
+     *
+     * See [Highmaps series data for detail](http://api.highcharts.com/highmaps#series.data.z)
+     */
+    zField: &#39;z&#39;,
+
+<span id='Chart-ux-Highcharts-MapBubbleSerie-method-getData'>    getData: function(record) {
+</span>
+    	var data = {};
+
+	this.dataCodeField &amp;&amp; (data[this.dataCodeField] = record.data[this.dataCodeField]);
+
+	Ext.apply(data, {
+	    path: this.dataPathField &amp;&amp; record.data[this.dataPathField],
+	    name: this.dataNameField &amp;&amp; record.data[this.dataNameField],
+	    color: this.dataColorField &amp;&amp; record.data[this.dataColorField],
+	    z: record.data[this.zField]
+	});
+
+	return data;
+    }
+});
+</pre>
+</body>
+</html>

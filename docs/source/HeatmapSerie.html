@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='Chart-ux-Highcharts-HeatmapSerie'>/***
+</span> * Heatmap is part of the Highcharts series (i.e. no store in it&#39;s own series definition) and is
+ * packaged as a module. Therefore, users need to include the module in their HTML file.
+ *
+ *     &lt;script src=&quot;http://code.highcharts.com/maps/modules/heatmap.js&quot;&gt;&lt;/script&gt;
+ *
+ * To configure a heatmap series, 3 fields are mandatory: xField, yField and valueField.
+ * The following is an example of a series configuration:
+ *
+ *      xtype: &#39;highcharts&#39;,
+ *      chartConfig: {
+ *           ....
+ *      },
+ *      series: [{
+ *          type: &#39;heatmap&#39;,
+ *          xField: &#39;Date&#39;,
+ *          yField: &#39;Time&#39;,
+ *          dataIndex: &#39;Temperature&#39;,
+ *
+ *          borderWidth: 0,
+ *          colsize: 24 * 3600000, // one day
+ *          tooltip: {
+ *              headerFormat: &#39;Temperature&lt;br/&gt;&#39;,
+ *              pointFormat: &#39;{point.x:%e %b, %Y} {point.y}:00: &lt;b&gt;{point.value} ℃&lt;/b&gt;&#39;
+ *          }
+ *      }]
+ */
+Ext.define(&#39;Chart.ux.Highcharts.HeatmapSerie&#39;, {
+    extend : &#39;Chart.ux.Highcharts.Serie&#39;,
+    alternateClassName: [ &#39;highcharts.heatmap&#39; ],
+<span id='Chart-ux-Highcharts-HeatmapSerie-cfg-type'>    type : &#39;heatmap&#39;,
+</span>
+<span id='Chart-ux-Highcharts-HeatmapSerie-cfg-colorField'>    /***
+</span>     *  @cfg colorField
+     *  @private
+     */
+
+<span id='Chart-ux-Highcharts-HeatmapSerie-cfg-xField'>    /***
+</span>     *  @cfg xField
+     *  mandatory field for the heatmap x-axis
+     */
+    xField: null,
+
+<span id='Chart-ux-Highcharts-HeatmapSerie-cfg-yField'>    /***
+</span>     *  @cfg yField
+     *  mandatory field for the heatmap y-axis
+     */
+    yField: null,
+
+<span id='Chart-ux-Highcharts-HeatmapSerie-cfg-dataIndex'>    /***
+</span>     *  @cfg dataIndex
+     *  mandatory field for the value of a heatmap cell
+     */
+    dataIndex: null,
+
+<span id='Chart-ux-Highcharts-HeatmapSerie-method-getData'>    getData: function(record) {
+</span>	return [
+	    record.data[this.xField],
+	    record.data[this.yField],
+	    record.data[this.dataIndex]
+	];
+    }
+});
+</pre>
+</body>
+</html>

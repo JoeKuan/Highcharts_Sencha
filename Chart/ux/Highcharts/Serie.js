@@ -1,4 +1,4 @@
-/***
+	/***
  * Serie class is the base class for all the series types. Users shouldn't use any of the 
  * series classes directly, they are created internally from Chart.ux.Highcharts depending on the
  * series configuration.
@@ -21,6 +21,7 @@
  *     ....
  * This means both series share the same categories and each series has it own set of y-values. 
  * In this case, the datetime field can be either string or numerical representation of date time.
+ *
  *     series:[{
  *        name: 'Share A',
  *        type: 'line',
@@ -37,6 +38,7 @@
  * # Mapping multiple series with irregular datasets
  * Suppose we have 3 series with different set of data points. To map the store with the series, first
  * the store is required to return Json data in the following format:
+ *
  *     { root: [ 
  *           series1: [ [ 1, 3 ], [ 2, 5 ], [ 7, 1 ] ],
  *           series2: [ [ 2, 4 ], [ 5, 7 ] ],
@@ -45,6 +47,7 @@
  *     }
  *
  * Then use {@link Chart.ux.Highcharts.Serie#cfg-dataIndex} to map the series data array
+ *
  *     series: [{
  *         name: 'Series A',
  *         dataIndex: 'series1'
@@ -55,6 +58,35 @@
  *         name: 'Series C',
  *         dataIndex: 'series3'
  *     }]
+ *
+ * # 3D charts
+ * Highcharts 3D charts require including additional Javascript file.
+ *
+ *     <script type="text/javascript" src="http://code.highcharts.com/highcharts-3d.js"></script>
+ *
+ * To plot 3D charts, simply uses the as the Highcharts 3D option, [*options3d*](http://api.highcharts.com/highcharts#chart.options3d). 
+ * Below is an example of 3D scatter using addition *zField* option for mapping z-axis value:
+ * 
+ *     series : [{
+ *         type : 'scatter',
+ *         xField: 'x',
+ *         yField: 'y',
+ *         zField: 'z'
+ *     }],
+ *     chartConfig : {
+ *         chart : {
+ *             ....
+ *             options3d: {
+ *                  enabled: true,
+ *                  ....
+ *             }
+ *         },
+ *         ....,
+ *         zAxis: {
+ *             ....
+ *         },
+ *
+ * For 3D column chart, users need to also specify *chartConfig.chart.type* as 'column'. 
  */
 Ext.define('Chart.ux.Highcharts.Serie', {
     requires: [ 'Chart.ux.Highcharts',
@@ -72,6 +104,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      * (includes Polar) which has the simple data mappings: *dataIndex* or *yField* 
      * for y-axis values and xField for either x-axis category field or data point's 
      * x-axis coordinate.
+     *
      *     series: [{
      *        type: 'scatter',
      *        xField: 'xValue',
@@ -86,12 +119,14 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      * @type Object/Chart.ux.Highcharts
      *
      * This can be useful with pointclick event when you need to use an Ext.Component.
+     *
      *     pointclick:{
      *         fn:function(serie,point,record,event){
      *         //Get parent window to replace the chart inside (me)
      *         var window=this.chart.up('windows');
      *         }
      *     }
+     *
      * Setting the scope on the listeners at runtime can cause trouble in Highcharts on 
      * parsing the listener
      */
@@ -209,6 +244,14 @@ Ext.define('Chart.ux.Highcharts.Serie', {
     },
 
     /***
+     * @private
+     * each data point in the series is represented in it's own x and y values
+     */
+    arr_getDataTriplet: function(record, index) {
+        return [ record.data[ this.xField ], record.data[ this.yField ], record.data[ this.zField ] ];
+    },
+
+    /***
      * @method getData
      * getData is the core mechanism for transferring from Store's record data into the series data array.
      * This routine acts as a Template Method for any series class, i.e. any new series type class must 
@@ -224,6 +267,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
      * override this method. The return for the method must confine to the [Series.addPoint][link1]
      * prototype. Note that if this method is manually defined, there is no need to define field name options
      * because this can be specified inside the implementation anyway
+     *
      *     series: [{
      *         type: 'spline',
      *         // Return avg y values
@@ -268,6 +312,7 @@ Ext.define('Chart.ux.Highcharts.Serie', {
         if (Chart.ux.Highcharts.sencha.product == 't') {
             config.xField && (this.xField = config.xField);
             config.yField && (this.yField = config.yField);
+            config.zField && (this.zField = config.zField);
             config.dataIndex && (this.dataIndex = config.dataIndex);
         }
 
@@ -293,6 +338,8 @@ Ext.define('Chart.ux.Highcharts.Serie', {
         if (!this.getData) {
             if (this.pointObject) {
                 this.getData = this.obj_getData;
+            } else if (this.zField) {
+                this.getData = this.arr_getDataTriplet;
             } else if (this.xField) {
                 this.getData = this.arr_getDataPair;
             } else {

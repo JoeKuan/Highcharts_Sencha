@@ -1,3 +1,13 @@
+ver 3.0.1
+- Support Highcharts 4.0
+- Prototype support Highmaps (as a module)
+- Added Pyramid Series
+- Added zField support for Scatter Series 3D 
+
+Desktop Demos
+- Added 3D charts demo (column, pie, scatter)
+- Added Pyramid demo 
+
 ver 2.4.5
 - Fixed initial empty chart display on Sencha Touch
 

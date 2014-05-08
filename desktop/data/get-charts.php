@@ -1,4 +1,7 @@
 <?php
+$result[] = array('text' => '3D Column', 'id' => 'charts/column3d', 'leaf' => true, 'icon' => '../images/columnchart.png');
+$result[] = array('text' => '3D Pie', 'id' => 'charts/pie3d', 'leaf' => true, 'icon' => '../images/piechart.png');
+$result[] = array('text' => '3D Scatter', 'id' => 'charts/scatter3d', 'leaf' => true, 'icon' => '../images/scatter.png');
 $result[] = array('text' => 'Spline', 'id' => 'charts/spline', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - Line Shift (Numeric x-axis)', 'id' => 'charts/splineNumShift', 'leaf' => true, 'icon' => '../images/linechart.png');
 $result[] = array('text' => 'Spline - Null data', 'id' => 'charts/splineNullData', 'leaf' => true, 'icon' => '../images/linechart.png');
@@ -19,6 +22,7 @@ $result[] = array('text' => 'Bubble (Multiple Series)', 'id' => 'charts/bubblemu
 $result[] = array('text' => 'Error Bar', 'id' => 'charts/error', 'leaf' => true, 'icon' => '../images/errorbar.png' );
 $result[] = array('text' => 'Box Plot', 'id' => 'charts/boxplot', 'leaf' => true, 'icon' => '../images/boxplot.png' );
 $result[] = array('text' => 'Waterfall', 'id' => 'charts/waterfall', 'leaf' => true, 'icon' => '../images/waterfall.png' );
+$result[] = array('text' => 'Pyramid', 'id' => 'charts/pyramid', 'leaf' => true, 'icon' => '../images/pyramid.png' );
 $result[] = array('text' => 'Funnel', 'id' => 'charts/funnel', 'leaf' => true, 'icon' => '../images/funnel.png' );
 
 $result[] = array('text' => 'Other Tests', 'id' => 'testing', 'leaf' => false, 'expanded' => true, 

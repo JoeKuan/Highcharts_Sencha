@@ -7,7 +7,7 @@ Ext.define('Highcharts.controller.Charts', {
               'TempSummary', 'Scatter', 'Speedometer', 'Stock', 
               'NetworkUsage', 'BrowsersJune', 'UpdateNoRecord',
               'IQ', 'BubbleMulti', 'BoxPlotStore', 'WaterfallStore',
-              'BubbleSingle', 'FunnelStore'
+              'BubbleSingle', 'FunnelStore', 'Scatter3d'
              ],
 
     init : function() {
@@ -124,13 +124,25 @@ Ext.define('Highcharts.controller.Charts', {
                         hcConfig = configs.getSplineAfterRenderedCallback();
                         store = Ext.create('Highcharts.store.NumericTemperature');
                         break;
-                    case 'column':
-                        hcConfig = configs.getColumn();
+                    case 'column3d':
+                        hcConfig = configs.getColumn3d();
                         store = Ext.create('Highcharts.store.Temperature');
+                        break;
+                    case 'column':
+                        hcConfig = configs.getColumn3d();
+                        store = Ext.create('Highcharts.store.Temperature');
+                        break;
+                    case 'pie3d':
+                        hcConfig = configs.getPie3d();
+                        store = Ext.create('Highcharts.store.TempSummary');
                         break;
                     case 'pie':
                         hcConfig = configs.getPie();
                         store = Ext.create('Highcharts.store.TempSummary');
+                        break;
+                    case 'scatter3d':
+                        hcConfig = configs.getScatter3d();
+                        store = Ext.create('Highcharts.store.Scatter3d');
                         break;
                     case 'scatter':
                         hcConfig = configs.getScatter();
@@ -201,6 +213,11 @@ Ext.define('Highcharts.controller.Charts', {
                         hcConfig = configs.getWaterfall();
                         reloadDisabled = true;
                         store = Ext.create('Highcharts.store.WaterfallStore');
+                        break;
+                    case 'pyramid':
+                        hcConfig = configs.getPyramid();
+                        reloadDisabled = true;
+                        store = Ext.create('Highcharts.store.FunnelStore');
                         break;
                     case 'funnel':
                         hcConfig = configs.getFunnel();

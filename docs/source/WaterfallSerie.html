@@ -25,13 +25,13 @@
  * [1]: http://www.highcharts.com/demo/waterfall
  *
  *     series: [{
- *         type: 'waterfall',
+ *         type: &#39;waterfall&#39;,
  *         upColor: Highcharts.getOptions().colors[2],
  *         color: Highcharts.getOptions().colors[3],
- *         categorieField: 'category',
- *         yField: 'value',
- *         colorField: 'color',
- *         sumTypeField: 'sum',
+ *         categorieField: &#39;category&#39;,
+ *         yField: &#39;value&#39;,
+ *         colorField: &#39;color&#39;,
+ *         sumTypeField: &#39;sum&#39;,
  *         dataLabels: {
  *             ....
  *         }
@@ -49,15 +49,15 @@
  *     ]}
  *
  */
-Ext.define('Chart.ux.Highcharts.WaterfallSerie', {
-	  extend : 'Chart.ux.Highcharts.Serie',
-	  alternateClassName: [ 'highcharts.waterfall' ],
-<span id='Chart-ux-Highcharts-WaterfallSerie-cfg-type'>	  type : 'waterfall',
+Ext.define(&#39;Chart.ux.Highcharts.WaterfallSerie&#39;, {
+	  extend : &#39;Chart.ux.Highcharts.Serie&#39;,
+	  alternateClassName: [ &#39;highcharts.waterfall&#39; ],
+<span id='Chart-ux-Highcharts-WaterfallSerie-cfg-type'>	  type : &#39;waterfall&#39;,
 </span>
 <span id='Chart-ux-Highcharts-WaterfallSerie-cfg-sumTypeField'>    /**
 </span>     * @cfg {String} sumTypeField
      * Column value is whether derived from precious values. 
-     * Possible values: 'intermediate', 'final' or null (expect dataIndex or yField contains value)
+     * Possible values: &#39;intermediate&#39;, &#39;final&#39; or null (expect dataIndex or yField contains value)
      */
     sumTypeField: null,
 
@@ -76,7 +76,7 @@ Ext.define('Chart.ux.Highcharts.WaterfallSerie', {
         };
 
         // Only define color if there is value, otherwise it column
-        // won't take any global color definitiion
+        // won&#39;t take any global color definitiion
         record.data [ this.colorField ] &amp;&amp; (dataObj.color = record.data[this.colorField]);
 
         if (this.sumTypeField) {
