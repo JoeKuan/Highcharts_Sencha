@@ -1,3 +1,12 @@
+ver 3.0.2
+- Minor fix and improve how series object create 
+
+Desktop Demo
+- Fixed column demo
+
+Mobile Demo
+- Cleanup standalone demo
+
 ver 3.0.1
 - Support Highcharts 4.0
 - Prototype support Highmaps (as a module)
