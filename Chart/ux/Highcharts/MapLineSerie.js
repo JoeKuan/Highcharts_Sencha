@@ -5,5 +5,5 @@
 Ext.define('Chart.ux.Highcharts.MapLineSerie', {
     extend : 'Chart.ux.Highcharts.MapSerie',
     alternateClassName: [ 'highcharts.mapline' ],
-    type : 'mapline',
+    type : 'mapline'
 });
