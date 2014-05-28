@@ -129,7 +129,7 @@ Ext.define('Highcharts.controller.Charts', {
                         store = Ext.create('Highcharts.store.Temperature');
                         break;
                     case 'column':
-                        hcConfig = configs.getColumn3d();
+                        hcConfig = configs.getColumn();
                         store = Ext.create('Highcharts.store.Temperature');
                         break;
                     case 'pie3d':

@@ -1357,11 +1357,10 @@ Ext.define ("Highcharts.ChartsDesktopConfig", {
 		    }
                 },
                 title : {
-                    text : '3D Scatter Chart with (x, y, z) coordinates',
+                    text : '3D Scatter Chart with (x, y, z) coordinates'
                 },
                 subtitle : {
-                    text : "Click 'Reload Data' to see the data points animate in 3D space",
-                    
+                    text : "Click 'Reload Data' to see the data points animate in 3D space"
                 },
                 yAxis : {
 		    min: 0,
