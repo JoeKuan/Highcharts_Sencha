@@ -2,11 +2,11 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 3.0.1
+ * version 3.0.2
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 9 May 2014
+ * Documentation last updated: 28 May 2014
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
@@ -188,7 +188,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '3.0.1',
+        version: '3.0.2',
 
         /***
          * @property {Object} sencha
@@ -412,13 +412,11 @@ console.log(config);
             // Clone Serie config for scope injection
             var serie = Ext.clone(series[i]);
             if(!serie.serieCls) {
-                if(serie.type != null || _this.defaultSerieType != null) {
-                    cls = serie.type || _this.chartConfig.chart.type || 
-                        _this.chartConfig.chart.defaultSeriesType || _this.defaultSerieType;
-                    cls = "highcharts." + cls;  // See alternateClassName
-                } else {
-                    cls = _this.basicSerieCls;
-                }
+                cls = serie.type || _this.chartConfig.chart.type || 
+                    _this.chartConfig.chart.defaultSeriesType || _this.defaultSerieType;
+
+		// See alternateClassName
+		cls = (cls) ? "highcharts." + cls : _this.basicSerieCls;
 
                 serieObject = Ext.create(cls, serie);
             } else {
