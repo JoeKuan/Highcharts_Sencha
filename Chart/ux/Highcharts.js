@@ -2,15 +2,15 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 3.0.2
+ * version 3.1.0
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 28 May 2014
+ * Documentation last updated: 14 Sept 2014
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
- * - Supports the latest Highcharts
+ * - Supports the latest Highcharts 5
  * - Supports both Sencha ExtJs 4 and Touch 2
  * - Supports Highcharts animations
  * - Supports Highmaps
@@ -188,7 +188,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '3.0.2',
+        version: '3.1.0',
 
         /***
          * @property {Object} sencha
@@ -230,7 +230,7 @@ Ext.define("Chart.ux.Highcharts", {
      * @property {Boolean} debug
      * Switch on the debug logging to the console
      */
-    debug: true,
+    debug: false,
 
     switchDebug : function() {
         this.debug = true;
@@ -355,7 +355,6 @@ Ext.define("Chart.ux.Highcharts", {
     afterChartRendered: null,
 
     constructor: function(config) {
-console.log(config);
         config.listeners && (this.afterChartRendered = config.listeners.afterChartRendered);
         this.afterChartRendered && (this.afterChartRendered = Ext.bind(this.afterChartRendered, this));
         if (config.animation == false) {
@@ -651,17 +650,19 @@ console.log(config);
             }
         }
 
-        for( i = 0; i < _this.series.length; i++) {
-            if(!_this.series[i].visible)
-                _this.chart.series[i].hide();
-        }
+	if (Ext.isArray(_this.series)) {
+            for( i = 0; i < _this.series.length; i++) {
+		if(!_this.series[i].visible)
+                    _this.chart.series[i].hide();
+            }
 
-        // Refresh the data only if it is not loading
-        // no point doing this, as onLoad will pick it up
-        if (this.store && !this.store.isLoading()) {
-            this.log("Call refresh from draw"); 
-            this.refresh();
-        }
+            // Refresh the data only if it is not loading
+            // no point doing this, as onLoad will pick it up
+            if (this.store && !this.store.isLoading()) {
+		this.log("Call refresh from draw"); 
+		this.refresh();
+            }
+	}
     },
 
     /***
@@ -813,9 +814,10 @@ console.log(config);
                             serie.bindRecord && (point.record = record);
                             data[i].push(point);
                         }
-                    } else if (serie.type == 'gauge') {
+                    } else if (serie.type == 'gauge' || serie.type == 'solidgauge') {
                         // Gauge is a dial type chart, so the data can only
                         // have one value
+console.log(record);
                         data[i][0] = serie.getData(record, x); 
                     } else if (serie.data && serie.data.length) {
                         // This means the series is added within its own data
@@ -1016,7 +1018,6 @@ console.log(config);
         if(!this.updateTask) {
             this.updateTask = new Ext.util.DelayedTask(this.draw, this);
         }
-	console.log("update delay " + cdelay);
         this.updateTask.delay(cdelay);
     },
 

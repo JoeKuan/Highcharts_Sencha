@@ -306,32 +306,50 @@ Ext.define(&#39;Chart.ux.Highcharts.Serie&#39;, {
 <span id='Chart-ux-Highcharts-Serie-property-serieCls'>    serieCls : true,
 </span>
 <span id='Chart-ux-Highcharts-Serie-method-constructor'>    constructor : function(config) {
-</span>        config.type = this.type;
+</span>
+	var sencha = Chart.ux.Highcharts.sencha;
+
+        config.type = this.type;
         if(!config.data) {
             config.data = [];
         }
 
         this.mixins.observable.constructor.call(this, config);
 
-        this.addEvents(
-<span id='Chart-ux-Highcharts-Serie-event-pointclick'>            /**
-</span>             * @event pointclick
-             * Fires when the point of the serie is clicked.
-             * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
-             * @param {Object} point the point clicked
-             * @param {Ext.data.Record} record the record associated to the point
-             * @param {Object} evt the event param
-             */
-            &#39;pointclick&#39;
-        );
-
         // Sencha Touch initialises fields differently
-        if (Chart.ux.Highcharts.sencha.product == &#39;t&#39;) {
+        if (sencha.product == &#39;t&#39;) {
             config.xField &amp;&amp; (this.xField = config.xField);
             config.yField &amp;&amp; (this.yField = config.yField);
             config.zField &amp;&amp; (this.zField = config.zField);
             config.dataIndex &amp;&amp; (this.dataIndex = config.dataIndex);
+	    
+            this.addEvents(
+<span id='Chart-ux-Highcharts-Serie-event-pointclick'>		/**
+</span>		 * @event pointclick
+		 * Fires when the point of the serie is clicked.
+		 * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
+		 * @param {Object} point the point clicked
+		 * @param {Ext.data.Record} record the record associated to the point
+		 * @param {Object} evt the event param
+		 */
+		&#39;pointclick&#39;
+	    );
+
+        } else {
+            // addEvents is deprecated in ExtJs 5.0 and raise error
+            (sencha.major &lt; 5) &amp;&amp; this.addEvents(
+<span id='Chart-ux-Highcharts-Serie-event-pointclick'>		/**
+</span>		 * @event pointclick
+		 * Fires when the point of the serie is clicked.
+		 * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
+		 * @param {Object} point the point clicked
+		 * @param {Ext.data.Record} record the record associated to the point
+		 * @param {Object} evt the event param
+		 */
+		&#39;pointclick&#39;
+	    );
         }
+
 
         this.config = config;
 

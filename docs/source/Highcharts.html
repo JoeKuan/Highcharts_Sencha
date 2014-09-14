@@ -19,15 +19,15 @@
 </span> * @author 
  * Joe Kuan &lt;kuan.joe@gmail.com&gt;
  *
- * version 3.0.1
+ * version 3.1.0
  *
  * &lt;!-- You are not permitted to remove the author section (above) from this file. --&gt;
  *
- * Documentation last updated: 9 May 2014
+ * Documentation last updated: 14 Sept 2014
  *
  * A much improved &amp; ported from ExtJs 3 Highchart adapter. 
  *
- * - Supports the latest Highcharts
+ * - Supports the latest Highcharts 5
  * - Supports both Sencha ExtJs 4 and Touch 2
  * - Supports Highcharts animations
  * - Supports Highmaps
@@ -205,7 +205,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 </span>         * @static
          * Version string of the current Highcharts extension
          */
-        version: &#39;3.0.1&#39;,
+        version: &#39;3.1.0&#39;,
 
 <span id='Chart-ux-Highcharts-static-property-sencha'>        /***
 </span>         * @property {Object} sencha
@@ -247,7 +247,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
 </span>     * @property {Boolean} debug
      * Switch on the debug logging to the console
      */
-    debug: true,
+    debug: false,
 
 <span id='Chart-ux-Highcharts-method-switchDebug'>    switchDebug : function() {
 </span>        this.debug = true;
@@ -372,8 +372,7 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
     afterChartRendered: null,
 
 <span id='Chart-ux-Highcharts-method-constructor'>    constructor: function(config) {
-</span>console.log(config);
-        config.listeners &amp;&amp; (this.afterChartRendered = config.listeners.afterChartRendered);
+</span>        config.listeners &amp;&amp; (this.afterChartRendered = config.listeners.afterChartRendered);
         this.afterChartRendered &amp;&amp; (this.afterChartRendered = Ext.bind(this.afterChartRendered, this));
         if (config.animation == false) {
             this.animation = false;
@@ -429,13 +428,11 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
             // Clone Serie config for scope injection
             var serie = Ext.clone(series[i]);
             if(!serie.serieCls) {
-                if(serie.type != null || _this.defaultSerieType != null) {
-                    cls = serie.type || _this.chartConfig.chart.type || 
-                        _this.chartConfig.chart.defaultSeriesType || _this.defaultSerieType;
-                    cls = &quot;highcharts.&quot; + cls;  // See alternateClassName
-                } else {
-                    cls = _this.basicSerieCls;
-                }
+                cls = serie.type || _this.chartConfig.chart.type || 
+                    _this.chartConfig.chart.defaultSeriesType || _this.defaultSerieType;
+
+		// See alternateClassName
+		cls = (cls) ? &quot;highcharts.&quot; + cls : _this.basicSerieCls;
 
                 serieObject = Ext.create(cls, serie);
             } else {
@@ -670,17 +667,19 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
             }
         }
 
-        for( i = 0; i &lt; _this.series.length; i++) {
-            if(!_this.series[i].visible)
-                _this.chart.series[i].hide();
-        }
+	if (Ext.isArray(_this.series)) {
+            for( i = 0; i &lt; _this.series.length; i++) {
+		if(!_this.series[i].visible)
+                    _this.chart.series[i].hide();
+            }
 
-        // Refresh the data only if it is not loading
-        // no point doing this, as onLoad will pick it up
-        if (this.store &amp;&amp; !this.store.isLoading()) {
-            this.log(&quot;Call refresh from draw&quot;); 
-            this.refresh();
-        }
+            // Refresh the data only if it is not loading
+            // no point doing this, as onLoad will pick it up
+            if (this.store &amp;&amp; !this.store.isLoading()) {
+		this.log(&quot;Call refresh from draw&quot;); 
+		this.refresh();
+            }
+	}
     },
 
 <span id='Chart-ux-Highcharts-method-onContainerResize'>    /***
@@ -832,9 +831,10 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
                             serie.bindRecord &amp;&amp; (point.record = record);
                             data[i].push(point);
                         }
-                    } else if (serie.type == &#39;gauge&#39;) {
+                    } else if (serie.type == &#39;gauge&#39; || serie.type == &#39;solidgauge&#39;) {
                         // Gauge is a dial type chart, so the data can only
                         // have one value
+console.log(record);
                         data[i][0] = serie.getData(record, x); 
                     } else if (serie.data &amp;&amp; serie.data.length) {
                         // This means the series is added within its own data
@@ -1035,7 +1035,6 @@ Ext.define(&quot;Chart.ux.Highcharts&quot;, {
         if(!this.updateTask) {
             this.updateTask = new Ext.util.DelayedTask(this.draw, this);
         }
-	console.log(&quot;update delay &quot; + cdelay);
         this.updateTask.delay(cdelay);
     },
 

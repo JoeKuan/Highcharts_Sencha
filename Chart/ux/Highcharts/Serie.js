@@ -289,6 +289,9 @@ Ext.define('Chart.ux.Highcharts.Serie', {
     serieCls : true,
 
     constructor : function(config) {
+
+	var sencha = Chart.ux.Highcharts.sencha;
+
         config.type = this.type;
         if(!config.data) {
             config.data = [];
@@ -296,25 +299,40 @@ Ext.define('Chart.ux.Highcharts.Serie', {
 
         this.mixins.observable.constructor.call(this, config);
 
-        this.addEvents(
-            /**
-             * @event pointclick
-             * Fires when the point of the serie is clicked.
-             * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
-             * @param {Object} point the point clicked
-             * @param {Ext.data.Record} record the record associated to the point
-             * @param {Object} evt the event param
-             */
-            'pointclick'
-        );
-
         // Sencha Touch initialises fields differently
-        if (Chart.ux.Highcharts.sencha.product == 't') {
+        if (sencha.product == 't') {
             config.xField && (this.xField = config.xField);
             config.yField && (this.yField = config.yField);
             config.zField && (this.zField = config.zField);
             config.dataIndex && (this.dataIndex = config.dataIndex);
+	    
+            this.addEvents(
+		/**
+		 * @event pointclick
+		 * Fires when the point of the serie is clicked.
+		 * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
+		 * @param {Object} point the point clicked
+		 * @param {Ext.data.Record} record the record associated to the point
+		 * @param {Object} evt the event param
+		 */
+		'pointclick'
+	    );
+
+        } else {
+            // addEvents is deprecated in ExtJs 5.0 and raise error
+            (sencha.major < 5) && this.addEvents(
+		/**
+		 * @event pointclick
+		 * Fires when the point of the serie is clicked.
+		 * @param {Chart.ux.Highcharts.Serie}  serie the serie where is fired
+		 * @param {Object} point the point clicked
+		 * @param {Ext.data.Record} record the record associated to the point
+		 * @param {Object} evt the event param
+		 */
+		'pointclick'
+	    );
         }
+
 
         this.config = config;
 
