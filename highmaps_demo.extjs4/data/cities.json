@@ -1,0 +1,31 @@
+{ success: true,
+        "rows": [{
+            "name": "Liège",
+            "x": 751,
+            "y": 356
+        }, {
+            "name": "Brussels",
+            "x": 573,
+            "y": 285
+        }, {
+            "name": "Tournai",
+            "x": 427,
+            "y": 339
+        }, {
+            "name": "Mons",
+            "x": 506,
+            "y": 374
+        }, {
+            "name": "Namur",
+            "x": 645,
+            "y": 388
+        }, {
+            "name": "Charleroi",
+            "x": 573,
+            "y": 395
+        }, {
+            "name": "Arlon",
+            "x": 775,
+            "y": 578
+        }]
+}

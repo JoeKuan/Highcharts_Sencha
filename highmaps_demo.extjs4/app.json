@@ -1,0 +1,9 @@
+{
+   "name": "Demo",
+   "requires": [],
+   "id": "d77e9b69-e3e3-4d2f-95c3-0b3853862de0",
+   "resources": [
+      "/HighmapsDemo/flags32.css",
+      "/HighmapsDemo/demo.css"
+   ]
+}

@@ -1,3 +1,8 @@
+ver 3.2.0
+- Included Highmaps Desktop Demo (ExtJs 4)
+- Actually work with Highmaps now
+- Removed console log in Highmaps
+
 ver 3.1.0
 - Support ExtJs 5
 - All demos now refer to ExtJs CDN

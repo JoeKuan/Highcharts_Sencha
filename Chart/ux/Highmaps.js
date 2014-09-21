@@ -2,11 +2,11 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 3.0.0
+ * version 3.2.0
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
- * Documentation last updated: 12 March 2014
+ * Documentation last updated: 22 Sept 2014
  *
  * A much improved & ported from ExtJs 3 Highchart adapter. 
  *
@@ -434,7 +434,7 @@ Ext.define("Chart.ux.Highmaps", {
 
         append = (append === null || append === true) ? true : false;
 
-	console.log("Map addSeries - append " + append);
+	// console.log("Map addSeries - append " + append);
 
 	var HC = Chart.ux.Highcharts;
         // Sencha Touch uses config to access properties
@@ -590,7 +590,7 @@ Ext.define("Chart.ux.Highmaps", {
 	    }
 	});
 
-	console.log(readyToDraw + " -- " + _this.ddDataReady);
+	// console.log(readyToDraw + " -- " + _this.ddDataReady);
 	if (!readyToDraw || !_this.ddDataReady) {
 	    return false;
 	}
@@ -640,7 +640,7 @@ Ext.define("Chart.ux.Highmaps", {
         } else if (this.rendered) {
             // Create the chart from fresh
 	    this.log("call Highcharts.Map (2)");
-	    console.log(_this.chartConfig);
+	    // console.log(_this.chartConfig);
             this.chart = new Highcharts.Map(config, this.afterChartRendered);
 	    this.fireEvent('mapReady', this);
         }

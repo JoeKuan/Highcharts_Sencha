@@ -139,7 +139,7 @@ Ext.define('Chart.ux.Highcharts.MapSerie', {
         // We need to bind the load map to reflect any change to the map
         if (this.updateMap && this.store) {
             var handler = this.store.on('load', function(store) {
-                console.log("call store load handler to getData()");
+                // console.log("call store load handler to getData()");
                 var data = this.getData();
                 var highmaps = this.getMap();
                 Ext.each(highmaps.chart.series, function(series) {
@@ -234,12 +234,12 @@ Ext.define('Chart.ux.Highcharts.MapSerie', {
         var items = this.store && this.store.data.items;
         var data = [];
 
-        Ext.isArray(items) && console.log("Call getMapSeriesData. Size " + items.length);
+        // Ext.isArray(items) && console.log("Call getMapSeriesData. Size " + items.length);
         Ext.each(items, function(record, index) {
             data.push(this.getData(record));
         }, this);           
 
-        console.log("Finish getMapSeriesData. Size " + data.length);
+        // console.log("Finish getMapSeriesData. Size " + data.length);
         return data;
     },
 
@@ -292,8 +292,8 @@ Ext.define('Chart.ux.Highcharts.MapSerie', {
         this.mdsLoaded = true;
         this.mssLoaded = true;
 
-        console.log("MapSerie addSeriesAfterLoad");
-        console.log(highmaps);
+        // console.log("MapSerie addSeriesAfterLoad");
+        // console.log(highmaps);
 
         var createLoadHandler = function(loadedVar) {
             return function() {
@@ -315,7 +315,7 @@ Ext.define('Chart.ux.Highcharts.MapSerie', {
         // have finished
         if (this.mapDataStore) {
             this.mdsLoaded = false;
-            console.log("Call mds store load method");
+            // console.log("Call mds store load method");
             this.mapDataStore.load({
                 scope: this,
                 callback: createLoadHandler("mdsLoaded")
@@ -324,14 +324,14 @@ Ext.define('Chart.ux.Highcharts.MapSerie', {
 
         if (this.store) {
             this.mssLoaded = false;
-            console.log("Call mss store load method");
+            // console.log("Call mss store load method");
             this.store.load({
                 scope: this,
                 callback: createLoadHandler("mssLoaded")
             });
         } else {
             // Just simply add 
-            console.log("No store - simply call highmaps.addSeries");
+            // console.log("No store - simply call highmaps.addSeries");
             this.dataReady = true;
             highmaps.drawMapWhenReady();
         }
@@ -376,8 +376,7 @@ Ext.define('Chart.ux.Highcharts.MapSerie', {
         if (Ext.isArray(this.joinBy)) {
             this.dataCodeField = this.joinBy[1];
             this.mapCodeField = this.joinBy[0];
-            console.log("mapCodeField: " + this.mapCodeField + ", dataCodeField: " +
-                        this.dataCodeField);
+            // console.log("mapCodeField: " + this.mapCodeField + ", dataCodeField: " + this.dataCodeField);
         } else {
             this.dataCodeField = this.joinBy;
             this.mapCodeField = this.joinBy;

@@ -1,0 +1,7 @@
+#info h2 {
+	display: inline;
+        padding-left: 10px;
+}
+#info .f32 .flag {
+	vertical-align: bottom !important;
+}

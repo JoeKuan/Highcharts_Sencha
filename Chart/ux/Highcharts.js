@@ -2,7 +2,7 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 3.1.0
+ * version 3.2.0
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
@@ -188,7 +188,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '3.1.0',
+        version: '3.2.0',
 
         /***
          * @property {Object} sencha
