@@ -64,7 +64,7 @@ Ext.define('Highcharts.controller.Charts', {
                     // Generate the highchart config based on the selected type
                     // Create the store if not exists
                     var configs = Highcharts.ChartsDesktopConfig;
-                    var hcConfg = null;
+                    var hcConfig = null;
                     var reloadDisabled = false;
 
                     // Clear up special purpose widget
@@ -99,6 +99,10 @@ Ext.define('Highcharts.controller.Charts', {
                         break;
                     case 'splineNullData': 
                         hcConfig = configs.getSplineNullData();
+                        store = Ext.create('Highcharts.store.NullTemperature');
+                        break;
+                    case 'splineConnectNulls': 
+                        hcConfig = configs.getSplineConnectNulls();
                         store = Ext.create('Highcharts.store.NullTemperature');
                         break;
                     case 'splineIrregular':

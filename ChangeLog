@@ -1,3 +1,10 @@
+ver 3.2.1
+- Major performance fix - calling draw multiple times !!
+- Fixed null data with connectNulls option
+- Fixed ExtJs 4 Popup Menu demo
+- Fixed ExtJs 5 Spline - Null data demo
+- Added null data (connectNulls) demos for ExtJs 4 & 5
+ 
 ver 3.2.0
 - Included Highmaps Desktop Demo (ExtJs 4)
 - Actually work with Highmaps now

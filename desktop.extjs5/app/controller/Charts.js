@@ -101,6 +101,10 @@ Ext.define('Highcharts.controller.Charts', {
                         hcConfig = configs.getSplineNullData();
                         store = Ext.create('Highcharts.store.NullTemperature');
                         break;
+                    case 'splineConnectNulls': 
+                        hcConfig = configs.getSplineConnectNulls();
+                        store = Ext.create('Highcharts.store.NullTemperature');
+                        break;
                     case 'splineIrregular':
                         hcConfig = configs.getSplineIrregular();
                         store = Ext.create('Highcharts.store.IrregularData');

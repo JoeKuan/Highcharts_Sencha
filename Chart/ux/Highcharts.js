@@ -2,7 +2,7 @@
  * @author 
  * Joe Kuan <kuan.joe@gmail.com>
  *
- * version 3.2.0
+ * version 3.2.1
  *
  * <!-- You are not permitted to remove the author section (above) from this file. -->
  *
@@ -188,7 +188,7 @@ Ext.define("Chart.ux.Highcharts", {
          * @static
          * Version string of the current Highcharts extension
          */
-        version: '3.2.0',
+        version: '3.2.1',
 
         /***
          * @property {Object} sencha
@@ -354,6 +354,7 @@ Ext.define("Chart.ux.Highcharts", {
      */
     afterChartRendered: null,
 
+    
     constructor: function(config) {
         config.listeners && (this.afterChartRendered = config.listeners.afterChartRendered);
         this.afterChartRendered && (this.afterChartRendered = Ext.bind(this.afterChartRendered, this));
@@ -576,6 +577,11 @@ Ext.define("Chart.ux.Highcharts", {
 
     /***
      *  @private
+     */
+    initDataBuilt: false,
+    
+    /***
+     *  @private
      *  Build the initial data set if there are data already
      *  inside the store.
      */
@@ -586,6 +592,12 @@ Ext.define("Chart.ux.Highcharts", {
         var series = null, chartConfigSeries = null;
         var ptObject = null, record = null, colorField = null;
 
+	this.log("Call Highcharts buildInitData");
+	if (this.initDataBuilt) {
+	    this.log("Already built. Ignore");
+	    return;
+	}
+	
         if (!this.store || this.store.isLoading() || 
             !_this.chartConfig || _this.initAnim === false ||
             _this.chartConfig.chart.animation === false) {
@@ -606,6 +618,8 @@ Ext.define("Chart.ux.Highcharts", {
             series = _this.series[i];
             series.buildInitData(items);
         }
+	
+	this.initDataBuilt = true;
     },
 
     /**
@@ -650,6 +664,7 @@ Ext.define("Chart.ux.Highcharts", {
             }
         }
 
+	/*
 	if (Ext.isArray(_this.series)) {
             for( i = 0; i < _this.series.length; i++) {
 		if(!_this.series[i].visible)
@@ -663,6 +678,7 @@ Ext.define("Chart.ux.Highcharts", {
 		this.refresh();
             }
 	}
+*/
     },
 
     /***
@@ -866,11 +882,23 @@ console.log(record);
                             // the current series data set
                             var chartSeriesLength = this.chart.series[i].points.length;
                             var storeSeriesLength = data[i].length;
-                            this.log("chartSeriesLength " + chartSeriesLength + 
+			    var connectNulls = this.chart.series[i].options.connectNulls;
+			    
+                            this.log("connectNulls " + connectNulls + " chartSeriesLength " + chartSeriesLength + 
                                      ", storeSeriesLength " + storeSeriesLength);
-                            for (var x = 0; x < Math.min(chartSeriesLength, storeSeriesLength); x++) {
-                                this.chart.series[i].points[x].update(data[i][x], false, true);
-                            }
+
+			    // ConnectNulls is quite tricky as the chart.series[i].points will
+			    // not contain any null data points. Hence, the chartSeriesLength is
+			    // always less than storeSeriesLength. So we CANNOT go through the
+			    // series and update each point as it can be undefined
+			    if (connectNulls) {
+				this.chart.series[i].setData(data[i]);
+				continue;
+			    } else {
+				for (var x = 0; x < Math.min(chartSeriesLength, storeSeriesLength); x++) {
+                                    this.chart.series[i].points[x].update(data[i][x], false, true);
+				}
+			    }
 
                             // Gotcha, we need to be careful with pie series, as the totalDataField
                             // can conflict with the following series data points trimming operations

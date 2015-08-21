@@ -6,10 +6,10 @@ Ext.define('Highcharts.model.NullTemperature', {
   }, {
     name : 'yesterday',
     type : 'float',
-    useNull: true
+    allowNull: true
   }, {
     name : 'today',
     type : 'float',
-    useNull: true
+    allowNull: true
   }]
 });
