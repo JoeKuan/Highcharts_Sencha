@@ -353,6 +353,15 @@ Ext.define("Chart.ux.Highcharts", {
      *          }
      */
     afterChartRendered: null,
+	
+	 /**
+     * 
+     * @config {Number}
+     * When using a column series chart, setting this to 1000 (msecs) 
+     * will help prevent the chart from drawing twice each time it is resized or initialized.
+     * 
+     */
+    redrawDefer: 0,
 
     
     constructor: function(config) {
@@ -675,7 +684,7 @@ Ext.define("Chart.ux.Highcharts", {
             // no point doing this, as onLoad will pick it up
             if (this.store && !this.store.isLoading()) {
 		this.log("Call refresh from draw"); 
-		this.refresh();
+		Ext.defer(this.refresh, this.redrawDefer, this);
             }
 	}
 */
