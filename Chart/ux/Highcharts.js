@@ -373,7 +373,7 @@ Ext.define("Chart.ux.Highcharts", {
         }
     },
 
-    initComponent : function() {
+    initialize : function() {
         if(this.store) {
             this.store = Ext.data.StoreManager.lookup(this.store);
         }
